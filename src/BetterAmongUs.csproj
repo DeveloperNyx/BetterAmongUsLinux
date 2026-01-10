@@ -45,24 +45,35 @@
 
 	<!-- Game Path Configuration -->
 	<PropertyGroup>
-		<!-- Default to true, can be overridden with -p:CopyToGame=false -->
 		<CopyToGame Condition="'$(CopyToGame)' == ''">true</CopyToGame>
 		<ModPathFile>build\mod_folder_path</ModPathFile>
-		<GamePath Condition="Exists('$(ModPathFile)') and '$(CopyToGame))' != 'true'">$([System.IO.File]::ReadAllText('$(ModPathFile)').Trim())</GamePath>
-		<ModsPath>$(GamePath)</ModsPath>
 	</PropertyGroup>
+
+	<!-- Target to read game path (only if CopyToGame is true) -->
+	<Target Name="ReadGamePath" BeforeTargets="CopyModToGame">
+		<PropertyGroup>
+			<GamePath Condition="Exists('$(ModPathFile)')">
+				$([System.IO.File]::ReadAllText('$(ModPathFile)').Trim())
+			</GamePath>
+		</PropertyGroup>
+		<Message Text="Game path read: $(GamePath)" Condition="'$(GamePath)' != ''" Importance="low" />
+	</Target>
 
 	<!-- Copy Mod to Game Folder -->
 	<Target Name="CopyModToGame" AfterTargets="PostBuildEvent"
-		Condition="'$(GamePath)' != '' and Exists('$(GamePath)') and '$(CopyToGame))' != 'true'">
-		<Message Text="Copying mod to $(GamePath)" Importance="high" />
-		<Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(GamePath)" SkipUnchangedFiles="true" />
-	</Target>
-
-	<Target Name="WarnIfNoGamePath" AfterTargets="PostBuildEvent"
-			Condition="'$(GamePath)' == '' and '$(CopyToGame))' != 'true'">
-		<Warning Text="Game path not found. Set game path in build\mod_folder_path." />
-		<Message Text="Mod was NOT copied to game folder!" Importance="high" />
+			Condition="'$(CopyToGame)' == 'true'">-->
+		<CallTarget Targets="ReadGamePath" Condition="Exists('$(ModPathFile)')" />
+		<Copy SourceFiles="$(TargetDir)$(AssemblyName).dll"
+			  DestinationFolder="$(GamePath)"
+			  SkipUnchangedFiles="true"
+			  Condition="'$(GamePath)' != '' and Exists('$(GamePath)')">
+			<Output TaskParameter="CopiedFiles" ItemName="CopiedMods" />
+		</Copy>
+		<Message Text="Successfully copied mod to: $(GamePath)"
+				 Importance="high"
+				 Condition="'@(CopiedMods)' != ''" />
+		<Warning Text="Game path not found. Create $(ModPathFile) with game folder path."
+				 Condition="'$(CopyToGame)' == 'true' and ('$(GamePath)' == '' or !Exists('$(GamePath)'))" />
 	</Target>
 
 	<!-- NuGet Packages -->
