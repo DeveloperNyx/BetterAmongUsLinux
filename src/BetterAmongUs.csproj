@@ -4,18 +4,30 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<OutputType>Library</OutputType>
-		<langVersion>preview</langVersion>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
-	<!-- Meta Data -->
+	<!-- Git Commit Hash Retrieval -->
+	<Target Name="GetGitCommitHash" BeforeTargets="BeforeBuild">
+		<Exec Command="git rev-parse --short HEAD"
+			  ConsoleToMSBuild="true"
+			  IgnoreExitCode="true"
+			  StandardErrorImportance="low"
+			  WorkingDirectory="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="ConsoleOutput" PropertyName="CommitHash" />
+		</Exec>
+		<PropertyGroup Condition="'$(CommitHash)' == ''">
+			<CommitHash>unknown</CommitHash>
+		</PropertyGroup>
+	</Target>
+
+	<!-- Build Metadata -->
 	<PropertyGroup>
 		<CommitHash Condition="'$(CommitHash)' == ''">unknown</CommitHash>
-		<BuildDate>$([System.DateTime]::UtcNow.ToString(MM.dd.yyyy))</BuildDate>
-		<IsCI Condition="'$(CI)' == 'true' or '$(GITHUB_ACTIONS)' == 'true' or '$(TF_BUILD)' == 'true'">true</IsCI>
-		<IsCI Condition="'$(IsCI)' == ''">false</IsCI>
+		<BuildDate>$([System.DateTime]::UtcNow.ToString("MM.dd.yyyy HH:mm"))</BuildDate>
 	</PropertyGroup>
 
-	<!-- Build Events -->
+	<!-- Assembly Metadata Attributes -->
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
 			<_Parameter1>CommitHash</_Parameter1>
@@ -25,27 +37,35 @@
 			<_Parameter1>BuildDate</_Parameter1>
 			<_Parameter2>$(BuildDate)</_Parameter2>
 		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>BuildConfiguration</_Parameter1>
+			<_Parameter2>$(Configuration)</_Parameter2>
+		</AssemblyAttribute>
 	</ItemGroup>
-	
+
+	<!-- Game Path Configuration -->
 	<PropertyGroup>
+		<!-- Default to true, can be overridden with -p:CopyToGame=false -->
+		<CopyToGame Condition="'$(CopyToGame)' == ''">true</CopyToGame>
 		<ModPathFile>build\mod_folder_path</ModPathFile>
-		<GamePath Condition="Exists('$(ModPathFile)') and '$(IsCI)' != 'true'">$([System.IO.File]::ReadAllText('$(ModPathFile)').Trim())</GamePath>
+		<GamePath Condition="Exists('$(ModPathFile)') and '$(CopyToGame))' != 'true'">$([System.IO.File]::ReadAllText('$(ModPathFile)').Trim())</GamePath>
 		<ModsPath>$(GamePath)</ModsPath>
 	</PropertyGroup>
 
+	<!-- Copy Mod to Game Folder -->
 	<Target Name="CopyModToGame" AfterTargets="PostBuildEvent"
-			Condition="'$(GamePath)' != '' and Exists('$(GamePath)') and '$(IsCI)' != 'true'">
+		Condition="'$(GamePath)' != '' and Exists('$(GamePath)') and '$(CopyToGame))' != 'true'">
 		<Message Text="Copying mod to $(GamePath)" Importance="high" />
 		<Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(GamePath)" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="WarnIfNoGamePath" AfterTargets="PostBuildEvent"
-			Condition="'$(GamePath)' == '' and '$(IsCI)' != 'true'">
+			Condition="'$(GamePath)' == '' and '$(CopyToGame))' != 'true'">
 		<Warning Text="Game path not found. Set game path in build\mod_folder_path." />
 		<Message Text="Mod was NOT copied to game folder!" Importance="high" />
 	</Target>
 
-	<!-- Packages -->
+	<!-- NuGet Packages -->
 	<ItemGroup>
 		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2025.11.18" />
 		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.0.1">
@@ -55,8 +75,9 @@
 		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.692" Private="false" ExcludeAssets="runtime;native" />
 	</ItemGroup>
 
-	<!-- Resources -->
+	<!-- Embedded Resources -->
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\**\*" />
 	</ItemGroup>
+
 </Project>

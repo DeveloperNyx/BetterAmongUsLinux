@@ -1,4 +1,5 @@
-﻿src/.vs
+﻿.vs
+src/.vs
 src/bin
 src/obj
 src/.editorconfig
