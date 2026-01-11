@@ -97,6 +97,12 @@ internal class PlayerInfoDisplay : MonoBehaviour
         if (Time.frameCount - _lastUpdateFrame < UPDATE_COOLDOWN)
             return;
 
+        if (_player == null || _player.Data == null || _nameText == null)
+        {
+            ResetText();
+            return;
+        }
+
         _sbTag.Clear();
         _sbTagTop.Clear();
         _sbTagBottom.Clear();
