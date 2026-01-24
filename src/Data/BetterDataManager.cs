@@ -111,7 +111,55 @@ internal static class BetterDataManager
                     Directory.CreateDirectory(directory);
                 }
 
-                File.CreateText(path).Close();
+                using var writer = File.CreateText(path);
+                if (path == banPlayerListFile)
+                {
+                    writer.WriteLine("// Example ban entries (friend code and/or hashed PUID)");
+                    writer.WriteLine("// Format: [FriendCode], [HashedPUID]");
+                    writer.WriteLine("// Example with both:");
+                    writer.WriteLine("// FriendCode#0000, abc123def456789");
+                    writer.WriteLine("// Example with just friend code:");
+                    writer.WriteLine("// FriendCode#0000");
+                    writer.WriteLine("// Example with just hashed PUID:");
+                    writer.WriteLine("// , hash123xyz789");
+                }
+                else if (path == banNameListFile)
+                {
+                    writer.WriteLine("// Example banned player names");
+                    writer.WriteLine("// Each name on a new line - supports wildcards with **");
+                    writer.WriteLine("// ** at start and end: contains anywhere");
+                    writer.WriteLine("// ** at start only: ends with");
+                    writer.WriteLine("// ** at end only: starts with");
+                    writer.WriteLine("// No **: exact match (case-insensitive)");
+                    writer.WriteLine("// ");
+                    writer.WriteLine("// HackerPlayer123");
+                    writer.WriteLine("// CheaterAccount");
+                    writer.WriteLine("// **Bot**");
+                    writer.WriteLine("// **Script");
+                    writer.WriteLine("// Exploit**");
+                    writer.WriteLine("// **Cheat**");
+                }
+                else if (path == banWordListFile)
+                {
+                    writer.WriteLine("// Example banned words/patterns");
+                    writer.WriteLine("// Each word or pattern on a new line - supports wildcards with **");
+                    writer.WriteLine("// ** at start and end: contains anywhere");
+                    writer.WriteLine("// ** at start only: ends with");
+                    writer.WriteLine("// ** at end only: starts with");
+                    writer.WriteLine("// No **: exact match (case-insensitive)");
+                    writer.WriteLine("// ");
+                    writer.WriteLine("// hack");
+                    writer.WriteLine("// cheat");
+                    writer.WriteLine("// exploit");
+                    writer.WriteLine("// **bot**");
+                    writer.WriteLine("// **script**");
+                    writer.WriteLine("// modded");
+                    writer.WriteLine("// aimbot");
+                    writer.WriteLine("// wallhack");
+                    writer.WriteLine("// **hack**");
+                    writer.WriteLine("// **cheat**");
+                    writer.WriteLine("// speed**");
+                }
             }
         }
     }

@@ -66,7 +66,9 @@ internal static class TextFileHandler
         if (File.Exists(filePath))
         {
             return File.ReadLines(filePath)
-                       .Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith("//"))
+                       .Where(line => !string.IsNullOrWhiteSpace(line) &&
+                              !line.StartsWith("//") &&
+                              !line.StartsWith("#"))
                        .SelectMany(line => line.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                                .Select(s => s.Trim()));
         }
