@@ -18,6 +18,10 @@ on:
     paths:
       - 'src/**'
       
+permissions:
+  actions: read
+  contents: read
+      
 jobs:
   build-mod:
     runs-on: ubuntu-latest
