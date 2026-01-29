@@ -2,6 +2,7 @@
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace BetterAmongUs.Patches.Gameplay.UI.Chat;
 internal static class ChatCommandsPatch
 {
     private static bool _enabled = true;
-    internal static string CommandPrefix => BAUModdedSupport.HasFlag(BAUModdedSupport.Force_BAU_Command_Prefix) ? "bau:" : BAUPlugin.CommandPrefix.Value;
+    internal static string CommandPrefix => BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Force_BAU_Command_Prefix) ? "bau:" : BAUPlugin.CommandPrefix.Value;
 
     // Run code for specific commands
     private static void HandleCommand()
@@ -32,7 +33,7 @@ internal static class ChatCommandsPatch
     [HarmonyPrefix]
     private static bool ChatController_SendChat_Prefix(ChatController __instance)
     {
-        if (!_enabled || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_AllCommands))
+        if (!_enabled || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllCommands))
         {
             return true;
         }
@@ -111,7 +112,7 @@ internal static class ChatCommandsPatch
     [HarmonyPostfix]
     private static void ChatController_Update_Postfix(ChatController __instance)
     {
-        if (!_enabled || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_AllCommands))
+        if (!_enabled || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllCommands))
         {
             ClearCommandDisplay();
             return;
@@ -227,6 +228,6 @@ internal static class ChatCommandsPatch
 
     private static bool FilterCommand(BaseCommand command, CommandType commandType)
     {
-        return command.Type == commandType && command.ShowCommand() && !BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Command + command.Name);
+        return command.Type == commandType && command.ShowCommand() && !BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Command + command.Name);
     }
 }

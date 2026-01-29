@@ -52,7 +52,7 @@ internal sealed class OptionTitleItem : OptionItem
     private void CreateBehavior()
     {
         if (!GameSettingMenu.Instance) return;
-        AllTBROptionsTemp.Add(this);
+        AllOptionsTemp.Add(this);
         optionBehaviour = UnityEngine.Object.Instantiate(Tab.AUTab.checkboxOrigin, Tab.AUTab.settingsContainer);
         Obj = optionBehaviour.gameObject;
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);

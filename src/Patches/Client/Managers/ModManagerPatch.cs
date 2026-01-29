@@ -1,7 +1,7 @@
 ﻿using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
-using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.AntiCheat;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using UnityEngine;
 
@@ -29,7 +29,7 @@ internal static class ModManagerPatch
             }
             else
             {
-                if (!BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_CustomModStamp))
+                if (!BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_CustomModStamp))
                 {
                     modStamp.sprite = Utils.LoadSprite("BetterAmongUs.Resources.Images.BetterAmongUs-Mod.png", 250f);
                 }

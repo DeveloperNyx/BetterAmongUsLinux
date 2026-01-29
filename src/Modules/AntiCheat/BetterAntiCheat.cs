@@ -3,6 +3,7 @@ using BetterAmongUs.Data;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
+using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Mono;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using HarmonyLib;
@@ -71,7 +72,7 @@ internal static class BetterAntiCheat
         [HarmonyPostfix]
         internal static void Deserialize_Postfix(PlatformSpecificData __instance)
         {
-            if (!BAUPlugin.AntiCheat.Value || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Anticheat) || !GameState.IsVanillaServer) return;
+            if (!BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !GameState.IsVanillaServer) return;
 
             if (GameState.IsLobby)
             {
@@ -149,7 +150,7 @@ internal static class BetterAntiCheat
     internal static void CheckRPC(PlayerControl player, byte callId, MessageReader oldReader)
     {
         if (player == null || player?.Data == null) return;
-        if (!IsEnabled || !BAUPlugin.AntiCheat.Value || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return;
+        if (!IsEnabled || !BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return;
         if (player.IsLocalPlayer() && player.IsHost()) return;
 
         MessageReader reader = MessageReader.Get(oldReader);
@@ -169,7 +170,7 @@ internal static class BetterAntiCheat
         try
         {
             if (player == null || player?.Data == null) return true;
-            if (!IsEnabled || !BAUPlugin.AntiCheat.Value || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return true;
+            if (!IsEnabled || !BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return true;
             if (player.IsLocalPlayer() && player.IsHost()) return true;
 
             MessageReader reader = MessageReader.Get(oldReader);

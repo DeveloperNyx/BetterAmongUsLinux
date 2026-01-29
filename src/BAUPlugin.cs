@@ -8,6 +8,8 @@ using BetterAmongUs.Data.Json;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
+using BetterAmongUs.Modules.OptionItems;
+using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Network;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using HarmonyLib;
@@ -139,13 +141,16 @@ internal class BAUPlugin : BasePlugin
     /// </summary>
     private void OnChainloaderFinished()
     {
-        BAUModdedSupport.Initialize();
+        if (!BAUModdedSupportEvents.InvokeAll_OnBAULoad(this)) return;
+
+        BAUModdedSupportFlags.Initialize();
         GithubAPI.Connect();
         BetterDataManager.Initialize();
         LoadOptions();
         Translator.Initialize();
         Harmony.PatchAll();
         GameSettingsPatch.SetupSettings(true);
+        BAUModdedSupportEvents.InvokeAll_OnBAUSettingsLoaded([.. OptionItem.AllOptions.Cast<object>()]);
         InstanceAttribute.RegisterAll();
         OutfitData.Initialize();
 
@@ -283,6 +288,14 @@ internal class BAUPlugin : BasePlugin
         ShowFPS = Config.Bind("Better Options", "ShowFPS", false);
         CommandPrefix = Config.Bind("Client Options", "CommandPrefix", "/");
         FavoriteColor = Config.Bind("Mod", "FavoriteColor", -1);
+
+        BAUModdedSupportEvents.InvokeAll_OnBAUConfigEntriesLoaded([
+            PrivateOnlyLobby, AntiCheat, SendBetterRpc,
+            BetterNotifications, ForceOwnLanguage, ChatDarkMode,
+            ChatInGameplay, LobbyPlayerInfo, DisableLobbyTheme,
+            UnlockFPS, ShowFPS, CommandPrefix,
+            FavoriteColor,
+        ]);
     }
 
     /// <summary>

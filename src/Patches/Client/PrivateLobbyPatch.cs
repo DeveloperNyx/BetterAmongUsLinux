@@ -1,5 +1,6 @@
 ﻿using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
@@ -17,7 +18,7 @@ internal static class PrivateLobbyPatch
     [HarmonyPostfix]
     private static void CreateGameOptions_Show_Postfix(CreateGameOptions __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_PrivateLobby))
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_PrivateLobby))
         {
             BAUPlugin.PrivateOnlyLobby.Value = false;
             return;

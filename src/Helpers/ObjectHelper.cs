@@ -1,4 +1,4 @@
-﻿using BetterAmongUs.Modules;
+﻿using BetterAmongUs.Modules.Support;
 using UnityEngine;
 
 namespace BetterAmongUs.Helpers;
@@ -112,7 +112,7 @@ internal static class ObjectHelper
     /// <param name="avoidGoName">Names of GameObjects to skip when applying colors.</param>
     internal static void SetUIColors(this GameObject go, Color? color = null, Func<SpriteRenderer, bool>? check = null, params string[] avoidGoName)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Theme)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Theme)) return;
 
         var sprites = go.GetComponentsInChildren<SpriteRenderer>(true);
         foreach (var sprite in sprites)
@@ -130,7 +130,7 @@ internal static class ObjectHelper
     /// <param name="color">The color to blend (defaults to green if null).</param>
     internal static void AddColor(SpriteRenderer sprite, Color? color = null)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Theme)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Theme)) return;
 
         color ??= Color.green;
         sprite.color = (sprite.color * 0.6f) + ((Color)color * 0.5f);

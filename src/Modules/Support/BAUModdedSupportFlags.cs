@@ -5,13 +5,13 @@ using BepInEx.Unity.IL2CPP;
 using BetterAmongUs.Helpers;
 using System.Reflection;
 
-namespace BetterAmongUs.Modules;
+namespace BetterAmongUs.Modules.Support;
 
 /// <summary>
 /// Provides modded support functionality for BetterAmongUs by allowing other mods to declare flags
 /// that control various features and behaviors of BetterAmongUs.
 /// </summary>
-public static class BAUModdedSupport
+public static class BAUModdedSupportFlags
 {
     // ============================================
     // Client Features - General
@@ -122,34 +122,22 @@ public static class BAUModdedSupport
     /// <param name="plugin">The plugin instance.</param>
     private static void TryGetFlags(BasePlugin plugin)
     {
-        foreach (var field in plugin.GetType().GetFields())
+        var field = plugin.GetType().GetField("BAUFlags",
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+
+        if (field == null) return;
+
+        var value = field.IsStatic ? field.GetValue(null) : field.GetValue(plugin);
+
+        if (value is not IEnumerable<string> strings) return;
+
+        var pluginName = plugin.GetType().GetCustomAttribute<BepInPlugin>()?.Name ?? plugin.GetType().Name;
+
+        foreach (var flag in strings)
         {
-            if (field.Name == "BAUFlags")
+            if (_flags.Add(flag))
             {
-                var value = field.IsStatic
-                    ? field.GetValue(null)
-                    : field.GetValue(plugin);
-
-                IEnumerable<string>? strings = null;
-                if (value is string[] strArray)
-                {
-                    strings = strArray;
-                }
-                else if (value is List<string> strList)
-                {
-                    strings = strList;
-                }
-
-                if (strings == null) return;
-
-                foreach (var flag in strings)
-                {
-                    if (!_flags.Contains(flag))
-                    {
-                        Logger_.Log($"Loaded '{flag}' flag from {plugin.GetType().GetCustomAttribute<BepInPlugin>().Name}", "BAUModdedSupport");
-                        AddFlag(flag);
-                    }
-                }
+                Logger_.Log($"Loaded '{flag}' flag from {pluginName}", "BAUModdedSupport");
             }
         }
     }

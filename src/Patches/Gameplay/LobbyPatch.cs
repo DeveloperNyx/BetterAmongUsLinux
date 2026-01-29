@@ -1,6 +1,7 @@
 ﻿using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using UnityEngine;
 
@@ -55,7 +56,7 @@ internal static class LobbyPatch
         __instance.ClientViewButton?.gameObject?.SetUIColors("Icon");
         __instance.HostViewButton?.gameObject?.SetUIColors("Icon");
 
-        if (!BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_BetterPingTracker))
+        if (!BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BetterPingTracker))
         {
             __instance.StartButton?.transform?.SetParent(__instance.HostInfoPanel?.transform);
             __instance.StartButtonClient?.transform?.SetParent(__instance.HostInfoPanel?.transform);
@@ -78,7 +79,7 @@ internal static class LobbyPatch
     [HarmonyPostfix]
     private static void GameStartManager_Update_Postfix(GameStartManager __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_CancelStartingGame)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_CancelStartingGame)) return;
 
         if (!GameState.IsHost)
         {
@@ -102,7 +103,7 @@ internal static class LobbyPatch
     [HarmonyPrefix]
     private static bool GameStartManager_BeginGame_Prefix(GameStartManager __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_CancelStartingGame)) return true;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_CancelStartingGame)) return true;
 
         if (__instance.startState == GameStartManager.StartingStates.Countdown)
         {

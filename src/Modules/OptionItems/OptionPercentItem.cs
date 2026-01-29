@@ -23,7 +23,7 @@ internal sealed class OptionPercentItem : OptionFloatItem
         }
 
         OptionPercentItem Item = new();
-        AllTBROptions.Add(Item);
+        AllOptions.Add(Item);
         Item._id = id;
         Item.Tab = tab;
         Item.Translation = tranStr;

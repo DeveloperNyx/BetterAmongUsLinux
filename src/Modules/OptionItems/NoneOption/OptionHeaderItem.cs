@@ -51,7 +51,7 @@ internal sealed class OptionHeaderItem : OptionItem
     private void CreateBehavior()
     {
         if (!GameSettingMenu.Instance) return;
-        AllTBROptionsTemp.Add(this);
+        AllOptionsTemp.Add(this);
         categoryHeaderMasked = UnityEngine.Object.Instantiate(Tab.AUTab.categoryHeaderOrigin, Tab.AUTab.settingsContainer);
         Obj = categoryHeaderMasked.gameObject;
         categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;

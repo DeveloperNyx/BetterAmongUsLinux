@@ -1,6 +1,6 @@
 ﻿using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
-using BetterAmongUs.Modules;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using UnityEngine;
 
@@ -32,7 +32,7 @@ internal static class MainMenuManagerPatch
     [HarmonyPostfix]
     private static void MainMenuManager_Start_Postfix(MainMenuManager __instance)
     {
-        if (!BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_BAULogo))
+        if (!BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BAULogo))
         {
             GameObject logo = GameObject.Find("LeftPanel/Sizer/LOGO-AU");
             GameObject sizer = logo.transform.parent.gameObject;

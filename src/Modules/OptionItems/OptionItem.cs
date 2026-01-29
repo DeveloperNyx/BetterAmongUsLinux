@@ -1,5 +1,6 @@
 ﻿using BetterAmongUs.Data;
 using BetterAmongUs.Helpers;
+using BetterAmongUs.Modules.Support;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -12,8 +13,8 @@ namespace BetterAmongUs.Modules.OptionItems;
 internal abstract class OptionItem
 {
     internal static int MaskLayer => 20;
-    internal static List<OptionItem> AllTBROptions = [];
-    internal static List<OptionItem> AllTBROptionsTemp = [];
+    internal static List<OptionItem> AllOptions = [];
+    internal static List<OptionItem> AllOptionsTemp = [];
     internal const string InfiniteIcon = "<b>∞</b>";
     internal virtual bool CanLoad => true;
     internal virtual bool IsOption => true;
@@ -30,8 +31,8 @@ internal abstract class OptionItem
     internal virtual bool Show => ShowCondition.Invoke();
     internal virtual bool ShowChildren => Show;
     internal Func<bool>? ShowCondition = () => { return true; };
-    internal bool Hide => !Show || GetParents().Any(opt => !opt.ShowChildren) || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_GameSetting + Translation);
-    internal static OptionItem? GetOptionById(int id) => AllTBROptions.FirstOrDefault(opt => opt._id == id);
+    internal bool Hide => !Show || GetParents().Any(opt => !opt.ShowChildren) || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_GameSetting + Translation);
+    internal static OptionItem? GetOptionById(int id) => AllOptions.FirstOrDefault(opt => opt._id == id);
     internal virtual void UpdateVisuals(bool updateTabVisuals = true) { }
     internal abstract string ValueAsString();
     internal virtual void TryLoad(bool forceLoad = false) { }
@@ -432,7 +433,7 @@ internal abstract class OptionItem<T> : OptionItem
     protected T? DefaultValue { get; set; } = default;
     internal virtual T? GetValue()
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_GameSetting + Translation))
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_GameSetting + Translation))
         {
             return DefaultValue;
         }

@@ -3,6 +3,7 @@ using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
 using BetterAmongUs.Modules.OptionItems.NoneOption;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using UnityEngine;
 
@@ -127,7 +128,7 @@ internal static class GameSettingsPatch
     [HarmonyPostfix]
     private static void GameSettingMenu_Start_Postfix(GameSettingMenu __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_AllGameSettings)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllGameSettings)) return;
 
         SetupSettings();
 
@@ -172,7 +173,7 @@ internal static class GameSettingsPatch
     [HarmonyPrefix]
     private static void GameSettingMenu_ChangeTab_Prefix(GameSettingMenu __instance, [HarmonyArgument(0)] int tabNum, [HarmonyArgument(1)] bool previewOnly)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_AllGameSettings)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllGameSettings)) return;
 
         if (BetterSettingsTab == null) return;
 
@@ -196,7 +197,7 @@ internal static class GameSettingsPatch
     [HarmonyPrefix]
     private static bool GameOptionsMenu_CreateSettings_Prefix(GameOptionsMenu __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_AllGameSettings)) return true;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllGameSettings)) return true;
 
         if (__instance == BetterSettingsTab.AUTab)
         {
@@ -210,7 +211,7 @@ internal static class GameSettingsPatch
     [HarmonyPrefix]
     private static void OptionsConsole_CanUse_Prefix(OptionsConsole __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_AllGameSettings)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllGameSettings)) return;
 
         __instance.HostOnly = false;
     }

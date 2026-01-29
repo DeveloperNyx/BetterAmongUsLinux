@@ -53,7 +53,7 @@ internal sealed class OptionStringItem : OptionItem<int>
         }
 
         OptionStringItem Item = new();
-        AllTBROptions.Add(Item);
+        AllOptions.Add(Item);
         Item._id = id;
         Item.Tab = tab;
         Item.Translation = tranStr;
@@ -86,7 +86,7 @@ internal sealed class OptionStringItem : OptionItem<int>
     {
         TryLoad();
         if (!GameSettingMenu.Instance) return;
-        AllTBROptionsTemp.Add(this);
+        AllOptionsTemp.Add(this);
         var numberOption = UnityEngine.Object.Instantiate(Tab.AUTab.numberOptionOrigin, Tab.AUTab.settingsContainer);
         Option = numberOption;
         Obj = Option.gameObject;

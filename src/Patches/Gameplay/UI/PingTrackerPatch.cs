@@ -1,4 +1,4 @@
-﻿using BetterAmongUs.Modules;
+﻿using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Mono;
 using HarmonyLib;
 
@@ -11,7 +11,7 @@ internal static class PingTrackerPatch
     [HarmonyPrefix]
     private static bool PingTracker_Update_Prefix(PingTracker __instance)
     {
-        if (BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_BetterPingTracker)) return true;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BetterPingTracker)) return true;
 
         var betterPingTracker = __instance.gameObject.AddComponent<BetterPingTracker>();
         betterPingTracker.SetUp(__instance.text, __instance.aspectPosition);

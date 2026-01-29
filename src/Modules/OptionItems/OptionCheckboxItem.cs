@@ -31,7 +31,7 @@ internal sealed class OptionCheckboxItem : OptionItem<bool>
         }
 
         OptionCheckboxItem Item = new();
-        AllTBROptions.Add(Item);
+        AllOptions.Add(Item);
         Item._id = id;
         Item.Tab = tab;
         Item.Translation = tranStr;
@@ -54,7 +54,7 @@ internal sealed class OptionCheckboxItem : OptionItem<bool>
     {
         TryLoad();
         if (!GameSettingMenu.Instance) return;
-        AllTBROptionsTemp.Add(this);
+        AllOptionsTemp.Add(this);
         var ToggleOption = UnityEngine.Object.Instantiate(Tab.AUTab.checkboxOrigin, Tab.AUTab.settingsContainer);
         Option = ToggleOption;
         Obj = Option.gameObject;

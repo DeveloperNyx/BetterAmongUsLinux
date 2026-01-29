@@ -83,7 +83,7 @@ internal sealed class OptionPlayerItem : OptionItem<int>
     protected sealed override void CreateBehavior()
     {
         if (!GameSettingMenu.Instance) return;
-        AllTBROptionsTemp.Add(this);
+        AllOptionsTemp.Add(this);
         var numberOption = UnityEngine.Object.Instantiate(Tab.AUTab.numberOptionOrigin, Tab.AUTab.settingsContainer);
         Option = numberOption;
         Obj = Option.gameObject;

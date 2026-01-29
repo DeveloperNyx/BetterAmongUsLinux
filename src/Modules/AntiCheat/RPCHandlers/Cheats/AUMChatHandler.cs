@@ -3,6 +3,7 @@ using BetterAmongUs.Data;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
+using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Mono;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using Hazel;
@@ -30,7 +31,7 @@ internal sealed class AUMChatHandler : RPCHandler
 
         Logger_.Log($"{sender.Data.PlayerName} -> {msgString}", "AUMChatLog");
 
-        if (!BAUPlugin.AntiCheat.Value || BAUModdedSupport.HasFlag(BAUModdedSupport.Disable_Anticheat) || !BetterGameSettings.DetectCheatClients.GetBool()) return;
+        if (!BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectCheatClients.GetBool()) return;
 
         var flag = string.IsNullOrEmpty(nameString) && string.IsNullOrEmpty(msgString);
 
