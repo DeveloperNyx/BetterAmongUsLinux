@@ -160,20 +160,4 @@ internal static class EndGameManagerPatch
             Logger_.LogHeader("Game Summary End", "GameSummary");
         }
     }
-
-
-    [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.ShowButtons))]
-    [HarmonyPrefix]
-    private static bool EndGameManager_ShowButtons_Prefix(EndGameManager __instance)
-    {
-        __instance.FrontMost.gameObject.SetActive(false);
-        __instance.Navigation.ShowDefaultNavigation();
-        if (!GameState.IsLocalGame)
-        {
-            __instance.Navigation.ShowNavigationToProgressionScreen();
-            __instance.Navigation.ContinueButton.transform.Find("ContinueButton").position -= new Vector3(0.5f, 0.2f, 0f);
-        }
-
-        return false;
-    }
 }
