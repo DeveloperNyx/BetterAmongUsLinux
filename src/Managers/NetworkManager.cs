@@ -271,16 +271,17 @@ internal static class NetworkManager
                         break;
                     }
 
+                    if (innerNetObject is PlayerControl player && player != null)
+                    {
+                        if (rpcCall == (byte)RpcCalls.SetNamePlateStr)
+                        {
+                            RPC.HandleCustomRPC(player, reader);
+                        }
+                    }
+
                     if (Enum.IsDefined(typeof(RpcCalls), rpcCall))
                     {
                         innerNetObject?.HandleRpc(rpcCall, reader);
-                    }
-                    else
-                    {
-                        if (innerNetObject is PlayerControl player && player != null)
-                        {
-                            RPC.HandleCustomRPC(player, rpcCall, reader);
-                        }
                     }
 
                     break;

@@ -40,7 +40,6 @@ internal sealed class CheckAppearHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckAppear RPC.");
             return false;
         }
 

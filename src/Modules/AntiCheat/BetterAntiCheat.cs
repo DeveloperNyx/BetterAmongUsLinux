@@ -5,6 +5,7 @@ using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Mono;
+using BetterAmongUs.Network;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using HarmonyLib;
 using Hazel;
@@ -188,6 +189,15 @@ internal static class BetterAntiCheat
                 return false;
             }
 
+            if (callId == (byte)RpcCalls.SetNamePlateStr)
+            {
+                if (RPC.IsPackedCustomRpc(reader))
+                {
+                    reader.Recycle();
+                    return false;
+                }
+            }
+
             if (!player.IsHost())
             {
                 if (callId is (byte)RpcCalls.SetTasks
@@ -207,11 +217,11 @@ internal static class BetterAntiCheat
             if (GameState.IsInGamePlay)
             {
                 if (callId is (byte)RpcCalls.SetColor
-                    or (byte)RpcCalls.SetHat_Deprecated
-                    or (byte)RpcCalls.SetSkin_Deprecated
-                    or (byte)RpcCalls.SetVisor_Deprecated
-                    or (byte)RpcCalls.SetPet_Deprecated
-                    or (byte)RpcCalls.SetNamePlate_Deprecated)
+                    or (byte)RpcCalls.SetHatStr
+                    or (byte)RpcCalls.SetSkinStr
+                    or (byte)RpcCalls.SetVisorStr
+                    or (byte)RpcCalls.SetPetStr
+                    or (byte)RpcCalls.SetNamePlateStr)
                 {
                     if (BetterNotificationManager.NotifyCheat(player, string.Format(Translator.GetString("AntiCheat.InvalidSetRPC"), Enum.GetName((RpcCalls)callId))))
                     {

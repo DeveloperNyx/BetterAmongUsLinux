@@ -52,7 +52,6 @@ internal sealed class CheckShapeshiftHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckShapeshift RPC");
             return false;
         }
 

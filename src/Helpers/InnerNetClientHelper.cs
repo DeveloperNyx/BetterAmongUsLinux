@@ -2,6 +2,7 @@
 using Hazel;
 using InnerNet;
 using System.Globalization;
+using System.Text;
 
 namespace BetterAmongUs.Helpers;
 
@@ -39,6 +40,97 @@ internal static class InnerNetClientHelper
     }
 
     /// <summary>
+    /// Determines whether the next string value in the specified reader matches the provided string without advancing
+    /// the reader's position.
+    /// </summary>
+    /// <param name="reader">The message reader to inspect for the presence of the string. Cannot be null.</param>
+    /// <param name="string">The string to compare against the next value in the reader. If null or empty, the method returns <see
+    /// langword="true"/>.</param>
+    /// <returns>true if the next string value in the reader matches the specified string; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="reader"/> is null.</exception>
+    internal static bool HasString(this MessageReader reader, string @string)
+    {
+        if (reader == null) throw new ArgumentNullException(nameof(reader));
+        if (string.IsNullOrEmpty(@string)) return true;
+
+        // Save current position
+        int originalPosition = reader.Position;
+        int originalReadHead = reader.readHead;
+
+        try
+        {
+            // Check if we have enough bytes for at least the packed int length
+            if (reader.BytesRemaining < 1)
+                return false;
+
+            // Try to read the packed int length without modifying internal state
+            int lengthOffset = reader.Position;
+            int lengthReadHead = reader.readHead;
+
+            // Read packed int manually without affecting the reader's state
+            bool readMore = true;
+            int shift = 0;
+            uint stringLength = 0;
+
+            while (readMore)
+            {
+                if (lengthOffset >= reader.Length)
+                    return false; // Not enough data
+
+                byte b = reader.Buffer[reader.Offset + lengthOffset];
+                lengthOffset++;
+
+                if (b >= 0x80)
+                {
+                    readMore = true;
+                    b ^= 0x80;
+                }
+                else
+                {
+                    readMore = false;
+                }
+
+                stringLength |= (uint)(b << shift);
+                shift += 7;
+
+                // Sanity check: string length shouldn't be ridiculously large
+                if (stringLength > reader.Buffer.Length || stringLength > 1024 * 1024) // 1MB max
+                    return false;
+            }
+
+            // Check if we have enough bytes for the string content
+            if (reader.Length - lengthOffset < (int)stringLength)
+                return false;
+
+            // Compare the string
+            if (stringLength != @string.Length)
+                return false;
+
+            byte[] stringBytes = Encoding.UTF8.GetBytes(@string);
+
+            // Compare byte by byte
+            for (int i = 0; i < stringLength; i++)
+            {
+                if (reader.Buffer[reader.Offset + lengthOffset + i] != stringBytes[i])
+                    return false;
+            }
+
+            return true;
+        }
+        catch
+        {
+            // If anything goes wrong, assume the string is not present
+            return false;
+        }
+        finally
+        {
+            // Restore original position
+            reader._position = originalPosition;
+            reader.readHead = originalReadHead;
+        }
+    }
+
+    /// <summary>
     /// Writes an array of boolean values to a MessageWriter in a packed format to save space.
     /// Each byte stores up to 8 boolean values as bits.
     /// </summary>
@@ -46,7 +138,7 @@ internal static class InnerNetClientHelper
     /// <param name="boolsEnumerable">The boolean values to write.</param>
     internal static void WriteBooleans(this MessageWriter writer, IEnumerable<bool> boolsEnumerable)
     {
-        bool[] bools = boolsEnumerable.ToArray();
+        bool[] bools = [.. boolsEnumerable];
 
         writer.Write(bools.Length);
 

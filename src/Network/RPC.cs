@@ -1,6 +1,6 @@
-﻿using BetterAmongUs.Enums;
+﻿using AmongUs.Data;
+using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
-using BetterAmongUs.Modules;
 using BetterAmongUs.Mono;
 using Hazel;
 
@@ -8,86 +8,98 @@ namespace BetterAmongUs.Network;
 
 /// <summary>
 /// Handles custom RPC (Remote Procedure Call) messages for BetterAmongUs.
+/// This class provides methods for sending and receiving custom RPC messages
+/// packed within vanilla RPC calls to maintain compatibility with vanilla servers.
 /// </summary>
 internal static class RPC
 {
     /// <summary>
-    /// Processes custom RPC messages received from other players.
+    /// The flag string used to identify custom RPC messages packed within vanilla RPC calls.
     /// </summary>
-    /// <param name="player">The player who sent the RPC.</param>
-    /// <param name="callId">The ID of the RPC call.</param>
-    /// <param name="oldReader">The message reader containing the RPC data.</param>
-    /// <remarks>
-    /// Handles both defined custom RPCs and protects against unknown RPCs in modded lobbies.
-    /// </remarks>
-    internal static void HandleCustomRPC(PlayerControl player, byte callId, MessageReader oldReader)
+    internal const string CUSTOM_RPC_FLAG = "bau:rpc";
+
+    /// <summary>
+    /// Sends a custom RPC message packed within a vanilla SetNamePlateStr RPC call.
+    /// This method is used to maintain compatibility with vanilla Among Us servers
+    /// while allowing custom RPC communication.
+    /// </summary>
+    /// <param name="customRPC">The custom RPC type to send.</param>
+    /// <param name="action">A delegate that writes the custom RPC payload to the message writer.</param>
+    /// <param name="targetClientId">The specific client ID to target, or -1 to broadcast to all clients.</param>
+    internal static void SendCustomRpc(CustomRPC customRPC, Action<MessageWriter> action, int targetClientId = -1)
     {
-        if (player == null || player.IsLocalPlayer() || player.Data == null || Enum.IsDefined(typeof(RpcCalls), callId)) return;
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)RpcCalls.SetNamePlateStr, SendOption.Reliable, targetClientId);
 
-        if (Enum.IsDefined(typeof(CustomRPC), (int)unchecked(callId)))
+        writer.Write(DataManager.Player.Customization.NamePlate);
+        writer.Write(PlayerControl.LocalPlayer.GetNextRpcSequenceId(RpcCalls.SetNamePlateStr));
+
+        writer.Write(CUSTOM_RPC_FLAG); // Flag to check if its a rpc packed into SetNamePlateStr
+        writer.Write((byte)customRPC);
+        action(writer);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+
+    /// <summary>
+    /// Handles incoming custom RPC messages by extracting and processing them
+    /// from the packed SetNamePlateStr RPC call.
+    /// </summary>
+    /// <param name="player">The player who sent the RPC message.</param>
+    /// <param name="oldReader">The message reader containing the RPC data.</param>
+    internal static void HandleCustomRPC(PlayerControl player, MessageReader oldReader)
+    {
+        if (player == null || player.IsLocalPlayer() || player.Data == null) return;
+
+        MessageReader reader = MessageReader.Get(oldReader);
+
+        _ = reader.ReadString();
+        _ = reader.ReadByte();
+
+        if (IsPackedCustomRpc(reader))
         {
-            MessageReader reader = MessageReader.Get(oldReader);
-
-            switch (callId)
+            CustomRPC customRPC = (CustomRPC)reader.ReadByte();
+            switch (customRPC)
             {
-                /*
-                case (byte)CustomRPC.LegacyBetterCheck:
-                    {
-                        var SetBetterUser = reader.ReadBoolean();
-                        var Signature = reader.ReadString();
-                        var Version = reader.ReadString();
-                        var IsVerified = Signature == Main.ModSignature.ToString();
-
-                        if (string.IsNullOrEmpty(Signature) || string.IsNullOrEmpty(Version))
-                        {
-                            BetterNotificationManager.NotifyCheat(player, $"Invalid Action RPC: {Enum.GetName((CustomRPC)callId)} called with invalid info");
-                            break;
-                        }
-
-                        player.BetterData().IsBetterUser = SetBetterUser;
-
-                        if (IsVerified)
-                        {
-                            player.BetterData().IsVerifiedBetterUser = true;
-                        }
-
-                        Logger.Log($"Received better user RPC from: {player.Data.PlayerName}:{player.Data.FriendCode}:{Utils.GetHashPuid(player)} - " +
-                            $"BetterUser: {SetBetterUser} - " +
-                            $"Version: {Version} - " +
-                            $"Verified: {IsVerified} - " +
-                            $"Signature: {Signature}");
-
-                        Utils.DirtyAllNames();
-                    }
-                    break;
-                */
-                case (byte)CustomRPC.SendSecretToPlayer:
+                case CustomRPC.SendSecretToPlayer:
                     {
                         player.BetterData().HandshakeHandler.HandleSecretFromSender(reader);
                     }
                     break;
-                case (byte)CustomRPC.CheckSecretHashFromPlayer:
+                case CustomRPC.CheckSecretHashFromPlayer:
                     {
                         player.BetterData().HandshakeHandler.HandleSecretHashFromPlayer(reader);
                     }
                     break;
             }
         }
-        else if (!Enum.IsDefined(typeof(CustomRPC), (int)unchecked(callId)))
+
+        reader.Recycle();
+    }
+
+    /// <summary>
+    /// Determines whether a MessageReader contains a packed custom RPC message.
+    /// </summary>
+    /// <param name="reader">The MessageReader to check for custom RPC content.</param>
+    /// <returns>
+    /// <c>true</c> if the reader contains a custom RPC flag and custom RPC data;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    internal static bool IsPackedCustomRpc(MessageReader reader)
+    {
+        if (reader.BytesRemaining > 0)
         {
             try
             {
-                if (!GameState.IsHost)
+                if (reader.ReadString() == CUSTOM_RPC_FLAG)
                 {
-                    if (player.IsHost())
-                    {
-                        var Icon = Translator.GetString("BAUMark");
-                        var BAU = $"<color=#278720>{Icon}</color><color=#0ed400><b>{Translator.GetString("BAU")}</b></color><color=#278720>{Icon}</color>";
-                        Utils.DisconnectSelf(string.Format(Translator.GetString("ModdedLobbyMsg"), BAU));
-                    }
+                    return true;
                 }
             }
-            catch { }
+            catch
+            {
+                return false;
+            }
         }
+
+        return false;
     }
 }

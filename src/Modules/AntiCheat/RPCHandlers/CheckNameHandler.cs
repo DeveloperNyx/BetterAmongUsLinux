@@ -15,7 +15,6 @@ internal sealed class CheckNameHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckName RPC");
             return false;
         }
 

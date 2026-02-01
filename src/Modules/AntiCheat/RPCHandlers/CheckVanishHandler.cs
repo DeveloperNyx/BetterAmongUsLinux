@@ -40,7 +40,6 @@ internal sealed class CheckVanishHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckVanish RPC");
             return false;
         }
 

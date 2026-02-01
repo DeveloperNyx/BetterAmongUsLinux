@@ -60,7 +60,6 @@ internal sealed class CheckMurderHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckMurder RPC");
             return false;
         }
 

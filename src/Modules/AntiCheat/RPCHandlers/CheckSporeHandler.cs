@@ -12,7 +12,6 @@ internal sealed class CheckSporeHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckSpore RPC");
             return false;
         }
 

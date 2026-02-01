@@ -12,7 +12,6 @@ internal sealed class CheckColorHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckColor RPC");
             return false;
         }
 

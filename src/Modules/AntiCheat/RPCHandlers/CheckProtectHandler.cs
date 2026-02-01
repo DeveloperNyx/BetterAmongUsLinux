@@ -49,7 +49,6 @@ internal sealed class CheckProtectHandler : RPCHandler
     {
         if (!GameState.IsHost)
         {
-            LogRpcInfo($"Non-host attempted CheckProtect RPC");
             return false;
         }
 
