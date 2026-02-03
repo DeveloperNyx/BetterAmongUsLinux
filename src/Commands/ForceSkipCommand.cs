@@ -33,7 +33,7 @@ internal sealed class ForceSkipCommand : BaseCommand
             {
                 MeetingHud.Instance.RpcClearVote(client.Id);
             }
-            MeetingHud.Instance.Close();
+            MeetingHud.Instance.RpcClose();
         }
     }
 }
