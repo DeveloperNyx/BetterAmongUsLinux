@@ -154,7 +154,7 @@ internal static class RoleManagerPatch
                         // Desync role to hide special role from non-BAU players
                         if (BetterGameSettings.DesyncRoles.GetBool())
                         {
-                            if (kvp.Key is not RoleTypes.Phantom or RoleTypes.Viper)
+                            if (kvp.Key is not (RoleTypes.Phantom or RoleTypes.Viper))
                             {
                                 List<MessageWriter> messageWriter = AmongUsClient.Instance.StartRpcDesync(pc.NetId, (byte)RpcCalls.SetRole, SendOption.None, pc.GetClientId(), clientCheck);
                                 messageWriter.ForEach(mW => mW.Write((ushort)RoleTypes.Impostor));

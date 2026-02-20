@@ -99,7 +99,7 @@ static class PlayerControlHelper
     {
         var Ban = ban || forceBan;
 
-        if (!GameState.IsHost || player.IsLocalPlayer() || !player.DataIsCollected() && !bypassDataCheck || player.IsHost() || player.isDummy)
+        if (!GameState.IsHost || player.IsLocalPlayer() || (!player.DataIsCollected() && !bypassDataCheck) || player.IsHost() || player.isDummy)
         {
             return;
         }
@@ -311,7 +311,7 @@ static class PlayerControlHelper
     /// </summary>
     /// <param name="data">The player data to check.</param>
     /// <returns>True if the player is on the impostor team.</returns>
-    internal static bool IsImpostorTeam(this NetworkedPlayerInfo data) => data?.RoleType is RoleTypes.Impostor or RoleTypes.ImpostorGhost or RoleTypes.Shapeshifter or RoleTypes.Phantom or RoleTypes.Viper;
+    internal static bool IsImpostorTeam(this NetworkedPlayerInfo data) => data?.RoleType.GetBehaviourPrefab().IsImpostor == true;
 
     /// <summary>
     /// Checks if a player is an impostor teammate of the local player.
