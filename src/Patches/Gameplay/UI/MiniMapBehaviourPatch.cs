@@ -233,10 +233,9 @@ internal static class MiniMapBehaviourPatch
             Color.red,
             Color.green,
             Color.blue,
-            Color.yellow,
+            Color.gray,
             Color.magenta,
             Color.cyan,
-            Color.gray,
             Color.white
         ];
 
