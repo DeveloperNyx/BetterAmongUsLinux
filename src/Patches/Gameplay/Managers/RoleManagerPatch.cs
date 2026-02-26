@@ -26,9 +26,9 @@ internal static class RoleManagerPatch
     private static void RoleManager_SetRole_Prefix(RoleManager __instance, PlayerControl targetPlayer, RoleTypes roleType)
     {
         // Store the original role when player dies (for ghost role purposes)
-        if (RoleManager.IsGhostRole(roleType))
+        if (roleType.IsGhostRole())
         {
-            if (!RoleManager.IsGhostRole(targetPlayer.Data.RoleType))
+            if (!targetPlayer.Data.RoleType.IsGhostRole())
             {
                 targetPlayer.BetterData().RoleInfo.DeadDisplayRole = targetPlayer.Data.RoleType;
             }
@@ -113,7 +113,7 @@ internal static class RoleManagerPatch
         // Get role counts from game options
         foreach (RoleTypes role in Roles)
         {
-            if (role.GetBehaviourPrefab().IsImpostor)
+            if (role.IsImpostorRole())
                 ImpostorRoles[role] = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(role);
             else
                 CrewmateRoles[role] = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(role);

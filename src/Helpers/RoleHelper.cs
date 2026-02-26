@@ -7,6 +7,9 @@ namespace BetterAmongUs.Helpers;
 /// </summary>
 internal static class RoleHelper
 {
+    /// <summary>
+    /// Provides a lazily initialized lookup dictionary that maps each role type to its corresponding role behavior.
+    /// </summary>
     private static readonly Lazy<Dictionary<RoleTypes, RoleBehaviour>> roleLookup =
         new(() =>
         {
@@ -34,8 +37,16 @@ internal static class RoleHelper
     /// </summary>
     /// <param name="role">The role type to check.</param>
     /// <returns>True if the role is part of the impostor team, false otherwise.</returns>
-    internal static bool IsImpostorRole(RoleTypes role) =>
+    internal static bool IsImpostorRole(this RoleTypes role) =>
         role.GetBehaviourPrefab().TeamType is RoleTeamTypes.Impostor;
+
+    /// <summary>
+    /// Determines whether the specified role is considered a ghost role.
+    /// </summary>
+    /// <param name="role">The role type to check.</param>
+    /// <returns>true if the role is classified as a ghost role; otherwise, false.</returns>
+    internal static bool IsGhostRole(this RoleTypes role) =>
+        RoleManager.IsGhostRole(role);
 
     /// <summary>
     /// Gets the display name of a role type.
