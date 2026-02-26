@@ -113,10 +113,10 @@ internal static class OptionsMenuBehaviourPatch
         }
     }
 
-    private static void UpdateFrameRate()
+    internal static void UpdateFrameRate()
     {
         // Toggle between 60 FPS (default) and 165 FPS
-        Application.targetFrameRate = BAUPlugin.UnlockFPS.Value ? 165 : 60;
+        Application.targetFrameRate = BAUPlugin.UnlockFPS.Value ? 999 : 60;
     }
 
     private static void OpenSaveData()

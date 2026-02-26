@@ -11,6 +11,7 @@ using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
 using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Network;
+using BetterAmongUs.Patches.Client;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
@@ -302,6 +303,8 @@ internal class BAUPlugin : BasePlugin
             UnlockFPS, ShowFPS, CommandPrefix,
             FavoriteColor, SettingsPreset
         ]);
+
+        OptionsMenuBehaviourPatch.UpdateFrameRate();
     }
 
     /// <summary>
