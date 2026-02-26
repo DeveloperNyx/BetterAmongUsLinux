@@ -10,7 +10,7 @@ namespace BetterAmongUs.Patches.Gameplay;
 internal class ZoomPatch
 {
     private static bool _wasZooming = false;
-    private static bool _shouldResetButtons = false;
+    private static float _lastOrthographicSize = 0f;
 
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     [HarmonyPostfix]
@@ -22,6 +22,8 @@ internal class ZoomPatch
 
         bool shouldReset = !canZoom && _wasZooming;
 
+        _lastOrthographicSize = Camera.main.orthographicSize;
+
         if (shouldReset)
         {
             SetZoomSize(reset: true);
@@ -29,19 +31,16 @@ internal class ZoomPatch
         }
         else if (canZoom)
         {
-            _wasZooming = true;
-
-            if (Camera.main.orthographicSize > 3.0f)
-                _shouldResetButtons = true;
-
             if (Input.mouseScrollDelta.y > 0 && Camera.main.orthographicSize > 3.0f)
             {
+                _wasZooming = true;
                 SetZoomSize(zoomIn: true);
             }
             else if (Input.mouseScrollDelta.y < 0 &&
                     (GameState.IsDead || GameState.IsFreePlay || GameState.IsLobby) &&
                     Camera.main.orthographicSize < 18.0f)
             {
+                _wasZooming = true;
                 SetZoomSize(zoomOut: true);
             }
         }
@@ -69,13 +68,12 @@ internal class ZoomPatch
             (reset || Camera.main.orthographicSize == 3.0f) &&
             PlayerControl.LocalPlayer.IsAlive());
 
-        if (_shouldResetButtons)
+        if (Camera.main.orthographicSize != _lastOrthographicSize)
         {
             ResolutionManager.ResolutionChanged.Invoke(
                 (float)Screen.width / Screen.height,
                 Screen.width, Screen.height,
                 Screen.fullScreen);
-            _shouldResetButtons = false;
         }
     }
 }
