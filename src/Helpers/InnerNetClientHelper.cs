@@ -1,7 +1,6 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using Hazel;
 using InnerNet;
-using System.Globalization;
 
 namespace BetterAmongUs.Helpers;
 
@@ -35,255 +34,6 @@ internal static class InnerNetClientHelper
         if (rpcMessage.TryCast<IGameDataMessage>(out var data))
         {
             AmongUsClient.Instance.reliableMessageQueue.Enqueue(data);
-        }
-    }
-
-    /// <summary>
-    /// Writes an array of boolean values to a MessageWriter in a packed format to save space.
-    /// Each byte stores up to 8 boolean values as bits.
-    /// </summary>
-    /// <param name="writer">The MessageWriter to write to.</param>
-    /// <param name="boolsEnumerable">The boolean values to write.</param>
-    internal static void WriteBooleans(this MessageWriter writer, IEnumerable<bool> boolsEnumerable)
-    {
-        bool[] bools = [.. boolsEnumerable];
-
-        writer.Write(bools.Length);
-
-        byte currentByte = 0;
-        int bitIndex = 0;
-
-        foreach (bool b in bools)
-        {
-            if (b) currentByte |= (byte)(1 << bitIndex);
-
-            bitIndex++;
-
-            if (bitIndex == 8)
-            {
-                writer.Write(currentByte);
-                currentByte = 0;
-                bitIndex = 0;
-            }
-        }
-
-        if (bitIndex > 0) writer.Write(currentByte);
-    }
-
-    /// <summary>
-    /// Reads an array of boolean values from a MessageReader that were previously packed using WriteBooleans.
-    /// </summary>
-    /// <param name="reader">The MessageReader to read from.</param>
-    /// <returns>An array of boolean values.</returns>
-    internal static bool[] ReadBooleans(this MessageReader reader)
-    {
-        int length = reader.ReadInt32();
-        bool[] bools = new bool[length];
-
-        int bitIndex = 0;
-        byte currentByte = 0;
-
-        for (int i = 0; i < length; i++)
-        {
-
-            if (bitIndex == 0) currentByte = reader.ReadByte();
-
-            bools[i] = (currentByte & 1 << bitIndex) != 0;
-
-            bitIndex++;
-
-            if (bitIndex == 8) bitIndex = 0;
-        }
-
-        return bools;
-    }
-
-    /// <summary>
-    /// Writes an array of bytes to a MessageWriter in a packed format, combining two bytes into one to save space.
-    /// </summary>
-    /// <param name="writer">The MessageWriter to write to.</param>
-    /// <param name="bytesEnumerable">The byte values to write.</param>
-    internal static void WriteBytes(this MessageWriter writer, IEnumerable<byte> bytesEnumerable)
-    {
-        byte[] bytes = bytesEnumerable.ToArray();
-
-        writer.Write(bytes.Length);
-        writer.Write(bytes);
-    }
-
-    /// <summary>
-    /// Reads an array of bytes from a MessageReader that were previously packed using WritePackedBytes.
-    /// </summary>
-    /// <param name="reader">The MessageReader to read from.</param>
-    /// <returns>An array of bytes.</returns>
-    internal static byte[] ReadBytes(this MessageReader reader)
-    {
-        int count = reader.ReadInt32();
-        var bytes = reader.ReadBytes(count);
-        return [.. bytes];
-    }
-
-    /// <summary>
-    /// Writes an array of bytes to a MessageWriter in a packed format, combining two bytes into one to save space.
-    /// </summary>
-    /// <param name="writer">The MessageWriter to write to.</param>
-    /// <param name="bytesEnumerable">The byte values to write.</param>
-    internal static void WritePackedBytes(this MessageWriter writer, IEnumerable<byte> bytesEnumerable)
-    {
-        byte[] bytes = bytesEnumerable.ToArray();
-
-        writer.Write((byte)bytes.Length);
-
-        for (int i = 0; i < bytes.Length; i += 2)
-        {
-            byte packedBytes;
-            if (i + 1 < bytes.Length) packedBytes = (byte)((bytes[i] & 0x0F) << 4 | bytes[i + 1] & 0x0F);
-            else packedBytes = (byte)((bytes[i] & 0x0F) << 4);
-            writer.Write(packedBytes);
-        }
-    }
-
-    /// <summary>
-    /// Reads an array of bytes from a MessageReader that were previously packed using WritePackedBytes.
-    /// </summary>
-    /// <param name="reader">The MessageReader to read from.</param>
-    /// <returns>An array of bytes.</returns>
-    internal static byte[] ReadPackedBytes(this MessageReader reader)
-    {
-        int count = reader.ReadByte();
-        List<byte> bytes = [];
-
-        for (int i = 0; i < (count + 1) / 2; i++)
-        {
-            byte packedBytes = reader.ReadByte();
-            bytes.Add((byte)(packedBytes >> 4 & 0x0F));
-
-            if (bytes.Count < count) bytes.Add((byte)(packedBytes & 0x0F));
-        }
-
-        return bytes.ToArray();
-    }
-
-    /// <summary>
-    /// Writes a floating-point value to a MessageWriter in a packed format to save space.
-    /// Handles negative values, integers, and decimal numbers efficiently.
-    /// </summary>
-    /// <param name="writer">The MessageWriter to write to.</param>
-    /// <param name="value">The float value to write.</param>
-    internal static void WritePacked(this MessageWriter writer, float value)
-    {
-        bool isNegative = value < 0;
-        float absValue = Math.Abs(value);
-
-        // Check if it's a solid number (integer)
-        bool isSolidNumber = absValue == (uint)absValue && absValue <= uint.MaxValue;
-
-        // Track the number of decimal places dynamically
-        int decimalPlaces = 0;
-        int scaleFactor = 1;
-        bool needsFallback = false; // Flag to determine if we need to send the value as a regular float
-
-        // Check if the value is not a solid number
-        if (!isSolidNumber)
-        {
-            // Convert to string to count decimals (avoiding floating point precision issues)
-            string absValueStr = absValue.ToString("G", CultureInfo.InvariantCulture);
-            if (absValueStr.Contains('.'))
-            {
-                decimalPlaces = absValueStr.Split('.')[1].Length; // Count decimals after the period
-                scaleFactor = (int)Math.Pow(10, decimalPlaces); // Set scale factor dynamically
-            }
-        }
-
-        // If the value can't be packed efficiently, we need a fallback
-        if (!isSolidNumber || absValue * scaleFactor > uint.MaxValue)
-        {
-            needsFallback = true; // Flag for fallback as a regular float
-        }
-
-        // Pack the flags into a list of booleans
-        var flags = new List<bool>
-        {
-            isNegative,
-            isSolidNumber,
-            decimalPlaces > 0,
-            needsFallback
-        };
-
-        // Write the flags using WriteBooleans
-        writer.WriteBooleans(flags);
-
-        // Write the decimal places as a byte (0-3 for simplicity)
-        writer.Write((byte)decimalPlaces);
-
-        // If it's a solid number, pack as uint
-        if (isSolidNumber && !needsFallback)
-        {
-            writer.Write((uint)absValue);
-        }
-
-        // If it's a decimal number, scale and pack it as uint (but check if it can fit)
-        else if (decimalPlaces > 0 && !needsFallback)
-        {
-            // Check if the scaled value fits into a uint
-            if (absValue * scaleFactor <= uint.MaxValue)
-            {
-                uint scaledValue = (uint)(absValue * scaleFactor); // Dynamically scale the value
-                writer.Write(scaledValue);
-            }
-            else
-            {
-                // If it can't fit into a uint, send as regular float
-                writer.Write(value);
-            }
-        }
-        else
-        {
-            // Send as regular float if it requires fallback
-            writer.Write(value);
-        }
-    }
-
-    /// <summary>
-    /// Reads a floating-point value from a MessageReader that was previously packed using WritePacked.
-    /// Handles negative values, integers, and decimal numbers efficiently.
-    /// </summary>
-    /// <param name="reader">The MessageReader to read from.</param>
-    /// <returns>The unpacked float value.</returns>
-    internal static float ReadPackedSingle(this MessageReader reader)
-    {
-        var flags = reader.ReadBooleans();
-        bool isNegative = flags[0];
-        bool isSolidNumber = flags[1];
-        bool hasDecimalPart = flags[2];
-        bool needsFallback = flags[3];
-
-        byte decimalPlaces = reader.ReadByte(); // Read the decimal places count
-
-        // If the value was packed as a regular float, just read it (don't reapply the sign)
-        if (needsFallback)
-        {
-            return reader.ReadSingle(); // The sign is already handled in the packed value
-        }
-
-        // Handle solid number (uint) case
-        if (isSolidNumber)
-        {
-            uint packedValue = reader.ReadUInt32();
-            return isNegative ? -(float)packedValue : packedValue;
-        }
-        // Handle decimal number (scaled uint)
-        else if (hasDecimalPart)
-        {
-            uint scaledValue = reader.ReadUInt32();
-            float scaleFactor = (float)Math.Pow(10, decimalPlaces); // Use the stored decimal places count
-            return isNegative ? -(scaledValue / scaleFactor) : scaledValue / scaleFactor;
-        }
-        else
-        {
-            // For other cases where it's a normal float
-            float value = reader.ReadSingle();
-            return isNegative ? -value : value;
         }
     }
 
@@ -344,6 +94,31 @@ internal static class InnerNetClientHelper
     internal static Vent? ReadVentId(this MessageReader reader) => BAUPlugin.AllVents.FirstOrDefault(vent => vent.Id == reader.ReadInt32());
 
     /// <summary>
+    /// Writes an array of bytes to a MessageWriter in a packed format, combining two bytes into one to save space.
+    /// </summary>
+    /// <param name="writer">The MessageWriter to write to.</param>
+    /// <param name="bytesEnumerable">The byte values to write.</param>
+    internal static void WriteBytes(this MessageWriter writer, IEnumerable<byte> bytesEnumerable)
+    {
+        byte[] bytes = bytesEnumerable.ToArray();
+
+        writer.Write(bytes.Length);
+        writer.Write(bytes);
+    }
+
+    /// <summary>
+    /// Reads an array of bytes from a MessageReader that were previously packed using WritePackedBytes.
+    /// </summary>
+    /// <param name="reader">The MessageReader to read from.</param>
+    /// <returns>An array of bytes.</returns>
+    internal static byte[] ReadBytes(this MessageReader reader)
+    {
+        int count = reader.ReadInt32();
+        var bytes = reader.ReadBytes(count);
+        return [.. bytes];
+    }
+
+    /// <summary>
     /// Converts a MessageWriter to a MessageReader.
     /// </summary>
     /// <param name="writer">The MessageWriter to convert.</param>
@@ -400,39 +175,6 @@ internal static class InnerNetClientHelper
         }
 
         return [.. readers];
-    }
-
-    /// <summary>
-    /// Writes multiple MessageReaders to a MessageWriter.
-    /// </summary>
-    /// <param name="writer">The MessageWriter to write to.</param>
-    /// <param name="readers">The MessageReaders to write.</param>
-    /// <param name="clear">Whether to clear the writer before writing.</param>
-    /// <returns>The MessageWriter for method chaining.</returns>
-    internal static MessageWriter WriteReaders(this MessageWriter writer, IEnumerable<MessageReader> readers, bool clear = false)
-    {
-        if (clear) writer.Clear(writer.SendOption);
-
-        foreach (MessageReader reader in readers)
-        {
-            writer.StartMessage(reader.Tag);
-            writer.Write(reader.ReadBytes(reader.Length));
-            writer.EndMessage();
-        }
-
-        return writer;
-    }
-
-    /// <summary>
-    /// Creates a copy of a MessageWriter.
-    /// </summary>
-    /// <param name="writer">The MessageWriter to copy.</param>
-    /// <returns>A new MessageWriter with the same content.</returns>
-    internal static MessageWriter Copy(this MessageWriter writer)
-    {
-        var newWriter = MessageWriter.Get(writer.SendOption);
-        newWriter.Write(writer.ToByteArray(false));
-        return newWriter;
     }
 
     /// <summary>
