@@ -1,5 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using BetterAmongUs.Helpers;
+using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
 using BetterAmongUs.Mono;
 using HarmonyLib;
@@ -26,6 +27,8 @@ internal static class PlayerControlPatch
 
     private static IEnumerator CoSetFavoriteColor(PlayerControl player)
     {
+        if (!GameState.IsLobby) yield break;
+
         // Apply player's favorite color setting if they own this character
         if (player.AmOwner)
         {

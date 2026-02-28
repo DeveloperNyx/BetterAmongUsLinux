@@ -16,20 +16,24 @@ internal static class GameSummaryPatch
     [HarmonyPostfix]
     private static void EndGameManager_SetEverythingUp_Postfix(EndGameManager __instance)
     {
+        // Log game end to console
         LogGameEnd();
 
+        // Create visual summary unless disabled
         if (!BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_EndGameSummary))
         {
             CreateGameSummary(__instance);
         }
     }
 
+    // Log game end info to console
     private static void LogGameEnd()
     {
         Logger_.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
         Logger_.LogHeader("Game Summary Start", "GameSummary");
     }
 
+    // Creates the visual game summary on screen
     private static void CreateGameSummary(EndGameManager endGameManager)
     {
         var summaryObject = CreateSummaryObject(endGameManager);
@@ -39,9 +43,11 @@ internal static class GameSummaryPatch
 
         ConfigureSummaryText(summaryText);
 
+        // Get win condition info
         var (winTeam, winTag, winColor) = GetWinInfo();
         Logger_.Log($"{winTeam}: {winTag}", "GameSummary");
 
+        // Build and display summary text
         var summaryHeader = BuildSummaryHeader(winTeam, winTag, winColor);
         var playerList = BuildPlayerList();
 
@@ -49,6 +55,7 @@ internal static class GameSummaryPatch
         Logger_.LogHeader("Game Summary End", "GameSummary");
     }
 
+    // Creates the text object for the summary
     private static GameObject CreateSummaryObject(EndGameManager endGameManager)
     {
         var summaryObject = UnityEngine.Object.Instantiate(
@@ -59,6 +66,7 @@ internal static class GameSummaryPatch
         summaryObject.name = "SummaryObj (TMP)";
         summaryObject.transform.SetSiblingIndex(0);
 
+        // Position in top-left corner
         var camera = HudManager.InstanceExists
             ? HudManager.Instance.GetComponentInChildren<Camera>()
             : Camera.main;
@@ -75,6 +83,7 @@ internal static class GameSummaryPatch
         return summaryObject;
     }
 
+    // Sets text properties for the summary
     private static void ConfigureSummaryText(TextMeshPro text)
     {
         text.autoSizeTextContainer = false;
@@ -84,59 +93,66 @@ internal static class GameSummaryPatch
         text.color = Color.white;
     }
 
+    // Determines which team won and how
     private static (string Team, string Tag, string Color) GetWinInfo()
     {
         return EndGameResult.CachedGameOverReason switch
         {
+            // Classic mode wins
             GameOverReason.CrewmatesByTask => (
                 Translator.GetString(StringNames.Crewmates),
                 Translator.GetString("Game.Summary.Result.TasksCompletion"),
-                "#8cffff"
+                Colors.CrewmateBlue.ColorToHex()
             ),
             GameOverReason.CrewmatesByVote => (
                 Translator.GetString(StringNames.Crewmates),
                 Translator.GetString("Game.Summary.Result.ImpostersVotedOut"),
-                "#8cffff"
+                Colors.CrewmateBlue.ColorToHex()
             ),
             GameOverReason.ImpostorDisconnect => (
                 Translator.GetString(StringNames.Crewmates),
                 Translator.GetString("Game.Summary.Result.ImpostorsDisconnected"),
-                "#8cffff"
+                Colors.CrewmateBlue.ColorToHex()
             ),
             GameOverReason.ImpostorsByKill => (
                 Translator.GetString(StringNames.ImpostorsCategory),
                 Translator.GetString("Game.Summary.Result.CrewOutnumbered"),
-                "#f00202"
+                Colors.ImpostorRed.ColorToHex()
             ),
             GameOverReason.ImpostorsBySabotage => (
                 Translator.GetString(StringNames.ImpostorsCategory),
                 Translator.GetString("Game.Summary.Result.Sabotage"),
-                "#f00202"
+                Colors.ImpostorRed.ColorToHex()
             ),
             GameOverReason.ImpostorsByVote => (
                 Translator.GetString(StringNames.ImpostorsCategory),
                 Translator.GetString("Game.Summary.Result.CrewOutnumbered"),
-                "#f00202"
+                Colors.ImpostorRed.ColorToHex()
             ),
             GameOverReason.CrewmateDisconnect => (
                 Translator.GetString(StringNames.ImpostorsCategory),
                 Translator.GetString("Game.Summary.Result.CrematesDisconnected"),
-                "#f00202"
+                Colors.ImpostorRed.ColorToHex()
             ),
+
+            // Hide & Seek mode wins
             GameOverReason.HideAndSeek_CrewmatesByTimer => (
                 Translator.GetString("Game.Summary.Hiders"),
                 Translator.GetString("Game.Summary.Result.TimeOut"),
-                "#8cffff"
+                Colors.CrewmateBlue.ColorToHex()
             ),
             GameOverReason.HideAndSeek_ImpostorsByKills => (
                 Translator.GetString("Game.Summary.Seekers"),
                 Translator.GetString("Game.Summary.Result.NoSurvivors"),
-                "#f00202"
+                Colors.ImpostorRed.ColorToHex()
             ),
+
+            // Fallback for unknown win conditions
             _ => ("Unknown", "Unknown", "#ffffff")
         };
     }
 
+    // Builds the header text with win info
     private static string BuildSummaryHeader(string winTeam, string winTag, string winColor)
     {
         return $"<align=\"center\"><size=150%>   {Translator.GetString("GameSummary")}</size></align>" +
@@ -144,6 +160,7 @@ internal static class GameSummaryPatch
                $"\n<size=60%>\n{Translator.GetString("Game.Summary.By")} {winTag}</size>";
     }
 
+    // Sorts players for display: disconnected first, then dead, then alive
     private static NetworkedPlayerInfo[] GetSortedPlayers()
     {
         return GameData.Instance.AllPlayers
@@ -154,6 +171,7 @@ internal static class GameSummaryPatch
             .ToArray();
     }
 
+    // Builds the complete player list text
     private static StringBuilder BuildPlayerList()
     {
         var playersData = GetSortedPlayers();
@@ -169,6 +187,7 @@ internal static class GameSummaryPatch
         return stringBuilder;
     }
 
+    // Builds a single player line with name, role info, and status
     private static string BuildPlayerLine(NetworkedPlayerInfo playerData)
     {
         var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[playerData.DefaultOutfit.ColorId])}>{playerData.BetterData().RealName}</color>";
@@ -178,6 +197,7 @@ internal static class GameSummaryPatch
         return $"{name} {roleInfo} {deathReason}";
     }
 
+    // Builds role info with stats (kills for impostors, tasks for crew)
     private static string BuildRoleInfo(NetworkedPlayerInfo playerData)
     {
         var themeColor = Utils.GetTeamHexColor(playerData.Role.TeamType);
@@ -196,6 +216,7 @@ internal static class GameSummaryPatch
         return $"({roleName}) → {theme($"{Translator.GetString("Tasks")}: {completedTasks}/{totalTasks}")}";
     }
 
+    // Builds player status (DC/Dead/Alive)
     private static string BuildDeathReason(NetworkedPlayerInfo playerData)
     {
         if (playerData.Disconnected)

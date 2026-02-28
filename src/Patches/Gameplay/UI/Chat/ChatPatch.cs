@@ -62,7 +62,7 @@ internal static class ChatPatch
 
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Toggle))]
     [HarmonyPostfix]
-    private static void ChatController_Toggle_Postfix(/*ChatController __instance*/)
+    private static void ChatController_Toggle_Postfix()
     {
         // Apply chat theme when chat is opened/closed
         SetChatTheme();

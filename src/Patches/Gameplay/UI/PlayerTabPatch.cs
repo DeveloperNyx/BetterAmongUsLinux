@@ -11,13 +11,14 @@ namespace BetterAmongUs.Patches.Gameplay.UI;
 [HarmonyPatch]
 internal static class PlayerTabPatch
 {
-    private static List<PassiveButton> presetButtons = [];
-    private static float cooldown = 0f;
+    private static List<PassiveButton> presetButtons = []; // Outfit preset buttons
+    private static float cooldown = 0f; // Button click cooldown
 
     [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
     [HarmonyPrefix]
     private static void PlayerTab_OnEnable_Prefix(PlayerTab __instance)
     {
+        // Clean up old preset buttons
         foreach (var button in presetButtons.ToArray())
         {
             if (button == null) continue;
@@ -25,23 +26,28 @@ internal static class PlayerTabPatch
         }
         presetButtons.Clear();
 
+        // Create preset buttons (0 = Among Us preset, 1-5 = custom presets)
         for (int i = 0; i <= 5; i++)
         {
             int currentI = i;
             var name = currentI == 0 ? "Among Us Preset" : $"Preset {i}";
             var button = __instance.CreateButton(name, new Vector3(2.5f, 1.55f - currentI * 0.45f, 0f), () =>
             {
+                // Ignore if cooldown active or same preset selected
                 if (cooldown > 0f || BetterDataManager.BetterDataFile.SelectedOutfitPreset == currentI) return;
                 cooldown = 0.5f;
 
+                // Update selected preset
                 BetterDataManager.BetterDataFile.SelectedOutfitPreset = currentI;
 
+                // Reset all button hover states
                 foreach (var button in presetButtons)
                 {
                     if (button == null) continue;
                     button.SetPassiveButtonHoverStateInactive();
                 }
 
+                // Load and apply outfit from preset
                 var data = OutfitData.GetOutfitData(currentI);
                 data.Load(() =>
                 {
@@ -67,31 +73,37 @@ internal static class PlayerTabPatch
     {
         _favoriteIcons.Clear();
 
+        // Add favorite functionality to color chips
         for (int i = 0; i < __instance.ColorChips.Count; i++)
         {
             var index = i;
             var colorChip = __instance.ColorChips[i];
+
+            // Override click behavior
             colorChip.Button.OnClick = new();
             colorChip.Button.OnClick.AddListener((Action)(() =>
             {
+                // Shift+Click = toggle favorite
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
                     if (BAUPlugin.FavoriteColor.Value == index)
                     {
-                        BAUPlugin.FavoriteColor.Value = -1;
+                        BAUPlugin.FavoriteColor.Value = -1; // Remove favorite
                     }
                     else
                     {
-                        BAUPlugin.FavoriteColor.Value = index;
+                        BAUPlugin.FavoriteColor.Value = index; // Set favorite
                     }
 
                     UpdateFavorite();
                     return;
                 }
 
+                // Normal click = equip color
                 __instance.ClickEquip();
             }));
 
+            // Add favorite star indicator
             var checkBox = colorChip.PlayerEquippedForeground.transform.Find("CheckMark").GetComponentInChildren<SpriteRenderer>();
             var favoriteIcon = UnityEngine.Object.Instantiate(checkBox, colorChip.transform);
             favoriteIcon.color = Color.yellow;
@@ -102,6 +114,7 @@ internal static class PlayerTabPatch
         UpdateFavorite();
     }
 
+    // Update favorite star visibility
     private static void UpdateFavorite()
     {
         for (int i = 0; i < _favoriteIcons.Count; i++)
@@ -111,6 +124,7 @@ internal static class PlayerTabPatch
         }
     }
 
+    // Apply outfit to local player
     private static bool LoadPlayerOutfit(OutfitData data)
     {
         var player = PlayerControl.LocalPlayer;
@@ -127,6 +141,7 @@ internal static class PlayerTabPatch
         return false;
     }
 
+    // Helper to create preset buttons
     private static PassiveButton CreateButton(this PlayerTab __instance, string name, Vector3 pos, Action callback)
     {
         var button = UnityEngine.Object.Instantiate(MainMenuManagerPatch.ButtonPrefab, __instance.transform);
@@ -146,6 +161,7 @@ internal static class PlayerTabPatch
     [HarmonyPrefix]
     private static void PlayerTab_Updatee_Postfix(PlayerTab __instance)
     {
+        // Handle cooldown
         if (cooldown > 0f)
         {
             cooldown -= Time.deltaTime;
@@ -155,13 +171,14 @@ internal static class PlayerTabPatch
             cooldown = 0f;
         }
 
+        // Update preset button hover states
         for (int i = 0; i < presetButtons.Count; i++)
         {
             PassiveButton? button = presetButtons[i];
             if (button == null) continue;
             if (i == BetterDataManager.BetterDataFile.SelectedOutfitPreset)
             {
-                button.SetPassiveButtonHoverStateActive();
+                button.SetPassiveButtonHoverStateActive(); // Highlight selected preset
             }
         }
     }

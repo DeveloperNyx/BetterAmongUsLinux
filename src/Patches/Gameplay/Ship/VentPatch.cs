@@ -12,8 +12,10 @@ internal static class VentPatch
     [HarmonyPrefix]
     private static bool Vent_SetOutline_Prefix(Vent __instance, bool on, bool mainTarget)
     {
+        // Skip if vent color groups are disabled - use vanilla behavior
         if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_VentColorGroups)) return true;
 
+        // Get group color for this vent and apply outline
         Color color = VentGroups.GetVentGroupColor(__instance);
         __instance.myRend.material.SetFloat("_Outline", on ? 1f : 0f);
         __instance.myRend.material.SetColor("_OutlineColor", color);

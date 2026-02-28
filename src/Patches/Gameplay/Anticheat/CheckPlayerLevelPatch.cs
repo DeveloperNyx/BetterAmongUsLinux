@@ -14,7 +14,8 @@ internal class CheckPlayerLevelPatch
     {
         if (GameState.IsHost)
         {
-            if (!__instance.IsLocalPlayer() && (__instance.Data.PlayerLevel < BetterGameSettings.KickLevelBelow.GetInt()))
+            // Kick players below minimum level
+            if (!__instance.IsLocalPlayer() && __instance.Data.PlayerLevel < BetterGameSettings.KickLevelBelow.GetInt())
             {
                 __instance.Kick(setReasonInfo: $" is level {__instance.Data.PlayerLevel}, level must be equal or above {BetterGameSettings.KickLevelBelow.GetInt()} to join");
             }

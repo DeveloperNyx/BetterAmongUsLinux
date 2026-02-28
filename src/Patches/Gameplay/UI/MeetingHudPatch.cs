@@ -15,6 +15,7 @@ internal static class MeetingHudPatch
     [HarmonyPostfix]
     private static void MeetingHud_Start_Postfix(MeetingHud __instance)
     {
+        // Add meeting info display to each player state
         foreach (var pva in __instance.playerStates)
         {
             var target = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
@@ -23,7 +24,7 @@ internal static class MeetingHudPatch
 
         if (!GameState.IsOnlineGame) return;
 
-        // Add host icon to meeting hud
+        // Add host icon to meeting UI
         __instance.ProceedButton.gameObject.transform.localPosition = new(-2.5f, 2.2f, 0);
         __instance.ProceedButton.gameObject.GetComponent<SpriteRenderer>().enabled = false;
         __instance.ProceedButton.GetComponent<PassiveButton>().enabled = false;
@@ -36,6 +37,7 @@ internal static class MeetingHudPatch
         Logger_.LogHeader("Meeting Has Started");
     }
 
+    // Updates host icon with current host info
     internal static void UpdateHostIcon()
     {
         if (MeetingHud.Instance == null) return;
@@ -46,7 +48,7 @@ internal static class MeetingHudPatch
 
     internal static float timeOpen = 0f;
 
-    // Set player meeting info
+    // Track how long meeting has been open
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Update))]
     [HarmonyPostfix]
     private static void MeetingHud_Update_Postfix(MeetingHud __instance)
@@ -61,6 +63,7 @@ internal static class MeetingHudPatch
         timeOpen = 0f;
         Logger_.LogHeader("Meeting Has Ended");
 
+        // Clear chat when meeting ends if gameplay chat is enabled
         if (BAUPlugin.ChatInGameplay.Value && !GameState.IsFreePlay && PlayerControl.LocalPlayer.IsAlive())
         {
             ChatPatch.ClearPlayerChats();
