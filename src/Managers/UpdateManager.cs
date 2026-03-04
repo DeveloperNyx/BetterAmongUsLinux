@@ -57,11 +57,11 @@ internal sealed class UpdateManager : MonoBehaviour
             if (button != null)
             {
                 button.OnClick = new();
-                button.OnClick.AddListener((Action)(() =>
+                button.OnClick.AddListener(() =>
                 {
                     if (AmUpdateing || WaitForRestart) return;
                     this.StartCoroutine(CoPressDownload(doNotPress));
-                }));
+                });
             }
 
             var obj = new GameObject("Update(TMP)");

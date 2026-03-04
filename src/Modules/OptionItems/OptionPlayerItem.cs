@@ -107,9 +107,9 @@ public sealed class OptionPlayerItem : OptionItem<int>
             numberOption.DestroyTextTranslators();
             numberOption.TitleText.text = Name;
             numberOption.PlusBtn.OnClick = new();
-            numberOption.PlusBtn.OnClick.AddListener((Action)(() => Increase()));
+            numberOption.PlusBtn.OnClick.AddListener(Increase);
             numberOption.MinusBtn.OnClick = new();
-            numberOption.MinusBtn.OnClick.AddListener((Action)(() => Decrease()));
+            numberOption.MinusBtn.OnClick.AddListener(Decrease);
         }
     }
 

@@ -299,14 +299,14 @@ public abstract class OptionItem
         button.interactableClickColor = Color.white;
         button.buttonSprite.sprite = Utils.LoadSprite("BetterAmongUs.Resources.Images.QuestionMark.png", 50);
         button.OnClick = new();
-        button.OnClick.AddListener((Action)(() =>
+        button.OnClick.AddListener(() =>
         {
             var menu = GameSettingMenu.Instance;
             if (menu != null)
             {
                 menu.MenuDescriptionText.text = text;
             }
-        }));
+        });
     }
 
     /// <summary>

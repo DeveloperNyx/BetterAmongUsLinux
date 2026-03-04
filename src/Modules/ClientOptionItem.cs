@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Patches.Client;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -144,7 +145,7 @@ internal sealed class ClientOptionItem
         var passiveButton = ToggleButton.GetComponent<PassiveButton>();
         passiveButton.OnClick = new();
 
-        passiveButton.OnClick.AddListener((Action)(() =>
+        passiveButton.OnClick.AddListener(() =>
         {
             if (toggleCheck?.Invoke() == false) return;
 
@@ -154,7 +155,7 @@ internal sealed class ClientOptionItem
                 UpdateToggle();
             }
             onToggle?.Invoke();
-        }));
+        });
 
         UpdateToggle();
     }
@@ -174,11 +175,11 @@ internal sealed class ClientOptionItem
         ToggleButton.Rollover?.ChangeOutColor(new Color32(0, 150, 0, 255));
         ToggleButton.Text.color = new Color(1f, 1f, 1f, 1f);
 
-        passiveButton.OnClick.AddListener((Action)(() =>
+        passiveButton.OnClick.AddListener(() =>
         {
             if (clickCheck?.Invoke() == false) return;
             onClick?.Invoke();
-        }));
+        });
     }
 
     /// <summary>
@@ -194,14 +195,14 @@ internal sealed class ClientOptionItem
 
         bool currentState = initialState;
 
-        passiveButton.OnClick.AddListener((Action)(() =>
+        passiveButton.OnClick.AddListener(() =>
         {
             if (toggleCheck?.Invoke() == false) return;
 
             currentState = !currentState;
             UpdateManualToggle(currentState);
             onToggle?.Invoke(currentState);
-        }));
+        });
 
         UpdateManualToggle(initialState);
     }

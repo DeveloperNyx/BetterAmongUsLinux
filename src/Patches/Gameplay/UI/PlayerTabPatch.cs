@@ -99,7 +99,7 @@ internal static class PlayerTabPatch
 
             // Override click behavior
             colorChip.Button.OnClick = new();
-            colorChip.Button.OnClick.AddListener((Action)(() =>
+            colorChip.Button.OnClick.AddListener(() =>
             {
                 // Shift+Click = toggle favorite
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
@@ -119,7 +119,7 @@ internal static class PlayerTabPatch
 
                 // Normal click = equip color
                 playerTab.ClickEquip();
-            }));
+            });
 
             // Add favorite star indicator
             var checkBox = colorChip.PlayerEquippedForeground.transform.Find("CheckMark").GetComponentInChildren<SpriteRenderer>();

@@ -158,11 +158,11 @@ internal static class OptionsMenuBehaviourPatch
         var index = __instance.Tabs.Length - 1;
         var button = tab.GetComponent<PassiveButton>();
         button.OnClick = new();
-        button.OnClick.AddListener((Action)(() =>
+        button.OnClick.AddListener(() =>
         {
             tab.Rollover.SetEnabledColors();
             __instance.OpenTabGroup(index);
-        }));
+        });
 
         return tab;
     }

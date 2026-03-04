@@ -121,10 +121,10 @@ internal sealed class OptionTab
 
         SettingsButton.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 0.6176f);
 
-        SettingsButton.OnClick.AddListener(new Action(() =>
+        SettingsButton.OnClick.AddListener(() =>
         {
             GameSettingMenu.Instance.ChangeTab(Id, false);
-        }));
+        });
 
         var SettingsTab = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsTab, GameSettingMenu.Instance.GameSettingsTab.transform.parent);
         AUTab = SettingsTab;

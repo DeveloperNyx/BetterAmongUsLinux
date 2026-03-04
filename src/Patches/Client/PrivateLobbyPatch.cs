@@ -48,7 +48,7 @@ internal static class PrivateLobbyPatch
             {
                 onButton.gameObject.SetActive(false);
                 onButton.OnClick = new();
-                onButton.OnClick.AddListener((Action)(() => TogglePrivateOnlyLobby(true)));
+                onButton.OnClick.AddListener(() => TogglePrivateOnlyLobby(true));
             }
 
             // Set up OFF button click handler
@@ -57,7 +57,7 @@ internal static class PrivateLobbyPatch
             {
                 offButton.gameObject.SetActive(false);
                 offButton.OnClick = new();
-                offButton.OnClick.AddListener((Action)(() => TogglePrivateOnlyLobby(false)));
+                offButton.OnClick.AddListener(() => TogglePrivateOnlyLobby(false));
             }
 
             // Position toggle at top-right of create game screen
