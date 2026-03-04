@@ -142,4 +142,21 @@ internal sealed class OutfitData
         VisorId = DataManager.Player.Customization.Visor;
         NamePlateId = DataManager.Player.Customization.NamePlate;
     }
+
+    /// <summary>
+    /// Converts to network player outfit.
+    /// </summary>
+    /// <returns></returns>
+    internal NetworkedPlayerInfo.PlayerOutfit ToPlayerOutfit()
+    {
+        return new NetworkedPlayerInfo.PlayerOutfit
+        {
+            HatId = HatId,
+            PetId = PetId,
+            SkinId = SkinId,
+            VisorId = VisorId,
+            NamePlateId = NamePlateId,
+            ColorId = DataManager.Player.Customization.Color
+        };
+    }
 }

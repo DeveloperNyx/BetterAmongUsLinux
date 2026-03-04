@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Data;
+﻿using AmongUs.Data;
+using BetterAmongUs.Data;
 using BetterAmongUs.Data.Json;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Patches.Client.Managers;
@@ -12,26 +13,41 @@ namespace BetterAmongUs.Patches.Gameplay.UI;
 internal static class PlayerTabPatch
 {
     private static List<PassiveButton> presetButtons = []; // Outfit preset buttons
+    private static List<PoolablePlayer> presetPreviews = []; // Outfit previews
     private static float cooldown = 0f; // Button click cooldown
+    private static readonly List<SpriteRenderer> _favoriteIcons = [];
 
     [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
-    [HarmonyPrefix]
-    private static void PlayerTab_OnEnable_Prefix(PlayerTab __instance)
+    [HarmonyPostfix]
+    private static void PlayerTab_OnEnable_Postfix(PlayerTab __instance)
     {
-        // Clean up old preset buttons
+        SetupOutfitPresets(__instance);
+        SetupFavoriteColor(__instance);
+    }
+
+    private static void SetupOutfitPresets(PlayerTab playerTab)
+    {
+        // Clean up old preset buttons and previews
         foreach (var button in presetButtons.ToArray())
         {
             if (button == null) continue;
             UnityEngine.Object.Destroy(button.gameObject);
         }
         presetButtons.Clear();
+        foreach (var preview in presetPreviews.ToArray())
+        {
+            if (preview == null) continue;
+            UnityEngine.Object.Destroy(preview.gameObject);
+        }
+        presetPreviews.Clear();
 
         // Create preset buttons (0 = Among Us preset, 1-5 = custom presets)
         for (int i = 0; i <= 5; i++)
         {
             int currentI = i;
             var name = currentI == 0 ? "Among Us Preset" : $"Preset {i}";
-            var button = __instance.CreateButton(name, new Vector3(2.5f, 1.55f - currentI * 0.45f, 0f), () =>
+            var data = OutfitData.GetOutfitData(currentI);
+            var button = playerTab.CreateOutfitPresetButton(name, new Vector3(2.5f, 1.55f - currentI * 0.45f, 0f), out var playerPreview, () =>
             {
                 // Ignore if cooldown active or same preset selected
                 if (cooldown > 0f || BetterDataManager.BetterDataFile.SelectedOutfitPreset == currentI) return;
@@ -48,36 +64,38 @@ internal static class PlayerTabPatch
                 }
 
                 // Load and apply outfit from preset
-                var data = OutfitData.GetOutfitData(currentI);
                 data.Load(() =>
                 {
                     if (LoadPlayerOutfit(data))
                     {
-                        __instance.PlayerPreview.UpdateFromLocalPlayer(PlayerMaterial.MaskType.None);
+                        playerTab.PlayerPreview.UpdateFromLocalPlayer(PlayerMaterial.MaskType.None);
                     }
                     else
                     {
-                        __instance.PlayerPreview.UpdateFromDataManager(PlayerMaterial.MaskType.None);
+                        playerTab.PlayerPreview.UpdateFromDataManager(PlayerMaterial.MaskType.None);
                     }
                 });
             });
+
+            // Set up preview
+            playerPreview.UpdateFromPlayerOutfit(data.ToPlayerOutfit(), PlayerMaterial.MaskType.None, false, true);
+            playerPreview.ToggleName(false);
+            playerPreview.transform.position += new Vector3(0f, 0f, -1f * currentI); // Fix rendering order
+            presetPreviews.Add(playerPreview);
+
             presetButtons.Add(button);
         }
     }
 
-    private static readonly List<SpriteRenderer> _favoriteIcons = [];
-
-    [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
-    [HarmonyPostfix]
-    private static void PlayerTab_OnEnable_Postfix(PlayerTab __instance)
+    private static void SetupFavoriteColor(PlayerTab playerTab)
     {
         _favoriteIcons.Clear();
 
         // Add favorite functionality to color chips
-        for (int i = 0; i < __instance.ColorChips.Count; i++)
+        for (int i = 0; i < playerTab.ColorChips.Count; i++)
         {
             var index = i;
-            var colorChip = __instance.ColorChips[i];
+            var colorChip = playerTab.ColorChips[i];
 
             // Override click behavior
             colorChip.Button.OnClick = new();
@@ -100,7 +118,7 @@ internal static class PlayerTabPatch
                 }
 
                 // Normal click = equip color
-                __instance.ClickEquip();
+                playerTab.ClickEquip();
             }));
 
             // Add favorite star indicator
@@ -142,18 +160,34 @@ internal static class PlayerTabPatch
     }
 
     // Helper to create preset buttons
-    private static PassiveButton CreateButton(this PlayerTab __instance, string name, Vector3 pos, Action callback)
+    private static PassiveButton CreateOutfitPresetButton(this PlayerTab __instance, string name, Vector3 pos, out PoolablePlayer playerPreview, Action callback)
     {
         var button = UnityEngine.Object.Instantiate(MainMenuManagerPatch.ButtonPrefab, __instance.transform);
         button.gameObject.SetActive(true);
         button.gameObject.SetLayers("UI");
         button.transform.localPosition = pos;
         button.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        // Create preview
+        button.transform.Find("Highlight/Icon")?.gameObject.DestroyObj();
+        button.transform.Find("Inactive/Icon")?.gameObject.DestroyObj();
+        var outfitPreview = UnityEngine.Object.Instantiate(__instance.PlayerPreview);
+        outfitPreview.transform.SetParent(button.transform);
+        outfitPreview.transform.localPosition = new Vector3(-1.3f, 0.15f, -10f);
+        outfitPreview.transform.localScale = Vector3.one * 0.45f;
+        outfitPreview.ResetCosmetics();
+        foreach (var pet in outfitPreview.GetComponentsInChildren<PetBehaviour>(true))
+        {
+            pet.gameObject.DestroyObj();
+        }
+        playerPreview = outfitPreview;
+
         button.OnClick = new();
         button.OnClick.AddListener(callback);
         button.DestroyTextTranslators();
         var text = button.GetComponentInChildren<TextMeshPro>();
         text?.SetText(name);
+
         return button;
     }
 
@@ -179,6 +213,13 @@ internal static class PlayerTabPatch
             if (i == BetterDataManager.BetterDataFile.SelectedOutfitPreset)
             {
                 button.SetPassiveButtonHoverStateActive(); // Highlight selected preset
+            }
+
+            // Update preview color
+            var preview = presetPreviews[i];
+            if (preview.Cosmetics.ColorId != DataManager.Player.Customization.Color)
+            {
+                preview.SetBodyColor(DataManager.Player.Customization.Color);
             }
         }
     }

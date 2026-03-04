@@ -54,6 +54,21 @@ internal static class ObjectHelper
     /// <param name="mono">The MonoBehaviour whose GameObject should be searched.</param>
     internal static void DestroyTextTranslators(this MonoBehaviour mono) => mono.gameObject.DestroyTextTranslators();
 
+
+    /// <summary>
+    /// Destroys a specified component on a game object 
+    /// </summary>
+    /// <typeparam name="T">The Type of the Component to destroy</typeparam>
+    /// <param name="obj"></param>
+    internal static void RemoveComponent<T>(this GameObject obj) where T : Component
+    {
+        var comp = obj.GetComponent<T>();
+        if (comp != null)
+        {
+            UnityEngine.Object.Destroy(comp);
+        }
+    }
+
     /// <summary>
     /// Sets the color of all SpriteRenderer components in the children of a GameObject.
     /// </summary>

@@ -12,7 +12,7 @@ namespace BetterAmongUs.Helpers;
 /// <summary>
 /// Provides extension methods and utilities for working with PlayerControl instances.
 /// </summary>
-static class PlayerControlHelper
+internal static class PlayerControlHelper
 {
     /// <summary>
     /// Gets the ClientData associated with a player.
@@ -83,6 +83,7 @@ static class PlayerControlHelper
         {
             return false;
         }
+
         return true;
     }
 
