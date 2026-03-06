@@ -64,6 +64,11 @@ internal static class ModInfo
     internal const string DISCORD = "https://discord.gg/vjYrXpzNAn";
 
     /// <summary>
+    /// Indicator rather that BAU is running on Starlight.
+    /// </summary>
+    internal static readonly bool Starlight = OperatingSystem.IsAndroid();
+
+    /// <summary>
     /// Retrieves metadata from the assembly attributes.
     /// </summary>
     /// <param name="key">The metadata key to retrieve.</param>

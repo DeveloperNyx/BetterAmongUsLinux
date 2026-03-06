@@ -51,16 +51,19 @@ internal static class OptionsMenuBehaviourPatch
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ShowFPS"), BAUPlugin.ShowFPS, 1, __instance);
 
         // Button options (no toggle)
-        ClientOptionItem.CreateButton(Translator.GetString("BetterOption.SaveData"), 1, __instance, OpenSaveData, () =>
+        if (!ModInfo.Starlight)
         {
-            // Only allow opening save data in lobby/main menu, not during gameplay
-            bool cannotOpen = GameState.IsInGame && !GameState.IsLobby;
-            if (cannotOpen)
+            ClientOptionItem.CreateButton(Translator.GetString("BetterOption.SaveData"), 1, __instance, OpenSaveData, () =>
             {
-                BetterNotificationManager.Notify($"Cannot open save data while in gameplay!", 2.5f);
-            }
-            return !cannotOpen;
-        });
+                // Only allow opening save data in lobby/main menu, not during gameplay
+                bool cannotOpen = GameState.IsInGame && !GameState.IsLobby;
+                if (cannotOpen)
+                {
+                    BetterNotificationManager.Notify($"Cannot open save data while in gameplay!", 2.5f);
+                }
+                return !cannotOpen;
+            });
+        }
 
         ClientOptionItem.CreateButton(Translator.GetString("BetterOption.ToVanilla"), 1, __instance, SwitchToVanilla, () =>
         {

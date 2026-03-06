@@ -317,5 +317,15 @@ internal class BAUPlugin : BasePlugin
     /// Gets the game installation path for Among Us.
     /// </summary>
     /// <returns>The game installation path string.</returns>
-    internal static string GetGamePathToAmongUs() => Path.GetDirectoryName(Application.dataPath) ?? Application.dataPath;
+    internal static string GetGamePathToAmongUs()
+    {
+        if (!ModInfo.Starlight)
+        {
+            return Path.GetDirectoryName(Application.dataPath) ?? throw new Exception("Unable to find `Application.dataPath` path");
+        }
+        else
+        {
+            return GetDataPathToAmongUs();
+        }
+    }
 }
