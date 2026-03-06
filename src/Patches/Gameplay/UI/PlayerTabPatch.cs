@@ -18,10 +18,16 @@ internal static class PlayerTabPatch
     private static readonly List<SpriteRenderer> _favoriteIcons = [];
 
     [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
+    [HarmonyPrefix]
+    private static void PlayerTab_OnEnable_Prefix(PlayerTab __instance)
+    {
+        SetupOutfitPresets(__instance);
+    }
+
+    [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
     [HarmonyPostfix]
     private static void PlayerTab_OnEnable_Postfix(PlayerTab __instance)
     {
-        SetupOutfitPresets(__instance);
         SetupFavoriteColor(__instance);
     }
 
