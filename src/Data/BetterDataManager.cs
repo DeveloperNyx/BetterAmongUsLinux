@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Data.Json;
+﻿using BetterAmongUs.Data.Config;
+using BetterAmongUs.Data.Json;
 using BetterAmongUs.Helpers;
 
 namespace BetterAmongUs.Data;

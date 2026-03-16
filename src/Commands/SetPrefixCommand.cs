@@ -1,6 +1,6 @@
 ﻿using BetterAmongUs.Attributes;
 using BetterAmongUs.Commands.Arguments;
-using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Modules.Support;
 
 namespace BetterAmongUs.Commands;

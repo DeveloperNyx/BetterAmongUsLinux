@@ -1,5 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
-using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;

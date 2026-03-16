@@ -1,5 +1,5 @@
 using AmongUs.GameOptions;
-using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 
 namespace BetterAmongUs.Modules;
 

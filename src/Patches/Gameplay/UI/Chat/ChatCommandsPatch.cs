@@ -1,5 +1,5 @@
 ﻿using BetterAmongUs.Commands;
-using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;

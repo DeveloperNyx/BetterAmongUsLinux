@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BetterAmongUs.Attributes;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Data.Json;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
@@ -53,6 +54,11 @@ internal class BAUPlugin : BasePlugin
 
         return text;
     }
+
+    /// <summary>
+    /// Gets the BAUPlugin instance.
+    /// </summary>
+    internal static BAUPlugin? Instance { get; private set; }
 
     /// <summary>
     /// Gets the Harmony instance used for patching.
@@ -106,6 +112,8 @@ internal class BAUPlugin : BasePlugin
 
     public override void Load()
     {
+        Instance = this;
+
         try
         {
             foreach (var listener in BepInEx.Logging.Logger.Listeners)
@@ -136,7 +144,7 @@ internal class BAUPlugin : BasePlugin
 
         BAUModdedSupportFlags.Initialize();
         GithubAPI.Connect();
-        BAUConfigs.LoadConfigs(this);
+        BAUConfigs.LoadConfigs();
         BetterDataManager.Initialize();
         Translator.Initialize();
         Harmony.PatchAll();

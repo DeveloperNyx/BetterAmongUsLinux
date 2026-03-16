@@ -1,5 +1,6 @@
 ﻿using AmongUs.Data;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Data.Json;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Patches.Client.Managers;

@@ -1,4 +1,4 @@
-using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Globalization;
