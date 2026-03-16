@@ -54,7 +54,9 @@ internal static class PlayerControlPatch
     [HarmonyPostfix]
     private static void PlayerControl_MurderPlayer_Postfix(PlayerControl __instance, PlayerControl target)
     {
-        if (target == null) return;
+        // Check for null references
+        if (__instance == null || target == null || target.Data == null || __instance.Data == null) 
+            return;
 
         // Log kill event with player names and roles
         Logger_.LogPrivate($"{__instance.Data.PlayerName} Has killed {target.Data.PlayerName} as {__instance.Data.RoleType.GetRoleName()}", "EventLog");

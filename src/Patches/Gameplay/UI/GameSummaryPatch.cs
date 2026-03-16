@@ -16,6 +16,10 @@ internal static class GameSummaryPatch
     [HarmonyPostfix]
     private static void EndGameManager_SetEverythingUp_Postfix(EndGameManager __instance)
     {
+        // Check for null references
+        if (__instance == null) 
+            return;
+
         LogGameEnd();
 
         if (!BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_EndGameSummary))

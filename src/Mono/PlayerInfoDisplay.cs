@@ -146,7 +146,14 @@ internal class PlayerInfoDisplay : MonoBehaviour
     /// </summary>
     private void UpdatePlayerInfo()
     {
-        if (_player?.Data == null) return;
+        if (_player == null) return;
+        if (_player.Data == null) return;
+
+        if (_nameText == null) return;
+        if (_cachedTranslations == null) return;
+
+        if (_sbTag == null || _sbTagTop == null || _sbTagBottom == null) return;
+        if (_topText == null || _bottomText == null || _infoText == null) return;
 
         var betterData = _player.BetterData();
 
@@ -169,19 +176,19 @@ internal class PlayerInfoDisplay : MonoBehaviour
 
         string friendCode = ValidateFriendCode(out string friendCodeColor);
 
+        if (DataManager.Settings == null || DataManager.Settings.Gameplay == null)
+            return;
+
         if (DataManager.Settings.Gameplay.StreamerMode)
-        {
             platform = _cachedTranslations.PlatformHidden;
-        }
 
         if (!_player.IsInShapeshift())
-        {
             SetPlayerOutline(_sbTag);
-        }
 
         if (GameState.IsInGame && GameState.IsLobby && !GameState.IsFreePlay)
         {
             SetLobbyInfo(ref newName, betterData, _sbTag);
+
             _sbTagTop.Append($"<color=#9e9e9e>{platform}</color>+++")
                     .Append($"<color=#ffd829>Lv: {_player.Data.PlayerLevel + 1}</color>+++");
 
@@ -196,15 +203,21 @@ internal class PlayerInfoDisplay : MonoBehaviour
         {
             if (_player.IsImpostorTeammate())
                 newName = newName.ToColor(Colors.ImpostorRed);
+
             _player.RawSetName(newName);
         }
         else
         {
             var targetData = Utils.PlayerDataFromPlayerId(_player.shapeshiftTargetPlayerId);
-            var name = targetData.BetterData()?.RealName ?? targetData.PlayerName;
+            if (targetData == null) return;
+
+            var betterTargetData = targetData.BetterData();
+            string name = betterTargetData != null ? betterTargetData.RealName : targetData.PlayerName;
+
             if (_player.IsImpostorTeammate())
                 name = name.ToColor(Colors.ImpostorRed);
-            if (targetData != null) _player.RawSetName(name);
+
+            _player.RawSetName(name);
         }
 
         UpdateTextIfChanged(_topText, _sbTagTop, ref _lastTopText);
