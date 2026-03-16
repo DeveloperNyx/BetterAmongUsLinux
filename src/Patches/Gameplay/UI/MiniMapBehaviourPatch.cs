@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Helpers;
+﻿using BetterAmongUs.Data.Config;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Mono;
@@ -68,7 +69,7 @@ internal static class MiniMapBehaviourPatch
     [HarmonyPostfix]
     private static void MapBehaviour_Show_Postfix(MapBehaviour __instance)
     {
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_MinimapIcons)) return;
+        if (!BAUConfigs.MinimapIcons.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_MinimapIcons)) return;
 
         // Make infected overlay buttons semi-transparent and smaller
         foreach (var button in __instance.infectedOverlay.allButtons)

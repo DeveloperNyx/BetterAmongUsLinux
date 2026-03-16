@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Modules;
+﻿using BetterAmongUs.Data.Config;
+using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using UnityEngine;
@@ -13,7 +14,7 @@ internal static class VentPatch
     private static bool Vent_SetOutline_Prefix(Vent __instance, bool on, bool mainTarget)
     {
         // Skip if vent color groups are disabled - use vanilla behavior
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_VentColorGroups)) return true;
+        if (!BAUConfigs.VentColorGroups.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_VentColorGroups)) return true;
 
         // Get group color for this vent and apply outline
         Color color = VentGroups.GetVentGroupColor(__instance);

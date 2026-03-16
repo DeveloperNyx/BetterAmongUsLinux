@@ -66,7 +66,7 @@ internal static class BAUConfigs
     /// <summary>
     /// Gets the configuration entry for vent color groups setting.
     /// </summary>
-    internal static BAUConfigEntry<bool>? VentColorGroups { get; } = new("Better Options", "VentColorGroups", false);
+    internal static BAUConfigEntry<bool>? VentColorGroups { get; } = new("Better Options", "VentColorGroups", true);
 
     /// <summary>
     /// Gets the configuration entry for command prefix setting.

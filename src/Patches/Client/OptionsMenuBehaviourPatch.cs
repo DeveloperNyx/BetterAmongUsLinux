@@ -51,6 +51,25 @@ internal static class OptionsMenuBehaviourPatch
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.UnlockFPS"), BAUConfigs.UnlockFPS, 1, __instance, UpdateFrameRate);
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ShowFPS"), BAUConfigs.ShowFPS, 1, __instance);
 
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.VentColorGroups"), BAUConfigs.VentColorGroups, 2, __instance, toggleCheck: () =>
+        {
+            bool cannotToggle = GameState.IsInGame;
+            if (cannotToggle)
+            {
+                BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
+            }
+            return !cannotToggle;
+        });
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.MinimapIcons"), BAUConfigs.MinimapIcons, 2, __instance, toggleCheck: () =>
+        {
+            bool cannotToggle = GameState.IsInGame;
+            if (cannotToggle)
+            {
+                BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
+            }
+            return !cannotToggle;
+        });
+
         // Button options (no toggle)
         if (!ModInfo.Starlight)
         {
