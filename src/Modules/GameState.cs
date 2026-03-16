@@ -1,4 +1,5 @@
 using AmongUs.GameOptions;
+using BetterAmongUs.Data;
 
 namespace BetterAmongUs.Modules;
 
@@ -241,7 +242,7 @@ internal static class GameState
     /// <summary>
     /// Gets whether the lobby is private-only (requires specific settings).
     /// </summary>
-    internal static bool IsPrivateOnlyLobby => (BAUPlugin.PrivateOnlyLobby.Value || AmongUsClient.Instance.AmLocalHost) && IsHost;
+    internal static bool IsPrivateOnlyLobby => (BAUConfigs.PrivateOnlyLobby.Value || AmongUsClient.Instance.AmLocalHost) && IsHost;
 
     /// <summary>
     /// Gets whether the local player can move.

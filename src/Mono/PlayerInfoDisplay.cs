@@ -156,7 +156,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
             return;
         }
 
-        if (!BAUPlugin.LobbyPlayerInfo.Value && GameState.IsLobby)
+        if (!BAUConfigs.LobbyPlayerInfo.Value && GameState.IsLobby)
         {
             ResetText();
             _player.RawSetName(_player.Data.PlayerName);
@@ -371,7 +371,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
     {
         if (betterData == null) return;
 
-        if (_player.IsHost() && BAUPlugin.LobbyPlayerInfo.Value)
+        if (_player.IsHost() && BAUConfigs.LobbyPlayerInfo.Value)
             newName = _player.GetPlayerNameAndColor();
 
         if ((_player.IsLocalPlayer() || betterData.IsBetterUser) && !GameState.IsInGamePlay)

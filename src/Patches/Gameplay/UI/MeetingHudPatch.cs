@@ -1,3 +1,4 @@
+using BetterAmongUs.Data;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Mono;
@@ -64,7 +65,7 @@ internal static class MeetingHudPatch
         Logger_.LogHeader("Meeting Has Ended");
 
         // Clear chat when meeting ends if gameplay chat is enabled
-        if (BAUPlugin.ChatInGameplay.Value && !GameState.IsFreePlay && PlayerControl.LocalPlayer.IsAlive())
+        if (BAUConfigs.ChatInGameplay.Value && !GameState.IsFreePlay && PlayerControl.LocalPlayer.IsAlive())
         {
             ChatPatch.ClearPlayerChats();
         }

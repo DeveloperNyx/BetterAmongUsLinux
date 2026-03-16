@@ -1,4 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using BetterAmongUs.Data;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
@@ -32,10 +33,10 @@ internal static class PlayerControlPatch
         // Apply player's favorite color setting if they own this character
         if (player.AmOwner)
         {
-            if (BAUPlugin.FavoriteColor.Value >= 0 && player.cosmetics.ColorId != (byte)BAUPlugin.FavoriteColor.Value)
+            if (BAUConfigs.FavoriteColor.Value >= 0 && player.cosmetics.ColorId != (byte)BAUConfigs.FavoriteColor.Value)
             {
                 // Send command to server to change color
-                player.CmdCheckColor((byte)BAUPlugin.FavoriteColor.Value);
+                player.CmdCheckColor((byte)BAUConfigs.FavoriteColor.Value);
             }
         }
 

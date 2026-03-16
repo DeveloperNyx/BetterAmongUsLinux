@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Helpers;
+﻿using BetterAmongUs.Data;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.Support;
@@ -15,7 +16,7 @@ internal class PlatformSpoofPatch
     [HarmonyPostfix]
     internal static void PlatformSpecificData_Deserialize_Postfix(PlatformSpecificData __instance)
     {
-        if (!BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !GameState.IsVanillaServer) return;
+        if (!BAUConfigs.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !GameState.IsVanillaServer) return;
 
         if (GameState.IsLobby)
         {

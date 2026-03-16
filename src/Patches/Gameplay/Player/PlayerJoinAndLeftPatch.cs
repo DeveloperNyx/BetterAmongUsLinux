@@ -77,8 +77,8 @@ internal static class PlayerJoinAndLeftPatch
         // Reclaim favorite color when player leaves in lobby
         if (GameState.IsLobby)
         {
-            var favColorId = (byte)BAUPlugin.FavoriteColor.Value;
-            if (BAUPlugin.FavoriteColor.Value >= 0)
+            var favColorId = (byte)BAUConfigs.FavoriteColor.Value;
+            if (BAUConfigs.FavoriteColor.Value >= 0)
             {
                 if (PlayerControl.LocalPlayer.cosmetics.ColorId != favColorId && data.ColorId == favColorId)
                 {

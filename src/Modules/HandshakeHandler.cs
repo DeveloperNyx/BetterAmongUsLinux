@@ -38,7 +38,7 @@ internal sealed class HandshakeHandler
     /// </summary>
     private IEnumerator CoWaitSendSecretToPlayer()
     {
-        if (!BAUPlugin.SendBetterRpc.Value) yield break;
+        if (!BAUConfigs.SendBetterRpc.Value) yield break;
 
         while (extendedData._Data?.Object == null || PlayerControl.LocalPlayer == null)
         {
@@ -55,7 +55,7 @@ internal sealed class HandshakeHandler
     /// </summary>
     internal void ResendSecretToPlayer()
     {
-        if (!BAUPlugin.SendBetterRpc.Value) return;
+        if (!BAUConfigs.SendBetterRpc.Value) return;
         if (HasSendSharedSecret && extendedData.IsVerifiedBetterUser) return;
 
         HasSendSharedSecret = false;
@@ -113,7 +113,7 @@ internal sealed class HandshakeHandler
     // Client sends back to local client
     private void SendSecretHashToSender(int tempKey, int senderClientId)
     {
-        if (!BAUPlugin.SendBetterRpc.Value) return;
+        if (!BAUConfigs.SendBetterRpc.Value) return;
 
         int hash = SharedSecret.GetSharedSecretHash();
         // Logger.Log($"Sending secret hash: {hash} (tempKey: {tempKey})");

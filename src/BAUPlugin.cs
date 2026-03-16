@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BetterAmongUs.Attributes;
@@ -11,7 +10,6 @@ using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
 using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Network;
-using BetterAmongUs.Patches.Client;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
@@ -138,7 +136,7 @@ internal class BAUPlugin : BasePlugin
 
         BAUModdedSupportFlags.Initialize();
         GithubAPI.Connect();
-        LoadOptions();
+        BAUConfigs.LoadConfigs(this);
         BetterDataManager.Initialize();
         Translator.Initialize();
         Harmony.PatchAll();
@@ -196,107 +194,6 @@ internal class BAUPlugin : BasePlugin
                 Logger_.Error($"Failed to register MonoBehaviour: {type.FullName}\n{ex}");
             }
         }
-    }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for private only lobby setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? PrivateOnlyLobby { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for anti-cheat setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? AntiCheat { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for sending Better RPC setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? SendBetterRpc { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for better notifications setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? BetterNotifications { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for force own language setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? ForceOwnLanguage { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for chat dark mode setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? ChatDarkMode { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for chat in gameplay setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? ChatInGameplay { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for lobby player info setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? LobbyPlayerInfo { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for disable lobby theme setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? DisableLobbyTheme { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for unlock FPS setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? UnlockFPS { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for show FPS setting.
-    /// </summary>
-    internal static ConfigEntry<bool>? ShowFPS { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for command prefix setting.
-    /// </summary>
-    internal static ConfigEntry<string>? CommandPrefix { get; set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for favorite color setting.
-    /// </summary>
-    internal static ConfigEntry<int>? FavoriteColor { get; set; }
-
-    /// <summary>
-    /// Gets or sets the configuration entry for the settings preset.
-    /// </summary>
-    internal static ConfigEntry<int>? SettingsPreset { get; private set; }
-
-    /// <summary>
-    /// Loads configuration options from BepInEx config file.
-    /// </summary>
-    private void LoadOptions()
-    {
-        PrivateOnlyLobby = Config.Bind("Mod", "PrivateOnlyLobby", false);
-        AntiCheat = Config.Bind("Better Options", "AntiCheat", true);
-        SendBetterRpc = Config.Bind("Better Options", "SendBetterRpc", true);
-        BetterNotifications = Config.Bind("Better Options", "BetterNotifications", true);
-        ForceOwnLanguage = Config.Bind("Better Options", "ForceOwnLanguage", false);
-        ChatDarkMode = Config.Bind("Better Options", "ChatDarkMode", true);
-        ChatInGameplay = Config.Bind("Better Options", "ChatInGameplay", true);
-        LobbyPlayerInfo = Config.Bind("Better Options", "LobbyPlayerInfo", true);
-        DisableLobbyTheme = Config.Bind("Better Options", "DisableLobbyTheme", true);
-        UnlockFPS = Config.Bind("Better Options", "UnlockFPS", false);
-        ShowFPS = Config.Bind("Better Options", "ShowFPS", false);
-        CommandPrefix = Config.Bind("Client Options", "CommandPrefix", "/");
-        FavoriteColor = Config.Bind("Mod", "FavoriteColor", -1);
-        SettingsPreset = Config.Bind("Mod", "SettingsPreset", 0);
-
-        BAUModdedSupportEvents.InvokeAll_OnBAUConfigEntriesLoaded([
-            PrivateOnlyLobby, AntiCheat, SendBetterRpc,
-            BetterNotifications, ForceOwnLanguage, ChatDarkMode,
-            ChatInGameplay, LobbyPlayerInfo, DisableLobbyTheme,
-            UnlockFPS, ShowFPS, CommandPrefix,
-            FavoriteColor, SettingsPreset
-        ]);
-
-        OptionsMenuBehaviourPatch.UpdateFrameRate();
     }
 
     /// <summary>

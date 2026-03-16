@@ -1,4 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
+using BetterAmongUs.Data;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
@@ -101,7 +102,7 @@ internal static class ClientPatch
     private static void AmongUsClient_CoStartGame_Postfix(AmongUsClient __instance)
     {
         // Clear in-game chat if chat feature is enabled
-        if (BAUPlugin.ChatInGameplay.Value)
+        if (BAUConfigs.ChatInGameplay.Value)
         {
             ChatPatch.ClearChat();
         }

@@ -1,4 +1,5 @@
 ﻿using BetterAmongUs.Commands;
+using BetterAmongUs.Data;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
@@ -13,7 +14,7 @@ namespace BetterAmongUs.Patches.Gameplay.UI.Chat;
 internal static class ChatCommandsPatch
 {
     private static bool _enabled = true;
-    internal static string CommandPrefix => BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Force_BAU_Command_Prefix) ? "bau:" : BAUPlugin.CommandPrefix.Value;
+    internal static string CommandPrefix => BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Force_BAU_Command_Prefix) ? "bau:" : BAUConfigs.CommandPrefix.Value;
 
     // Execute command when valid command is typed
     private static void HandleCommand()

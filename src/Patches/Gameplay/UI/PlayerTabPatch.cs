@@ -110,13 +110,13 @@ internal static class PlayerTabPatch
                 // Shift+Click = toggle favorite
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 {
-                    if (BAUPlugin.FavoriteColor.Value == index)
+                    if (BAUConfigs.FavoriteColor.Value == index)
                     {
-                        BAUPlugin.FavoriteColor.Value = -1; // Remove favorite
+                        BAUConfigs.FavoriteColor.Value = -1; // Remove favorite
                     }
                     else
                     {
-                        BAUPlugin.FavoriteColor.Value = index; // Set favorite
+                        BAUConfigs.FavoriteColor.Value = index; // Set favorite
                     }
 
                     UpdateFavorite();
@@ -144,7 +144,7 @@ internal static class PlayerTabPatch
         for (int i = 0; i < _favoriteIcons.Count; i++)
         {
             SpriteRenderer? fav = _favoriteIcons[i];
-            fav.gameObject.SetActive(i == BAUPlugin.FavoriteColor.Value);
+            fav.gameObject.SetActive(i == BAUConfigs.FavoriteColor.Value);
         }
     }
 

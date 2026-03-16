@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Helpers;
+﻿using BetterAmongUs.Data;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.OptionItems;
 using BetterAmongUs.Modules.Support;
@@ -23,7 +24,7 @@ internal static class LobbyPatch
     [HarmonyPostfix]
     private static void LobbyBehaviour_Update_Postfix()
     {
-        if (BAUPlugin.DisableLobbyTheme.Value)
+        if (BAUConfigs.DisableLobbyTheme.Value)
             SoundManager.instance.StopSound(LobbyBehaviour.Instance.MapTheme);
     }
 

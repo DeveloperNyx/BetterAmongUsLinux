@@ -1,3 +1,4 @@
+using BetterAmongUs.Data;
 using BetterAmongUs.Helpers;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Globalization;
@@ -205,7 +206,7 @@ internal static class Translator
         }
         var langId = TranslationController.InstanceExists ? TranslationController.Instance.currentLanguage.languageID : SupportedLangs.English;
         if (useConsoleLanguage) langId = SupportedLangs.English;
-        if (BAUPlugin.ForceOwnLanguage.Value) langId = GetUserSystemLanguage();
+        if (BAUConfigs.ForceOwnLanguage.Value) langId = GetUserSystemLanguage();
         string str = GetString(key, langId, showInvalid);
         if (formatting != null)
             str = string.Format(str, formatting);
@@ -284,7 +285,7 @@ internal static class Translator
     internal static SupportedLangs GetTargetLanguageId(bool useConsoleLanguage = false)
     {
         if (useConsoleLanguage) return SupportedLangs.English;
-        if (BAUPlugin.ForceOwnLanguage.Value) return GetUserSystemLanguage();
+        if (BAUConfigs.ForceOwnLanguage.Value) return GetUserSystemLanguage();
 
         return TranslationController.InstanceExists ?
             TranslationController.Instance.currentLanguage.languageID :

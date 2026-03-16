@@ -33,7 +33,7 @@ internal sealed class OptionPresetItem : OptionStringItem
         Item.TranslatorStrings = Enumerable.Repeat(string.Empty, 10).ToArray();
         Item.Range = new IntRange(0, 10);
         Item.DefaultValue = 0;
-        Item.Value = BAUPlugin.SettingsPreset.Value;
+        Item.Value = BAUConfigs.SettingsPreset.Value;
 
         Item.CreateBehavior();
         return Item;
@@ -41,7 +41,7 @@ internal sealed class OptionPresetItem : OptionStringItem
 
     internal override void OnValueChange(int oldValue, int newValue)
     {
-        BAUPlugin.SettingsPreset.Value = newValue;
+        BAUConfigs.SettingsPreset.Value = newValue;
         BetterDataManager.BetterGameSettingsFile = new();
         BetterDataManager.BetterGameSettingsFile.Init();
         foreach (var opt in AllOptions)

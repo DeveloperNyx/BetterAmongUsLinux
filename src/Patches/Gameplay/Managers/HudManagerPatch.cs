@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Helpers;
+﻿using BetterAmongUs.Data;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
 using HarmonyLib;
@@ -88,7 +89,7 @@ internal static class HudManagerPatch
             // Manage in-game chat visibility based on settings and game state
             if (GameState.InGame)
             {
-                if (!BAUPlugin.ChatInGameplay.Value)
+                if (!BAUConfigs.ChatInGameplay.Value)
                 {
                     // Vanilla chat behavior: only show chat when dead or during meetings
                     if (!PlayerControl.LocalPlayer.IsAlive())
