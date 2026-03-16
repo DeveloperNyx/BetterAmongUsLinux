@@ -27,7 +27,7 @@ internal static class ClientPatch
     private static bool SignInStatusComponent_SetOnline_Prefix(SignInStatusComponent __instance)
     {
         // Get supported Among Us versions for BAU
-        var varSupportedVersions = BAUPlugin.SupportedAmongUsVersions;
+        var varSupportedVersions = ModInfo.SupportedAmongUsVersions;
         Version currentVersion = new(BAUPlugin.AppVersion);
         Version firstSupportedVersion = new(varSupportedVersions.First());
         Version lastSupportedVersion = new(varSupportedVersions.Last());

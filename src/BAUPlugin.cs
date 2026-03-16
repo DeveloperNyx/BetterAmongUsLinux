@@ -82,14 +82,6 @@ internal class BAUPlugin : BasePlugin
     internal static PlatformSpecificData PlatformData => Constants.GetPlatformData();
 
     /// <summary>
-    /// Gets the list of supported Among Us versions.
-    /// </summary>
-    internal static string[] SupportedAmongUsVersions =
-    [
-        "2025.11.18",
-    ];
-
-    /// <summary>
     /// Gets the list of all PlayerControl instances.
     /// </summary>
     internal static List<PlayerControl> AllPlayerControls = [];
@@ -161,7 +153,7 @@ internal class BAUPlugin : BasePlugin
         File.WriteAllText(Path.Combine(BetterDataManager.filePathFolder, "better-log.txt"), "");
         Logger_.Log("Better Among Us successfully loaded!");
 
-        string SupportedVersions = string.Join(" ", SupportedAmongUsVersions);
+        string SupportedVersions = string.Join(" ", ModInfo.SupportedAmongUsVersions);
         Logger_.Log($"BetterAmongUs {BetterAmongUsVersion}-{ModInfo.BuildDate} - [{AppVersion} --> {SupportedVersions}] {Utils.GetPlatformName(PlatformData.Platform)}");
     }
 

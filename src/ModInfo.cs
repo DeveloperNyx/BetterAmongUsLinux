@@ -54,6 +54,14 @@ internal static class ModInfo
     internal const string PLUGIN_VERSION = "1.3.2";
 
     /// <summary>
+    /// Gets the list of supported Among Us versions.
+    /// </summary>
+    internal static string[] SupportedAmongUsVersions =
+    [
+        "2025.11.18",
+    ];
+
+    /// <summary>
     /// The GitHub repository URL for BAU.
     /// </summary>
     internal const string GITHUB = "https://github.com/D1GQ/BetterAmongUs";
