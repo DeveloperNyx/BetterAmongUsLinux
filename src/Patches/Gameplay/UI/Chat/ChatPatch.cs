@@ -134,28 +134,33 @@ internal static class ChatPatch
     private static void ChatController_SetChatBubbleName_Postfix(ChatController __instance, ChatBubble bubble, NetworkedPlayerInfo playerInfo, bool isDead, bool didVote)
     {
         if (didVote) return;
+        if (bubble == null) return;
+        if (bubble.NameText == null) return;
+        if (playerInfo == null) return;
+
+        var sourcePlayer = playerInfo.Object;
+        if (sourcePlayer == null) return;
+        if (PlayerControl.LocalPlayer == null) return;
 
         StringBuilder sbTag = new();
         StringBuilder sbInfo = new();
 
-        var sourcePlayer = playerInfo.Object;
         string hashPuid = Utils.GetHashPuid(sourcePlayer);
         string friendCode = playerInfo.FriendCode;
         string playerName = playerInfo.BetterData()?.RealName ?? "???";
 
-        // Format role display with team color
         string Role = $"<size=75%><color={sourcePlayer.GetTeamHexColor()}>{sourcePlayer.GetRoleName()}</color></size>+++";
 
-        // In lobby, show player tags instead of roles
         if (GameState.IsLobby && !GameState.IsFreePlay)
         {
             Role = "";
 
-            // Show BAU user tag
-            if (sourcePlayer.IsLocalPlayer() || sourcePlayer.BetterData().IsBetterUser)
-                sbTag.AppendFormat("<color=#0dff00>{1}{0}</color>+++", Translator.GetString("Player.BetterUser"), sourcePlayer.BetterData().IsVerifiedBetterUser || sourcePlayer.IsLocalPlayer() ? "✓ " : "");
+            var betterData = sourcePlayer.BetterData();
+            if (betterData == null) return;
 
-            // Show mod-specific tags based on player data
+            if (sourcePlayer.IsLocalPlayer() || betterData.IsBetterUser)
+                sbTag.AppendFormat("<color=#0dff00>{1}{0}</color>+++", Translator.GetString("Player.BetterUser"), betterData.IsVerifiedBetterUser || sourcePlayer.IsLocalPlayer() ? "✓ " : "");
+
             if (BetterDataManager.BetterDataFile.SickoData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
                 sbTag.Append($"<color=#00f583>{Translator.GetString("Player.SickoUser")}</color>+++");
             else if (BetterDataManager.BetterDataFile.AUMData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
@@ -166,7 +171,6 @@ internal static class ChatPatch
                 sbTag.Append($"<color=#fc0000>{Translator.GetString("Player.KnownCheater")}</color>+++");
         }
 
-        // Hide roles from alive players (unless same team)
         if (!sourcePlayer.IsImpostorTeammate())
         {
             if (PlayerControl.LocalPlayer.IsAlive() && !sourcePlayer.IsLocalPlayer())
@@ -175,23 +179,19 @@ internal static class ChatPatch
             }
         }
 
-        // Show role for dead players or if local player is Guardian Angel
         if (PlayerControl.LocalPlayer.Is(RoleTypes.GuardianAngel) && !sourcePlayer.IsAlive() || !PlayerControl.LocalPlayer.Is(RoleTypes.GuardianAngel))
         {
             sbTag.Append(Role);
         }
 
-        // Format tags with separators
         sbInfo.Append("<size=75%>");
-        for (int i = 0; i < sbTag.ToString().Split("+++").Length; i++)
+        var parts = sbTag.ToString().Split("+++");
+        for (int i = 0; i < parts.Length; i++)
         {
-            if (!string.IsNullOrEmpty(sbTag.ToString().Split("+++")[i]))
+            if (!string.IsNullOrEmpty(parts[i]))
             {
-                if (i < sbTag.ToString().Split("+++").Length)
-                {
-                    sbInfo.Append(sbTag.ToString().Split("+++")[i]);
-                }
-                if (i != sbTag.ToString().Split("+++").Length - 2)
+                sbInfo.Append(parts[i]);
+                if (i != parts.Length - 2)
                 {
                     sbInfo.Append(" - ");
                 }
@@ -199,7 +199,6 @@ internal static class ChatPatch
         }
         sbInfo.Append("</size>");
 
-        // Position tags before local player name, after other players' names
         bool flag = sourcePlayer.IsLocalPlayer();
         if (flag)
         {

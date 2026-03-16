@@ -15,17 +15,19 @@ internal sealed class ExtendedPlayerInfo : MonoBehaviour, IMonoExtension<Network
 {
     internal ExtendedPlayerInfo()
     {
-        HandshakeHandler = new(this);
+        try
+        {
+            HandshakeHandler = new(this);
+        }
+        catch (Exception ex)
+        {
+            Logger_.Error("Handshake disabled: " + ex.Message);
+            HandshakeHandler = null;
+        }
     }
 
-    /// <summary>
-    /// Gets or sets the base NetworkedPlayerInfo instance.
-    /// </summary>
     public NetworkedPlayerInfo? BaseMono { get; set; }
 
-    /// <summary>
-    /// Gets the NetworkedPlayerInfo instance.
-    /// </summary>
     internal NetworkedPlayerInfo? _Data => BaseMono;
 
     private bool hasSet = false;
@@ -47,7 +49,11 @@ internal sealed class ExtendedPlayerInfo : MonoBehaviour, IMonoExtension<Network
     private void Awake()
     {
         if (!this.RegisterExtension()) return;
-        HandshakeHandler.WaitSendSecretToPlayer();
+
+        if (HandshakeHandler != null)
+        {
+            HandshakeHandler.WaitSendSecretToPlayer();
+        }
     }
 
     private void OnDestroy()
@@ -90,7 +96,7 @@ internal sealed class ExtendedPlayerInfo : MonoBehaviour, IMonoExtension<Network
     /// Gets the handshake handler for this player.
     /// </summary>
     [HideFromIl2Cpp]
-    internal HandshakeHandler HandshakeHandler { get; }
+    internal HandshakeHandler? HandshakeHandler { get; }
 
     /// <summary>
     /// Gets the player ID.
