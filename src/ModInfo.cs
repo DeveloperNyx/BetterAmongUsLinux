@@ -11,7 +11,7 @@ internal static class ModInfo
     /// <summary>
     /// Gets the release type of the current build.
     /// </summary>
-    internal static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Release;
+    internal static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Beta;
 
     /// <summary>
     /// Gets the Git commit hash from assembly metadata.
@@ -26,17 +26,17 @@ internal static class ModInfo
     /// <summary>
     /// The beta number for beta releases.
     /// </summary>
-    internal const string BETA_NUM = "0";
+    internal const string BETA_NUM = "1";
 
     /// <summary>
     /// The hotfix number for hotfix releases.
     /// </summary>
-    internal const string HOTFIX_NUM = "3";
+    internal const string HOTFIX_NUM = "0";
 
     /// <summary>
     /// Indicates whether this is a hotfix release.
     /// </summary>
-    internal const bool IS_HOTFIX = true;
+    internal const bool IS_HOTFIX = false;
 
     /// <summary>
     /// The name of BAU.
@@ -51,7 +51,7 @@ internal static class ModInfo
     /// <summary>
     /// The version of BAU.
     /// </summary>
-    internal const string PLUGIN_VERSION = "1.3.2";
+    internal const string PLUGIN_VERSION = "1.3.3";
 
     /// <summary>
     /// Gets the list of supported Among Us versions.
