@@ -31,7 +31,6 @@ internal sealed class ClientOptionItem
     public static ClientOptionItem CreateToggle(string name, ConfigEntry<bool> config, int page, OptionsMenuBehaviour optionsMenuBehaviour, Action? onToggle = null, Func<bool>? toggleCheck = null)
     {
         var toggleButton = CreateToggleButton(name, optionsMenuBehaviour, GetOrCreatePage(page, optionsMenuBehaviour).transform);
-        toggleButton.transform.localPosition = CalculateButtonPosition(page);
         var item = new ClientOptionItem(name, config, toggleButton);
 
         item.SetupToggleButton(onToggle, toggleCheck);
@@ -40,6 +39,8 @@ internal sealed class ClientOptionItem
             options = ClientOptions[page] = [];
         }
         options.Add(item);
+
+        UpdateAllButtonPositions();
 
         return item;
     }
@@ -50,7 +51,6 @@ internal sealed class ClientOptionItem
     public static ClientOptionItem CreateButton(string name, int page, OptionsMenuBehaviour optionsMenuBehaviour, Action onClick, Func<bool>? clickCheck = null)
     {
         var toggleButton = CreateToggleButton(name, optionsMenuBehaviour, GetOrCreatePage(page, optionsMenuBehaviour).transform);
-        toggleButton.transform.localPosition = CalculateButtonPosition(page);
         var item = new ClientOptionItem(name, null, toggleButton);
 
         item.SetupButton(onClick, clickCheck);
@@ -59,6 +59,8 @@ internal sealed class ClientOptionItem
             options = ClientOptions[page] = [];
         }
         options.Add(item);
+
+        UpdateAllButtonPositions();
 
         return item;
     }
@@ -87,17 +89,43 @@ internal sealed class ClientOptionItem
     }
 
     /// <summary>
+    /// Calculates all option positions.
+    /// </summary>
+    private static void UpdateAllButtonPositions()
+    {
+        foreach (var kvp in ClientOptions)
+        {
+            int page = kvp.Key;
+            for (int i = 0; i < kvp.Value.Count; i++)
+            {
+                ClientOptionItem? option = kvp.Value[i];
+                option.ToggleButton.gameObject.transform.localPosition = CalculateButtonPosition(page, i);
+            }
+        }
+    }
+
+    /// <summary>
     /// Calculates the position for a new button based on the current number of options.
     /// </summary>
-    private static Vector3 CalculateButtonPosition(int page)
+    private static Vector3 CalculateButtonPosition(int page, int count)
     {
-        if (!ClientOptions.TryGetValue(page, out var options))
+        if (page == -1)
         {
-            options = ClientOptions[page] = [];
+            if (!ClientOptions.TryGetValue(page, out var options))
+            {
+                options = ClientOptions[page] = [];
+            }
+
+            return new Vector3(
+                options.Count == 1 ? 0f : count % 2 == 0 ? -1.3f : 1.3f,
+                -1.8f,
+                -6f
+            );
         }
+
         return new Vector3(
-            options.Count % 2 == 0 ? -1.3f : 1.3f,
-            1.8f - 0.5f * (options.Count / 2),
+            count % 2 == 0 ? -1.3f : 1.3f,
+            1.8f - 0.5f * (count / 2),
             -6f
         );
     }
@@ -179,6 +207,11 @@ internal sealed class ClientOptionItem
     /// </summary>
     private static GameObject? GetOrCreatePage(int page, OptionsMenuBehaviour optionsMenuBehaviour, bool doNotCreate = false)
     {
+        if (page == -1)
+        {
+            return OptionsMenuBehaviourPatch.BetterOptionsTab.Content;
+        }
+
         string name = "Page " + page;
         var currentPage = OptionsMenuBehaviourPatch.BetterOptionsTab.Content.transform.Find(name)?.gameObject;
         if (currentPage == null)

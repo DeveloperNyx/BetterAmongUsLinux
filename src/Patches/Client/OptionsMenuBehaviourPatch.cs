@@ -53,7 +53,7 @@ internal static class OptionsMenuBehaviourPatch
         // Button options (no toggle)
         if (!ModInfo.Starlight)
         {
-            ClientOptionItem.CreateButton(Translator.GetString("BetterOption.SaveData"), 1, __instance, OpenSaveData, () =>
+            ClientOptionItem.CreateButton(Translator.GetString("BetterOption.SaveData"), -1, __instance, OpenSaveData, () =>
             {
                 // Only allow opening save data in lobby/main menu, not during gameplay
                 bool cannotOpen = GameState.IsInGame && !GameState.IsLobby;
@@ -65,7 +65,7 @@ internal static class OptionsMenuBehaviourPatch
             });
         }
 
-        ClientOptionItem.CreateButton(Translator.GetString("BetterOption.ToVanilla"), 1, __instance, SwitchToVanilla, () =>
+        ClientOptionItem.CreateButton(Translator.GetString("BetterOption.ToVanilla"), -1, __instance, SwitchToVanilla, () =>
         {
             // Prevent switching to vanilla while in a game
             bool cannotSwitch = GameState.IsInGame;
