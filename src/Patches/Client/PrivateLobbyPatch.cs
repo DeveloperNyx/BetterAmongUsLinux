@@ -134,3 +134,4 @@ internal static class PrivateLobbyPatch
             }
         }
     }
+}
