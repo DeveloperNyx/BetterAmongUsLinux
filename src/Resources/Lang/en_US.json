@@ -60,6 +60,9 @@
   "BetterOption.LobbyTheme": "Disable Lobby Theme",
   "BetterOption.UnlockFPS": "UnlockFPS",
   "BetterOption.ShowFPS": "ShowFPS",
+  "BetterOption.VentColorGroups": "Vent Color Groups",
+  "BetterOption.MinimapIcons": "Minimap Icons",
+
   "BetterOption.SaveData": "Open Save Data",
   "BetterOption.ToVanilla": "Switch To Vanilla",
 

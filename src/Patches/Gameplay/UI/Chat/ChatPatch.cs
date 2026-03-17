@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Mono;
@@ -73,7 +74,7 @@ internal static class ChatPatch
     private static void ChatController_Update_Prefix(ChatController __instance)
     {
         // Apply dark/light theme to chat input field
-        if (BAUPlugin.ChatDarkMode.Value)
+        if (BAUConfigs.ChatDarkMode.Value)
         {
             // Free chat color
             __instance.freeChatField.background.color = new Color32(40, 40, 40, byte.MaxValue);
@@ -211,7 +212,7 @@ internal static class ChatPatch
     {
         var chat = HudManager.Instance.Chat;
 
-        if (BAUPlugin.ChatDarkMode.Value)
+        if (BAUConfigs.ChatDarkMode.Value)
         {
             // Quick chat color
             chat.quickChatField.background.color = new Color32(40, 40, 40, byte.MaxValue);
@@ -240,7 +241,7 @@ internal static class ChatPatch
     {
         var chatBubble = asChatBubble;
 
-        if (BAUPlugin.ChatDarkMode.Value)
+        if (BAUConfigs.ChatDarkMode.Value)
         {
             chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = Color.white;
             chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(0.15f, 0.15f, 0.15f, 1f);

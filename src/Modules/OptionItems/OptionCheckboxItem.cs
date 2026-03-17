@@ -78,7 +78,7 @@ public sealed class OptionCheckboxItem : OptionItem<bool>
             toggleOption.TitleText.text = Name;
             var button = toggleOption.buttons[0];
             button.OnClick = new();
-            button.OnClick.AddListener((Action)(() => SetValue(!Value)));
+            button.OnClick.AddListener(() => SetValue(!Value));
         }
     }
 

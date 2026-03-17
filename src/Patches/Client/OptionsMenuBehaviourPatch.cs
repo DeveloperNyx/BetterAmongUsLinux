@@ -1,5 +1,6 @@
-using BepInEx;
+﻿using BepInEx;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
@@ -39,30 +40,52 @@ internal static class OptionsMenuBehaviourPatch
         ClientOptionItem.ClientOptions.Clear();
 
         // Toggle options with config binding
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.AntiCheat"), BAUPlugin.AntiCheat, __instance);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.SendBetterRpc"), BAUPlugin.SendBetterRpc, __instance, SendBetterRpcAction);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.BetterNotifications"), BAUPlugin.BetterNotifications, __instance, ClearNotifications);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ForceOwnLanguage"), BAUPlugin.ForceOwnLanguage, __instance);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ChatDarkMode"), BAUPlugin.ChatDarkMode, __instance, ChatPatch.SetChatTheme);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ChatInGame"), BAUPlugin.ChatInGameplay, __instance);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.LobbyInfo"), BAUPlugin.LobbyPlayerInfo, __instance);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.LobbyTheme"), BAUPlugin.DisableLobbyTheme, __instance, ToggleLobbyTheme);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.UnlockFPS"), BAUPlugin.UnlockFPS, __instance, UpdateFrameRate);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ShowFPS"), BAUPlugin.ShowFPS, __instance);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.AntiCheat"), BAUConfigs.AntiCheat, 1, __instance);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.SendBetterRpc"), BAUConfigs.SendBetterRpc, 1, __instance, SendBetterRpcAction);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.BetterNotifications"), BAUConfigs.BetterNotifications, 1, __instance, ClearNotifications);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ForceOwnLanguage"), BAUConfigs.ForceOwnLanguage, 1, __instance);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ChatDarkMode"), BAUConfigs.ChatDarkMode, 1, __instance, ChatPatch.SetChatTheme);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ChatInGame"), BAUConfigs.ChatInGameplay, 1, __instance);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.LobbyInfo"), BAUConfigs.LobbyPlayerInfo, 1, __instance);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.LobbyTheme"), BAUConfigs.DisableLobbyTheme, 1, __instance, ToggleLobbyTheme);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.UnlockFPS"), BAUConfigs.UnlockFPS, 1, __instance, UpdateFrameRate);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ShowFPS"), BAUConfigs.ShowFPS, 1, __instance);
 
-        // Button options (no toggle)
-        ClientOptionItem.CreateButton(Translator.GetString("BetterOption.SaveData"), __instance, OpenSaveData, () =>
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.VentColorGroups"), BAUConfigs.VentColorGroups, 2, __instance, toggleCheck: () =>
         {
-            // Only allow opening save data in lobby/main menu, not during gameplay
-            bool cannotOpen = GameState.IsInGame && !GameState.IsLobby;
-            if (cannotOpen)
+            bool cannotToggle = GameState.IsInGame;
+            if (cannotToggle)
             {
-                BetterNotificationManager.Notify($"Cannot open save data while in gameplay!", 2.5f);
+                BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
             }
-            return !cannotOpen;
+            return !cannotToggle;
+        });
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.MinimapIcons"), BAUConfigs.MinimapIcons, 2, __instance, toggleCheck: () =>
+        {
+            bool cannotToggle = GameState.IsInGame;
+            if (cannotToggle)
+            {
+                BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
+            }
+            return !cannotToggle;
         });
 
-        ClientOptionItem.CreateButton(Translator.GetString("BetterOption.ToVanilla"), __instance, SwitchToVanilla, () =>
+        // Button options (no toggle)
+        if (!ModInfo.Starlight)
+        {
+            ClientOptionItem.CreateButton(Translator.GetString("BetterOption.SaveData"), -1, __instance, OpenSaveData, () =>
+            {
+                // Only allow opening save data in lobby/main menu, not during gameplay
+                bool cannotOpen = GameState.IsInGame && !GameState.IsLobby;
+                if (cannotOpen)
+                {
+                    BetterNotificationManager.Notify($"Cannot open save data while in gameplay!", 2.5f);
+                }
+                return !cannotOpen;
+            });
+        }
+
+        ClientOptionItem.CreateButton(Translator.GetString("BetterOption.ToVanilla"), -1, __instance, SwitchToVanilla, () =>
         {
             // Prevent switching to vanilla while in a game
             bool cannotSwitch = GameState.IsInGame;
@@ -107,7 +130,7 @@ internal static class OptionsMenuBehaviourPatch
     private static void ToggleLobbyTheme()
     {
         // Play lobby theme music if re-enabled while in lobby
-        if (GameState.IsLobby && !BAUPlugin.DisableLobbyTheme.Value)
+        if (GameState.IsLobby && !BAUConfigs.DisableLobbyTheme.Value)
         {
             SoundManager.instance.CrossFadeSound("MapTheme", LobbyBehaviour.Instance.MapTheme, 0.5f, 1.5f);
         }
@@ -116,7 +139,7 @@ internal static class OptionsMenuBehaviourPatch
     internal static void UpdateFrameRate()
     {
         // Toggle between 60 FPS (default) and 165 FPS
-        Application.targetFrameRate = BAUPlugin.UnlockFPS.Value ? 999 : 60;
+        Application.targetFrameRate = BAUConfigs.UnlockFPS.Value ? 999 : 60;
     }
 
     private static void OpenSaveData()
@@ -158,11 +181,11 @@ internal static class OptionsMenuBehaviourPatch
         var index = __instance.Tabs.Length - 1;
         var button = tab.GetComponent<PassiveButton>();
         button.OnClick = new();
-        button.OnClick.AddListener((Action)(() =>
+        button.OnClick.AddListener(() =>
         {
             tab.Rollover.SetEnabledColors();
             __instance.OpenTabGroup(index);
-        }));
+        });
 
         return tab;
     }

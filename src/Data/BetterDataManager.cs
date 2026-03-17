@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Data.Json;
+﻿using BetterAmongUs.Data.Config;
+using BetterAmongUs.Data.Json;
 using BetterAmongUs.Helpers;
 
 namespace BetterAmongUs.Data;
@@ -56,7 +57,7 @@ internal static class BetterDataManager
     /// <summary>
     /// Current compressed settings file path.
     /// </summary>
-    internal static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{BAUPlugin.SettingsPreset?.Value ?? 0}.dat");
+    internal static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{BAUConfigs.SettingsPreset?.Value ?? 0}.dat");
 
     /// <summary>
     /// File containing banned player identifiers.
@@ -172,7 +173,7 @@ internal static class BetterDataManager
     {
         if (File.Exists(SettingsFile_Legacy))
         {
-            BAUPlugin.SettingsPreset.Value = 1;
+            BAUConfigs.SettingsPreset.Value = 1;
             File.Move(SettingsFile_Legacy, SettingsFile);
         }
     }

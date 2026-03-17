@@ -10,11 +10,13 @@ internal static class RolePatch
     [HarmonyPrefix]
     private static bool NoisemakerRole_NotifyOfDeath_Prefix(NoisemakerRole __instance)
     {
+        // Prevent duplicate noisemaker notifications
         if (__instance.Player.BetterData().RoleInfo.HasNoisemakerNotify)
         {
             return false;
         }
 
+        // Mark that notification has been sent
         __instance.Player.BetterData().RoleInfo.HasNoisemakerNotify = true;
 
         return true;

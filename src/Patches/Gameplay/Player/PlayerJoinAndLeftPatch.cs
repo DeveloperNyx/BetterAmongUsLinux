@@ -1,4 +1,5 @@
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Mono;
@@ -77,8 +78,8 @@ internal static class PlayerJoinAndLeftPatch
         // Reclaim favorite color when player leaves in lobby
         if (GameState.IsLobby)
         {
-            var favColorId = (byte)BAUPlugin.FavoriteColor.Value;
-            if (BAUPlugin.FavoriteColor.Value >= 0)
+            var favColorId = (byte)BAUConfigs.FavoriteColor.Value;
+            if (BAUConfigs.FavoriteColor.Value >= 0)
             {
                 if (PlayerControl.LocalPlayer.cosmetics.ColorId != favColorId && data.ColorId == favColorId)
                 {

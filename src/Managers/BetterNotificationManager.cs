@@ -1,4 +1,5 @@
 ﻿using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Mono;
@@ -29,7 +30,7 @@ internal static class BetterNotificationManager
     /// <param name="Time">The duration in seconds to show the notification.</param>
     internal static void Notify(string text, float Time = 5f)
     {
-        if (!BAUPlugin.BetterNotifications.Value) return;
+        if (!BAUConfigs.BetterNotifications.Value) return;
 
         if (BAUNotificationManagerObj != null)
         {

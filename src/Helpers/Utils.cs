@@ -203,7 +203,6 @@ internal static class Utils
         }
         catch
         {
-            // Intentionally empty - chat failures shouldn't crash the game
         }
     }
 

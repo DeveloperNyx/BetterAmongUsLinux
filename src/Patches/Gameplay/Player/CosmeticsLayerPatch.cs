@@ -10,13 +10,15 @@ internal static class CosmeticsLayerPatch
     [HarmonyPrefix]
     private static bool CosmeticsLayer_GetColorBlindText_Prefix(CosmeticsLayer __instance, ref string __result)
     {
-        // Skip processing if color ID is out of bounds (custom colors)
+        // Skip for custom colors not in vanilla palette
         if (__instance.bodyMatProperties.ColorId > Palette.PlayerColors.Length) return true;
 
+        // Get color name from palette
         string colorName = Palette.GetColorName(__instance.bodyMatProperties.ColorId);
 
         if (!string.IsNullOrEmpty(colorName))
         {
+            // Capitalize first letter, lowercase rest, and apply color formatting
             __result = (char.ToUpperInvariant(colorName[0]) + colorName[1..].ToLowerInvariant())
                 .ToColor(Palette.PlayerColors[__instance.bodyMatProperties.ColorId]);
         }

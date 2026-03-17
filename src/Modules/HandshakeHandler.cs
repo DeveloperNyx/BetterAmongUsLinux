@@ -1,5 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Mono;
@@ -29,7 +30,7 @@ internal sealed class HandshakeHandler
 
     private IEnumerator CoWaitSendSecretToPlayer()
     {
-        if (!BAUPlugin.SendBetterRpc.Value) yield break;
+        if (!BAUConfigs.SendBetterRpc.Value) yield break;
 
         while (extendedData._Data?.Object == null || PlayerControl.LocalPlayer == null)
         {
@@ -43,7 +44,7 @@ internal sealed class HandshakeHandler
 
     internal void ResendSecretToPlayer()
     {
-        if (!BAUPlugin.SendBetterRpc.Value) return;
+        if (!BAUConfigs.SendBetterRpc.Value) return;
         if (HasSendSharedSecret && extendedData.IsVerifiedBetterUser) return;
 
         HasSendSharedSecret = false;
@@ -88,7 +89,7 @@ internal sealed class HandshakeHandler
 
     private void SendSecretHashToSender(int tempKey, int senderClientId)
     {
-        if (!BAUPlugin.SendBetterRpc.Value) return;
+        if (!BAUConfigs.SendBetterRpc.Value) return;
 
         int hash = SharedSecret.GetSharedSecretHash();
 

@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Helpers;
+﻿using BetterAmongUs.Data.Config;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Modules.Support;
 using HarmonyLib;
@@ -21,7 +22,7 @@ internal static class PrivateLobbyPatch
         // Check if other mods have disabled private lobby feature
         if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_PrivateLobby))
         {
-            BAUPlugin.PrivateOnlyLobby.Value = false;
+            BAUConfigs.PrivateOnlyLobby.Value = false;
             return;
         }
 
@@ -48,7 +49,7 @@ internal static class PrivateLobbyPatch
             {
                 onButton.gameObject.SetActive(false);
                 onButton.OnClick = new();
-                onButton.OnClick.AddListener((Action)(() => TogglePrivateOnlyLobby(true)));
+                onButton.OnClick.AddListener(() => TogglePrivateOnlyLobby(true));
             }
 
             // Set up OFF button click handler
@@ -57,7 +58,7 @@ internal static class PrivateLobbyPatch
             {
                 offButton.gameObject.SetActive(false);
                 offButton.OnClick = new();
-                offButton.OnClick.AddListener((Action)(() => TogglePrivateOnlyLobby(false)));
+                offButton.OnClick.AddListener(() => TogglePrivateOnlyLobby(false));
             }
 
             // Position toggle at top-right of create game screen
@@ -77,7 +78,7 @@ internal static class PrivateLobbyPatch
         }
 
         // Initialize toggle state from saved configuration
-        TogglePrivateOnlyLobby(BAUPlugin.PrivateOnlyLobby.Value);
+        TogglePrivateOnlyLobby(BAUConfigs.PrivateOnlyLobby.Value);
     }
 
     private static void TogglePrivateOnlyLobby(bool modeOn)
@@ -103,7 +104,7 @@ internal static class PrivateLobbyPatch
         }
 
         // Save setting to configuration
-        BAUPlugin.PrivateOnlyLobby.Value = modeOn;
+        BAUConfigs.PrivateOnlyLobby.Value = modeOn;
     }
 
     [HarmonyPatch(typeof(LobbyInfoPane), nameof(LobbyInfoPane.Update))]
@@ -111,7 +112,7 @@ internal static class PrivateLobbyPatch
     private static void LobbyInfoPane_Update_Postfix(LobbyInfoPane __instance)
     {
         // Enforce private lobby setting if enabled by host
-        if (BAUPlugin.PrivateOnlyLobby.Value && !GameState.IsLocalGame && GameState.IsHost)
+        if (BAUConfigs.PrivateOnlyLobby.Value && !GameState.IsLocalGame && GameState.IsHost)
         {
             // Ensure game stays private
             if (AmongUsClient.Instance.IsGamePublic)

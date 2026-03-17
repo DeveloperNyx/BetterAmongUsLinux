@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Modules.Support;
+﻿using BetterAmongUs.Helpers;
+using BetterAmongUs.Modules.Support;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
@@ -74,7 +75,7 @@ internal static class ServerDropdownPatch
                 new Il2CppReferenceArray<Il2CppSystem.Object>(0));
             serverListButton.Text.ForceMeshUpdate(false, false);
             serverListButton.Button.OnClick.RemoveAllListeners();
-            serverListButton.Button.OnClick.AddListener((Action)(() => __instance.ChooseOption(region)));
+            serverListButton.Button.OnClick.AddListener(() => __instance.ChooseOption(region));
             __instance.controllerSelectable.Add(serverListButton.Button);
 
             // Move to next column if current column is full

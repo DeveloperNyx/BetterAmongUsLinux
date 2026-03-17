@@ -1,4 +1,5 @@
-﻿using BetterAmongUs.Helpers;
+﻿using BetterAmongUs.Data.Config;
+using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using System.Text;
 using TMPro;
@@ -71,7 +72,7 @@ internal sealed class BetterPingTracker : MonoBehaviour
         sb.Append($"<color=#00dbdb><size=75%>BetterAmongUs {BAUPlugin.GetVersionText(true)}</size></color>\n");
         sb.Append($"<color=#8A8A8A>{ModInfo.GITHUB}</color>\n".Size(52f));
 
-        if (BAUPlugin.ShowFPS.Value)
+        if (BAUConfigs.ShowFPS.Value)
         {
             float FPSNum = 1.0f / Time.deltaTime;
             sb.AppendFormat("<color=#0dff00><size=75%>FPS: <b>{0}</b></size></color>\n", (int)FPSNum);

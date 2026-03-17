@@ -1,5 +1,6 @@
 ﻿using BetterAmongUs.Attributes;
 using BetterAmongUs.Commands.Arguments;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Modules.Support;
 
 namespace BetterAmongUs.Commands;
@@ -21,11 +22,11 @@ internal sealed class SetPrefixCommand : BaseCommand
 
     internal override void Run()
     {
-        var oldPrefix = BAUPlugin.CommandPrefix.Value;
+        var oldPrefix = BAUConfigs.CommandPrefix.Value;
         var prefix = prefixArgument.Arg.ToCharArray()?.First().ToString();
         if (!string.IsNullOrEmpty(prefix))
         {
-            BAUPlugin.CommandPrefix.Value = prefix;
+            BAUConfigs.CommandPrefix.Value = prefix;
             CommandResultText($"Command prefix set from <#c1c100>{oldPrefix}</color> to <#c1c100>{prefix}</color>");
         }
         else

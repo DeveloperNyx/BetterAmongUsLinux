@@ -1,4 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
@@ -27,7 +28,7 @@ internal static class ClientPatch
     private static bool SignInStatusComponent_SetOnline_Prefix(SignInStatusComponent __instance)
     {
         // Get supported Among Us versions for BAU
-        var varSupportedVersions = BAUPlugin.SupportedAmongUsVersions;
+        var varSupportedVersions = ModInfo.SupportedAmongUsVersions;
         Version currentVersion = new(BAUPlugin.AppVersion);
         Version firstSupportedVersion = new(varSupportedVersions.First());
         Version lastSupportedVersion = new(varSupportedVersions.Last());
@@ -101,7 +102,7 @@ internal static class ClientPatch
     private static void AmongUsClient_CoStartGame_Postfix(AmongUsClient __instance)
     {
         // Clear in-game chat if chat feature is enabled
-        if (BAUPlugin.ChatInGameplay.Value)
+        if (BAUConfigs.ChatInGameplay.Value)
         {
             ChatPatch.ClearChat();
         }

@@ -1,5 +1,6 @@
 ﻿using BetterAmongUs.Attributes;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
@@ -82,7 +83,7 @@ internal static class BetterAntiCheat
     internal static void CheckRPC(PlayerControl player, byte callId, MessageReader oldReader)
     {
         if (player == null || player?.Data == null) return;
-        if (!IsEnabled || !BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return;
+        if (!IsEnabled || !BAUConfigs.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return;
         if (player.IsLocalPlayer() && player.IsHost()) return;
 
         MessageReader reader = MessageReader.Get(oldReader);
@@ -102,7 +103,7 @@ internal static class BetterAntiCheat
         try
         {
             if (player == null || player?.Data == null) return true;
-            if (!IsEnabled || !BAUPlugin.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return true;
+            if (!IsEnabled || !BAUConfigs.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return true;
             if (player.IsLocalPlayer() && player.IsHost()) return true;
 
             MessageReader reader = MessageReader.Get(oldReader);

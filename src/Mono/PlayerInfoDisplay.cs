@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using AmongUs.GameOptions;
 using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
@@ -163,7 +164,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
             return;
         }
 
-        if (!BAUPlugin.LobbyPlayerInfo.Value && GameState.IsLobby)
+        if (!BAUConfigs.LobbyPlayerInfo.Value && GameState.IsLobby)
         {
             ResetText();
             _player.RawSetName(_player.Data.PlayerName);
@@ -379,6 +380,9 @@ internal class PlayerInfoDisplay : MonoBehaviour
     [HideFromIl2Cpp]
     private void SetLobbyInfo(ref string newName, ExtendedPlayerInfo betterData, StringBuilder sbTag)
     {
+        if (_player.IsHost() && BAUConfigs.LobbyPlayerInfo.Value)
+            newName = _player.GetPlayerNameAndColor();
+
         if ((_player.IsLocalPlayer() || betterData.IsBetterUser) && !GameState.IsInGamePlay)
         {
             string verificationSymbol = betterData.IsVerifiedBetterUser || _player.IsLocalPlayer() ? "✓ " : "";
