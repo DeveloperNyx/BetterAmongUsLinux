@@ -154,11 +154,11 @@ internal sealed class HandshakeHandler
         if (!_pendingVerificationData.HasValue) return;
         if (SharedSecret.GetSharedSecret().Length == 0) return;
 
-        var data = _pendingVerificationData.Value;
+        var (tempKey, receivedHash) = _pendingVerificationData.Value;
 
         // Logger.Log($"Received hash check: TempKey={data.tempKey} (ours={SharedSecret.GetTempKey()}), Hash={data.receivedHash} (ours={SharedSecret.GetSharedSecretHash()})");
 
-        if (data.tempKey != SharedSecret.GetTempKey())
+        if (tempKey != SharedSecret.GetTempKey())
         {
             // Logger.Warning($"Invalid tempKey from {extendedData._Data?.PlayerName}");
             return;
@@ -166,7 +166,7 @@ internal sealed class HandshakeHandler
 
         _extendedData.IsBetterUser = true;
 
-        if (data.receivedHash == SharedSecret.GetSharedSecretHash())
+        if (receivedHash == SharedSecret.GetSharedSecretHash())
         {
             _extendedData.IsVerifiedBetterUser = true;
             // Logger.Log($"Verified player: {extendedData._Data?.PlayerName}");

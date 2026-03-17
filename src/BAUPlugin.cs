@@ -1,4 +1,6 @@
-﻿using BepInEx;
+﻿#pragma warning disable CS0162
+
+using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BetterAmongUs.Attributes;
@@ -93,12 +95,12 @@ internal class BAUPlugin : BasePlugin
     /// <summary>
     /// Gets the list of all alive PlayerControl instances.
     /// </summary>
-    internal static List<PlayerControl> AllAlivePlayerControls => AllPlayerControls.Where(pc => pc.IsAlive()).ToList();
+    internal static List<PlayerControl> AllAlivePlayerControls => [.. AllPlayerControls.Where(pc => pc.IsAlive())];
 
     /// <summary>
     /// Gets all DeadBody objects in the scene.
     /// </summary>
-    internal static DeadBody[] AllDeadBodys => UnityEngine.Object.FindObjectsOfType<DeadBody>().ToArray();
+    internal static DeadBody[] AllDeadBodys => [.. UnityEngine.Object.FindObjectsOfType<DeadBody>()];
 
     /// <summary>
     /// Gets all Vent objects in the scene.
