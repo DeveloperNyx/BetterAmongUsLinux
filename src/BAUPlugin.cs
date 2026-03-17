@@ -127,7 +127,7 @@ internal class BAUPlugin : BasePlugin
                 }
             }
 
-            if (!ModInfo.Starlight && !ModInfo.Linux)
+            if (!ModInfo.Starlight)
             {
                 SetupConsole();
             }

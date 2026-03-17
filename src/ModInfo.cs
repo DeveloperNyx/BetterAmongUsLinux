@@ -77,11 +77,6 @@ internal static class ModInfo
     internal static readonly bool Starlight = OperatingSystem.IsAndroid();
 
     /// <summary>
-    /// Indicator rather that BAU is running on Linux.
-    /// </summary>
-    internal static readonly bool Linux = OperatingSystem.IsLinux();
-
-    /// <summary>
     /// Retrieves metadata from the assembly attributes.
     /// </summary>
     /// <param name="key">The metadata key to retrieve.</param>
