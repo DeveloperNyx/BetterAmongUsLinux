@@ -143,8 +143,10 @@ internal static class ChatPatch
         string friendCode = playerInfo.FriendCode;
         string playerName = playerInfo.BetterData()?.RealName ?? "???";
 
+        // Format role display with team color
         string Role = $"<size=75%><color={sourcePlayer.GetTeamHexColor()}>{sourcePlayer.GetRoleName()}</color></size>+++";
 
+        // In lobby, show player tags instead of roles
         if (GameState.IsLobby && !GameState.IsFreePlay)
         {
             Role = "";
@@ -152,11 +154,13 @@ internal static class ChatPatch
             var betterData = sourcePlayer.BetterData();
             if (betterData == null) return;
 
+            // Show BAU user tag
             if (sourcePlayer.IsLocalPlayer() || betterData.IsBetterUser)
             {
                 sbTag.AppendFormat("<color=#0dff00>{1}{0}</color>+++", Translator.GetString("Player.BetterUser"), betterData.IsVerifiedBetterUser || sourcePlayer.IsLocalPlayer() ? "✓ " : "");
             }
 
+            // Show mod-specific tags based on player data
             if (BetterDataManager.BetterDataFile.SickoData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
                 sbTag.Append($"<color=#00f583>{Translator.GetString("Player.SickoUser")}</color>+++");
             else if (BetterDataManager.BetterDataFile.AUMData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
@@ -167,17 +171,20 @@ internal static class ChatPatch
                 sbTag.Append($"<color=#fc0000>{Translator.GetString("Player.KnownCheater")}</color>+++");
         }
 
+        // Hide roles from alive players (unless same team)
         if (!sourcePlayer.IsImpostorTeammate())
         {
             if (localPlayer.IsAlive() && !sourcePlayer.IsLocalPlayer())
                 Role = "";
         }
 
+        // Show role for dead players or if local player is Guardian Angel
         if ((localPlayer.Is(RoleTypes.GuardianAngel) && !sourcePlayer.IsAlive()) || !localPlayer.Is(RoleTypes.GuardianAngel))
         {
             sbTag.Append(Role);
         }
 
+        // Format tags with separators
         sbInfo.Append("<size=75%>");
         var parts = sbTag.ToString().Split("+++");
 
@@ -193,6 +200,7 @@ internal static class ChatPatch
 
         sbInfo.Append("</size>");
 
+        // Position tags before local player name, after other players' names
         if (sourcePlayer.IsLocalPlayer())
             playerName = sbInfo + " " + playerName;
         else
