@@ -129,7 +129,7 @@ internal static class PrivateLobbyPatch
                 var sprite = __instance.HostPrivateButton.transform.Find("Inactive")?.GetComponent<SpriteRenderer>();
                 if (sprite != null)
                 {
-                    sprite.color = new Color(0.35f, 1f, 1f, 1f);
+                    sprite.color = new Color(0.35f, 1f, 1f, 1f); // Corrected colour assignment
                 }
             }
         }
