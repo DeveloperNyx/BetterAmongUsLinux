@@ -125,7 +125,11 @@ internal class BAUPlugin : BasePlugin
                 }
             }
 
-            SetupConsole();
+            if (!ModInfo.Starlight && !ModInfo.Linux)
+            {
+                SetupConsole();
+            }
+
             RegisterAllMonoBehavioursInAssembly();
             IL2CPPChainloader.Instance.Finished += OnChainloaderFinished;
         }
