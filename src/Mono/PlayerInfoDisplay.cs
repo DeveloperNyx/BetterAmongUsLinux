@@ -379,30 +379,13 @@ internal class PlayerInfoDisplay : MonoBehaviour
     [HideFromIl2Cpp]
     private void SetLobbyInfo(ref string newName, ExtendedPlayerInfo betterData, StringBuilder sbTag)
     {
-        if (betterData == null) return;
-
-        if (_player.IsHost() && BAUPlugin.LobbyPlayerInfo.Value)
-            newName = _player.GetPlayerNameAndColor();
-
         if ((_player.IsLocalPlayer() || betterData.IsBetterUser) && !GameState.IsInGamePlay)
         {
-            string verificationSymbol;
-
-            if (betterData.HandshakeHandler.SharedSecret.UseFallback)
-            {
-                // Fallback path (Linux or crypto unavailable)
-                verificationSymbol = betterData.IsVerifiedBetterUser ? "(Linux) ✓ " : "(Linux) ";
-            }
-            else
-            {
-                // Normal ECDH path
-                verificationSymbol = betterData.IsVerifiedBetterUser || _player.IsLocalPlayer() ? "✓ " : "";
-            }
+            string verificationSymbol = betterData.IsVerifiedBetterUser || _player.IsLocalPlayer() ? "✓ " : "";
 
             sbTag.AppendFormat("<color=#0dff00>{1}{0}</color>+++",
                 _cachedTranslations.BetterUser, verificationSymbol);
         }
-
         sbTag.Append($"<color=#b554ff>ID: {_player.PlayerId}</color>+++");
     }
 
