@@ -226,7 +226,10 @@ internal static class ChatCommandsPatch
     {
         for (int i = 1; i < typedParts.Length && i <= closestCommand.Arguments.Length; i++)
         {
-            closestCommand.Arguments[i - 1]?.Arg = typedParts[i];
+            if (closestCommand.Arguments[i - 1] != null)
+            {
+                closestCommand.Arguments[i - 1].Arg = typedParts[i]; // Safe assignment
+            }
         }
     }
 

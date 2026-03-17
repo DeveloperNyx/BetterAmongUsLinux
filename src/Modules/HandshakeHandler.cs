@@ -1,4 +1,4 @@
-﻿using BepInEx.Unity.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP.Utils;
 using BetterAmongUs.Data;
 using BetterAmongUs.Data.Config;
 using BetterAmongUs.Enums;
@@ -46,8 +46,8 @@ internal sealed class HandshakeHandler
             if (GameState.IsFreePlay) yield break;
             yield return null;
         }
-        yield return new WaitForSeconds(1f);
 
+        yield return new WaitForSeconds(1f);
         SendSecretToPlayer();
     }
 
@@ -73,8 +73,10 @@ internal sealed class HandshakeHandler
         if (HasSendSharedSecret) return;
 
         HasSendSharedSecret = true;
+
         RPC.SendCustomRpcPacked(CustomRPC.SendSecretToPlayer, writer =>
         {
+            writer.Write(SharedSecret.CryptoAvailable);
             writer.WriteBytes(SharedSecret.GetPublicKey());
             writer.Write(SharedSecret.GetTempKey());
         }, extendedData._Data.ClientId);
@@ -89,10 +91,14 @@ internal sealed class HandshakeHandler
     {
         if (extendedData._Data?.Object?.IsLocalPlayer() == true) return;
 
+        bool senderSupportsCrypto = reader.ReadBoolean();
         byte[] sendersPublicKey = reader.ReadBytes();
         int tempKey = reader.ReadInt32();
 
         // Logger.Log($"Received public key ({sendersPublicKey.Length} bytes) from {_Data.PlayerName}");
+
+        SharedSecret.UseFallback = !senderSupportsCrypto;
+        SharedSecret.SetRemoteTempKey(tempKey);
 
         byte[] secret = SharedSecret.GenerateSharedSecret(sendersPublicKey);
         if (secret.Length == 0)
@@ -100,7 +106,9 @@ internal sealed class HandshakeHandler
             // Logger.Error("Failed to generate shared secret!");
             return;
         }
+
         extendedData.IsBetterUser = true;
+
         TryHandlePendingVerificationData();
         SendSecretHashToSender(tempKey, extendedData._Data.ClientId);
         ResendSecretToPlayer();
@@ -134,6 +142,7 @@ internal sealed class HandshakeHandler
     {
         int tempKey = reader.ReadInt32();
         int receivedHash = reader.ReadInt32();
+
         _pendingVerificationData = (tempKey, receivedHash);
         TryHandlePendingVerificationData();
     }
@@ -143,30 +152,29 @@ internal sealed class HandshakeHandler
     /// </summary>
     internal void TryHandlePendingVerificationData()
     {
-        if (_pendingVerificationData?.tempKey == null || _pendingVerificationData?.receivedHash == null) return;
+        if (!_pendingVerificationData.HasValue) return;
         if (SharedSecret.GetSharedSecret().Length == 0) return;
 
-        var tempKey = _pendingVerificationData?.tempKey;
-        var receivedHash = _pendingVerificationData?.receivedHash;
+        var data = _pendingVerificationData.Value;
 
-        // Logger.Log($"Received hash check: TempKey={tempKey} (ours={SharedSecret.GetTempKey()}), Hash={receivedHash} (ours={SharedSecret.GetSharedSecretHash()})");
+        // Logger.Log($"Received hash check: TempKey={data.tempKey} (ours={SharedSecret.GetTempKey()}), Hash={data.receivedHash} (ours={SharedSecret.GetSharedSecretHash()})");
 
-        if (tempKey != SharedSecret.GetTempKey())
+        if (data.tempKey != SharedSecret.GetTempKey())
         {
-            // Logger.Warning($"Invalid tempKey from {_Data.PlayerName}");
+            // Logger.Warning($"Invalid tempKey from {extendedData._Data?.PlayerName}");
             return;
         }
 
         extendedData.IsBetterUser = true;
 
-        if (receivedHash == SharedSecret.GetSharedSecretHash())
+        if (data.receivedHash == SharedSecret.GetSharedSecretHash())
         {
             extendedData.IsVerifiedBetterUser = true;
-            // Logger.Log($"Verified player: {_Data.PlayerName}");
+            // Logger.Log($"Verified player: {extendedData._Data?.PlayerName}");
         }
         else
         {
-            // Logger.Warning($"Hash mismatch from {_Data.PlayerName}");
+            // Logger.Warning($"Hash mismatch from {extendedData._Data?.PlayerName}");
         }
 
         _pendingVerificationData = null;

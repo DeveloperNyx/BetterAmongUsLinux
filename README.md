@@ -1,5 +1,3 @@
-Here's the updated guide with clear instructions for downloading the correct zip file and extracting it, as well as replacing the DLL if you've previously installed the mod:
-
 # ♻ BetterAmongUs ♻
 
 A client-sided mod that enhances the experience for the popular game Among Us!
@@ -16,6 +14,7 @@ A client-sided mod that enhances the experience for the popular game Among Us!
 </div>
 
 ## Installation
+Here's the updated guide with clear instructions for downloading the correct zip file and extracting it, as well as replacing the DLL if you've previously installed the mod, as this has been requested to be updated multiple times...
 
 ### For First-Time Installation:
 
