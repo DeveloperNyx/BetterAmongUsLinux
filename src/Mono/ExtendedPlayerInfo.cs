@@ -17,7 +17,7 @@ internal sealed class ExtendedPlayerInfo : MonoBehaviour, IMonoExtension<Network
     {
         try
         {
-            HandshakeHandler = new(this);
+            HandshakeHandler = new HandshakeHandler(this);
         }
         catch (Exception ex)
         {
@@ -76,14 +76,17 @@ internal sealed class ExtendedPlayerInfo : MonoBehaviour, IMonoExtension<Network
 
             if (AntiCheatInfo.RPCSentPS >= ExtendedAntiCheatInfo.MAX_RPC_SENT && !flag)
             {
-                BetterNotificationManager.NotifyCheat(_Data.Object,
+                BetterNotificationManager.NotifyCheat(
+                    _Data.Object,
                     Translator.GetString("AntiCheat.Reason.RPCSentPS"),
                     Translator.GetString("AntiCheat.UnauthorizedAction")
                 );
+
                 Logger_.LogCheat($"{_Data.Object.BetterData().RealName} {AntiCheatInfo.RPCSentPS} Sent.");
             }
 
             timeAccumulator += time;
+
             if (timeAccumulator >= 0.25f - 0.005 * AntiCheatInfo.RPCSentPS)
             {
                 AntiCheatInfo.RPCSentPS -= 1;

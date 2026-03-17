@@ -374,11 +374,8 @@ internal class PlayerInfoDisplay : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets lobby-specific information.
+    /// Sets in-game specific information.
     /// </summary>
-    /// <param name="newName">Reference to the player's name.</param>
-    /// <param name="betterData">Extended player data.</param>
-    /// <param name="sbTag">StringBuilder for tag text.</param>
     [HideFromIl2Cpp]
     private void SetLobbyInfo(ref string newName, ExtendedPlayerInfo betterData, StringBuilder sbTag)
     {
@@ -389,10 +386,23 @@ internal class PlayerInfoDisplay : MonoBehaviour
 
         if ((_player.IsLocalPlayer() || betterData.IsBetterUser) && !GameState.IsInGamePlay)
         {
-            string verificationSymbol = betterData.IsVerifiedBetterUser || _player.IsLocalPlayer() ? "✓ " : "";
+            string verificationSymbol;
+
+            if (betterData.HandshakeHandler.SharedSecret.UseFallback)
+            {
+                // Fallback path (Linux or crypto unavailable)
+                verificationSymbol = betterData.IsVerifiedBetterUser ? "(Linux) ✓ " : "(Linux) ";
+            }
+            else
+            {
+                // Normal ECDH path
+                verificationSymbol = betterData.IsVerifiedBetterUser || _player.IsLocalPlayer() ? "✓ " : "";
+            }
+
             sbTag.AppendFormat("<color=#0dff00>{1}{0}</color>+++",
                 _cachedTranslations.BetterUser, verificationSymbol);
         }
+
         sbTag.Append($"<color=#b554ff>ID: {_player.PlayerId}</color>+++");
     }
 

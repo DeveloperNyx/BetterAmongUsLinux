@@ -21,8 +21,6 @@ internal static class ChatPatch
     internal static void ClearChat()
     {
         if (!HudManager.InstanceExists) return;
-
-        // Clear all chat bubbles
         HudManager.Instance.Chat.chatBubblePool.ReclaimAll();
     }
 
@@ -30,7 +28,6 @@ internal static class ChatPatch
     {
         if (!HudManager.InstanceExists) return;
 
-        // Clear only player chat bubbles (keep command bubbles)
         foreach (var obj in HudManager.Instance.Chat.chatBubblePool.activeChildren.ToArray())
         {
             var chatBubble = obj.GetComponent<ChatBubble>();
@@ -40,6 +37,7 @@ internal static class ChatPatch
                 HudManager.Instance.Chat.chatBubblePool.Reclaim(chatBubble);
             }
         }
+
         HudManager.Instance.Chat.AlignAllBubbles();
     }
 
@@ -47,7 +45,6 @@ internal static class ChatPatch
     {
         if (!HudManager.InstanceExists) return;
 
-        // Clear only command chat bubbles (keep player chat)
         foreach (var obj in HudManager.Instance.Chat.chatBubblePool.activeChildren.ToArray())
         {
             var chatBubble = obj.GetComponent<ChatBubble>();
@@ -57,14 +54,14 @@ internal static class ChatPatch
                 HudManager.Instance.Chat.chatBubblePool.Reclaim(chatBubble);
             }
         }
+
         HudManager.Instance.Chat.AlignAllBubbles();
     }
 
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Toggle))]
     [HarmonyPostfix]
-    private static void ChatController_Toggle_Postfix(/*ChatController __instance*/)
+    private static void ChatController_Toggle_Postfix()
     {
-        // Apply chat theme when chat is opened/closed
         SetChatTheme();
     }
 
@@ -73,52 +70,45 @@ internal static class ChatPatch
     [HarmonyPriority(Priority.First)]
     private static void ChatController_Update_Prefix(ChatController __instance)
     {
-        // Apply dark/light theme to chat input field
         if (BAUPlugin.ChatDarkMode.Value)
         {
-            // Free chat color
             __instance.freeChatField.background.color = new Color32(40, 40, 40, byte.MaxValue);
             __instance.freeChatField.textArea.compoText.Color(Color.white);
             __instance.freeChatField.textArea.outputText.color = Color.white;
         }
         else
         {
-            // Free chat color
             __instance.freeChatField.background.color = new Color32(255, 255, 255, byte.MaxValue);
             __instance.freeChatField.textArea.compoText.Color(Color.black);
             __instance.freeChatField.textArea.outputText.color = Color.black;
         }
 
-        // Ctrl+X to cut text to clipboard
         if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.X))
         {
             ClipboardHelper.PutClipboardString(__instance.freeChatField.textArea.text);
             __instance.freeChatField.textArea.SetText("");
         }
 
-        // Up arrow for chat history navigation
         if (Input.GetKeyDown(KeyCode.UpArrow) && ChatHistory.Any())
         {
             CurrentHistorySelection = Mathf.Clamp(--CurrentHistorySelection, 0, ChatHistory.Count - 1);
             __instance.freeChatField.textArea.SetText(ChatHistory[CurrentHistorySelection]);
         }
 
-        // Down arrow for chat history navigation
         if (Input.GetKeyDown(KeyCode.DownArrow) && ChatHistory.Any())
         {
             CurrentHistorySelection++;
             if (CurrentHistorySelection < ChatHistory.Count)
                 __instance.freeChatField.textArea.SetText(ChatHistory[CurrentHistorySelection]);
-            else __instance.freeChatField.textArea.SetText("");
+            else
+                __instance.freeChatField.textArea.SetText("");
         }
     }
 
-    // Log chat messages to console
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]
     [HarmonyPostfix]
     private static void ChatController_AddChat_Postfix(ChatController __instance, PlayerControl sourcePlayer, string chatText)
     {
-        // Log chat publicly if player is alive, privately if dead
         if (sourcePlayer.IsAlive() || !PlayerControl.LocalPlayer.IsAlive())
         {
             Logger_.Log($"{sourcePlayer.Data.PlayerName} -> {chatText}", "ChatLog");
@@ -134,13 +124,11 @@ internal static class ChatPatch
     private static void ChatController_SetChatBubbleName_Postfix(ChatController __instance, ChatBubble bubble, NetworkedPlayerInfo playerInfo, bool isDead, bool didVote)
     {
         if (didVote) return;
-        if (bubble == null) return;
-        if (bubble.NameText == null) return;
-        if (playerInfo == null) return;
+        if (bubble == null || bubble.NameText == null || playerInfo == null) return;
 
         var sourcePlayer = playerInfo.Object;
-        if (sourcePlayer == null) return;
-        if (PlayerControl.LocalPlayer == null) return;
+        var localPlayer = PlayerControl.LocalPlayer;
+        if (sourcePlayer == null || localPlayer == null) return;
 
         StringBuilder sbTag = new();
         StringBuilder sbInfo = new();
@@ -159,7 +147,13 @@ internal static class ChatPatch
             if (betterData == null) return;
 
             if (sourcePlayer.IsLocalPlayer() || betterData.IsBetterUser)
-                sbTag.AppendFormat("<color=#0dff00>{1}{0}</color>+++", Translator.GetString("Player.BetterUser"), betterData.IsVerifiedBetterUser || sourcePlayer.IsLocalPlayer() ? "✓ " : "");
+            {
+                sbTag.AppendFormat(
+                    "<color=#0dff00>{1}{0}</color>+++",
+                    Translator.GetString("Player.BetterUser"),
+                    betterData.IsVerifiedBetterUser || sourcePlayer.IsLocalPlayer() ? "✓ " : ""
+                );
+            }
 
             if (BetterDataManager.BetterDataFile.SickoData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
                 sbTag.Append($"<color=#00f583>{Translator.GetString("Player.SickoUser")}</color>+++");
@@ -173,41 +167,34 @@ internal static class ChatPatch
 
         if (!sourcePlayer.IsImpostorTeammate())
         {
-            if (PlayerControl.LocalPlayer.IsAlive() && !sourcePlayer.IsLocalPlayer())
-            {
+            if (localPlayer.IsAlive() && !sourcePlayer.IsLocalPlayer())
                 Role = "";
-            }
         }
 
-        if (PlayerControl.LocalPlayer.Is(RoleTypes.GuardianAngel) && !sourcePlayer.IsAlive() || !PlayerControl.LocalPlayer.Is(RoleTypes.GuardianAngel))
+        if ((localPlayer.Is(RoleTypes.GuardianAngel) && !sourcePlayer.IsAlive()) || !localPlayer.Is(RoleTypes.GuardianAngel))
         {
             sbTag.Append(Role);
         }
 
         sbInfo.Append("<size=75%>");
         var parts = sbTag.ToString().Split("+++");
+
         for (int i = 0; i < parts.Length; i++)
         {
-            if (!string.IsNullOrEmpty(parts[i]))
-            {
-                sbInfo.Append(parts[i]);
-                if (i != parts.Length - 2)
-                {
-                    sbInfo.Append(" - ");
-                }
-            }
+            if (string.IsNullOrEmpty(parts[i])) continue;
+
+            sbInfo.Append(parts[i]);
+
+            if (i != parts.Length - 2)
+                sbInfo.Append(" - ");
         }
+
         sbInfo.Append("</size>");
 
-        bool flag = sourcePlayer.IsLocalPlayer();
-        if (flag)
-        {
-            playerName = $"{sbInfo} " + playerName;
-        }
+        if (sourcePlayer.IsLocalPlayer())
+            playerName = sbInfo + " " + playerName;
         else
-        {
-            playerName += $" {sbInfo}";
-        }
+            playerName += " " + sbInfo;
 
         bubble.NameText.SetText(playerName);
     }
@@ -225,63 +212,51 @@ internal static class ChatPatch
 
         if (BAUPlugin.ChatDarkMode.Value)
         {
-            // Quick chat color
             chat.quickChatField.background.color = new Color32(40, 40, 40, byte.MaxValue);
             chat.quickChatField.text.color = Color.white;
 
-            // Icons
             chat.quickChatButton.transform.Find("QuickChatIcon").GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 1f);
             chat.openKeyboardButton.transform.Find("OpenKeyboardIcon").GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 1f);
         }
         else
         {
-            // Quick chat color
             chat.quickChatField.background.color = new Color32(255, 255, 255, byte.MaxValue);
             chat.quickChatField.text.color = Color.black;
 
-            // Icons
             chat.quickChatButton.transform.Find("QuickChatIcon").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
             chat.openKeyboardButton.transform.Find("OpenKeyboardIcon").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         }
 
-        // Apply theme to all existing chat bubbles
         foreach (var item in HudManager.Instance.Chat.chatBubblePool.activeChildren.SelectIl2Cpp(c => c.GetComponent<ChatBubble>()))
         {
             SetChatPoolTheme(item);
         }
     }
 
-    // Apply theme to individual chat bubble
     internal static ChatBubble SetChatPoolTheme(ChatBubble asChatBubble)
     {
-        ChatBubble chatBubble = asChatBubble;
+        var chatBubble = asChatBubble;
 
         if (BAUPlugin.ChatDarkMode.Value)
         {
-            chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = new Color(1f, 1f, 1f, 1f);
+            chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = Color.white;
             chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(0.15f, 0.15f, 0.15f, 1f);
 
-            // Make dead player chat bubbles more transparent
-            if (chatBubble.transform.Find("PoolablePlayer/xMark") != null)
+            var mark = chatBubble.transform.Find("PoolablePlayer/xMark");
+            if (mark != null && mark.GetComponentInChildren<SpriteRenderer>(true).enabled)
             {
-                if (chatBubble.transform.Find("PoolablePlayer/xMark").GetComponentInChildren<SpriteRenderer>(true).enabled == true)
-                {
-                    chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(0.15f, 0.15f, 0.15f, 0.5f);
-                }
+                chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(0.15f, 0.15f, 0.15f, 0.5f);
             }
         }
         else
         {
-            chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = new Color(0f, 0f, 0f, 1f);
-            chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(1f, 1f, 1f, 1f);
+            chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = Color.black;
+            chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = Color.white;
 
-            // Make dead player chat bubbles more transparent
-            if (chatBubble.transform.Find("PoolablePlayer/xMark") != null)
+            var mark = chatBubble.transform.Find("PoolablePlayer/xMark");
+            if (mark != null && mark.GetComponentInChildren<SpriteRenderer>(true).enabled)
             {
-                if (chatBubble.transform.Find("PoolablePlayer/xMark").GetComponentInChildren<SpriteRenderer>(true).enabled == true)
-                {
-                    chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(1f, 1f, 1f, 0.5f);
-                }
+                chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(1f, 1f, 1f, 0.5f);
             }
         }
 
@@ -292,7 +267,6 @@ internal static class ChatPatch
     [HarmonyPostfix]
     private static void FreeChatInputField_Awake_Postfix(FreeChatInputField __instance)
     {
-        // Enable extended character support for chat
         __instance.textArea.allowAllCharacters = true;
         __instance.textArea.AllowSymbols = true;
         __instance.textArea.AllowPaste = true;
@@ -305,7 +279,6 @@ internal static class ChatPatch
     [HarmonyPostfix]
     private static void FreeChatInputField_UpdateCharCount_Postfix(FreeChatInputField __instance)
     {
-        // Update character counter with color coding
         int length = __instance.textArea.text.Length;
         __instance.charCountText.text = string.Format("{0}/118", length);
         __instance.charCountText.color = GetCharColor(length);
@@ -313,14 +286,7 @@ internal static class ChatPatch
 
     private static Color GetCharColor(int length)
     {
-        // Color gradient: green -> yellow -> red as text length increases
-        Color[] colorGradient =
-        [
-            Color.green,
-            Color.yellow,
-            Color.red
-        ];
-
+        Color[] colorGradient = [Color.green, Color.yellow, Color.red];
         (float min, float max) lerpRange = (0f, 117f);
         return colorGradient.LerpColor(lerpRange, length);
     }
