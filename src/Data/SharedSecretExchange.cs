@@ -8,11 +8,11 @@ namespace BetterAmongUs.Data;
 /// </summary>
 internal sealed class SharedSecretExchange
 {
-    private readonly ECDiffieHellman dh;
+    private readonly ECDiffieHellman? dh;
     private byte[] publicKey;
     private int tempKey;
     private byte[] sharedSecret = [];
-    private bool cryptoDisabled;
+    private readonly bool cryptoDisabled;
 
     /// <summary>
     /// Gets a value indicating whether cryptographic operations are available.

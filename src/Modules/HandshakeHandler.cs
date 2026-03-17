@@ -20,18 +20,17 @@ internal sealed class HandshakeHandler
     [HideFromIl2Cpp]
     internal HandshakeHandler(ExtendedPlayerInfo extendedData)
     {
-        this.extendedData = extendedData;
+        _extendedData = extendedData;
     }
 
-    [HideFromIl2Cpp]
-    private ExtendedPlayerInfo extendedData { get; }
+    private readonly ExtendedPlayerInfo _extendedData;
 
     /// <summary>
     /// Initiates the wait period before sending the secret to another player.
     /// </summary>
     internal void WaitSendSecretToPlayer()
     {
-        extendedData.StartCoroutine(CoWaitSendSecretToPlayer());
+        _extendedData.StartCoroutine(CoWaitSendSecretToPlayer());
     }
 
     /// <summary>
@@ -41,7 +40,7 @@ internal sealed class HandshakeHandler
     {
         if (!BAUConfigs.SendBetterRpc.Value) yield break;
 
-        while (extendedData._Data?.Object == null || PlayerControl.LocalPlayer == null)
+        while (_extendedData._Data?.Object == null || PlayerControl.LocalPlayer == null)
         {
             if (GameState.IsFreePlay) yield break;
             yield return null;
@@ -57,7 +56,7 @@ internal sealed class HandshakeHandler
     internal void ResendSecretToPlayer()
     {
         if (!BAUConfigs.SendBetterRpc.Value) return;
-        if (HasSendSharedSecret && extendedData.IsVerifiedBetterUser) return;
+        if (HasSendSharedSecret && _extendedData.IsVerifiedBetterUser) return;
 
         HasSendSharedSecret = false;
         SendSecretToPlayer();
@@ -69,7 +68,7 @@ internal sealed class HandshakeHandler
     // Local client sends to client
     private void SendSecretToPlayer()
     {
-        if (extendedData._Data.Object.IsLocalPlayer()) return;
+        if (_extendedData._Data.Object.IsLocalPlayer()) return;
         if (HasSendSharedSecret) return;
 
         HasSendSharedSecret = true;
@@ -79,7 +78,7 @@ internal sealed class HandshakeHandler
             writer.Write(SharedSecret.CryptoAvailable);
             writer.WriteBytes(SharedSecret.GetPublicKey());
             writer.Write(SharedSecret.GetTempKey());
-        }, extendedData._Data.ClientId);
+        }, _extendedData._Data.ClientId);
     }
 
     /// <summary>
@@ -89,7 +88,7 @@ internal sealed class HandshakeHandler
     // Client receives from local client
     internal void HandleSecretFromSender(MessageReader reader)
     {
-        if (extendedData._Data?.Object?.IsLocalPlayer() == true) return;
+        if (_extendedData._Data?.Object?.IsLocalPlayer() == true) return;
 
         bool senderSupportsCrypto = reader.ReadBoolean();
         byte[] sendersPublicKey = reader.ReadBytes();
@@ -107,10 +106,10 @@ internal sealed class HandshakeHandler
             return;
         }
 
-        extendedData.IsBetterUser = true;
+        _extendedData.IsBetterUser = true;
 
         TryHandlePendingVerificationData();
-        SendSecretHashToSender(tempKey, extendedData._Data.ClientId);
+        SendSecretHashToSender(tempKey, _extendedData._Data.ClientId);
         ResendSecretToPlayer();
     }
 
@@ -165,11 +164,11 @@ internal sealed class HandshakeHandler
             return;
         }
 
-        extendedData.IsBetterUser = true;
+        _extendedData.IsBetterUser = true;
 
         if (data.receivedHash == SharedSecret.GetSharedSecretHash())
         {
-            extendedData.IsVerifiedBetterUser = true;
+            _extendedData.IsVerifiedBetterUser = true;
             // Logger.Log($"Verified player: {extendedData._Data?.PlayerName}");
         }
         else
