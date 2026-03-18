@@ -9,13 +9,11 @@
 
 	<!-- Apply Null Notation Restrictions -->
 	<Target Name="Il2CppRestrictions" BeforeTargets="CoreCompile" Condition="$([MSBuild]::IsOsPlatform(Windows))">
-		<Exec Command="powershell.exe -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\build\Il2CppRestrictions.ps1&quot;"
-			  IgnoreExitCode="true">
+		<Exec Command="powershell.exe -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\build\Il2CppRestrictions.ps1&quot;" IgnoreExitCode="true">
 			<Output TaskParameter="ExitCode" PropertyName="ScriptExitCode" />
 		</Exec>
 
-		<Error Condition="'$(ScriptExitCode)' != '0'"
-			   Text="Il2Cpp compatibility check failed. See errors in error list." />
+		<Error Condition="'$(ScriptExitCode)' != '0'" Text="Il2Cpp compatibility check failed. See errors in error list." />
 	</Target>
 
 	<!-- Git Commit Hash Retrieval -->
