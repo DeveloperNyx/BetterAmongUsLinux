@@ -27,7 +27,6 @@ internal sealed class BetterGameSettings
     internal static OptionCheckboxItem? DesyncRoles;
     internal static OptionCheckboxItem? CancelInvalidSabotage;
     internal static OptionCheckboxItem? CensorDetectionReason;
-    internal static OptionCheckboxItem? RemovePetOnDeath;
     internal static OptionCheckboxItem? DisableSabotages;
 }
 
@@ -101,7 +100,6 @@ internal static class GameSettingsPatch
                 {
                     OptionHeaderItem.Create(BetterSettingsTab, "BetterSetting.MainHeader.Gameplay");
                     BetterGameSettings.DisableSabotages = OptionCheckboxItem.Create(1500, BetterSettingsTab, "BetterSetting.Setting.DisableSabotages", false);
-                    BetterGameSettings.RemovePetOnDeath = OptionCheckboxItem.Create(1600, BetterSettingsTab, "BetterSetting.Setting.RemovePetOnDeath", false);
                 }
                 // Hide & Seek specific settings with dynamic impostor selection
                 else if (IsPreload || GameState.IsHideNSeek)
