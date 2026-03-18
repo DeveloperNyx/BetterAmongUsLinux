@@ -59,15 +59,19 @@ internal sealed class ExtendedPlayerControl : MonoBehaviour, IMonoExtension<Play
         }
     }
 
+    internal readonly ValueTracker<bool> InVentTracker = new();
+    private void Update()
+    {
+        if (_Player == null)
+            return;
+
+        InVentTracker.Update(_Player.inVent);
+    }
+
     private void OnDestroy()
     {
         this.UnregisterExtension();
     }
-
-    /// <summary>
-    /// Dictionary storing last name set for each player.
-    /// </summary>
-    internal readonly Dictionary<NetworkedPlayerInfo, string> NameSetLastFor = [];
 }
 
 /// <summary>
