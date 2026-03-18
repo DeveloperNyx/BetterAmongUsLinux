@@ -12,7 +12,7 @@ internal class CheckPlayerLevelPatch
     [HarmonyPostfix]
     private static void PlayerControl_FixedUpdate_Postfix(PlayerControl __instance)
     {
-        if (GameState.IsHost)
+        if (GameState.IsHost && GameState.IsLobby)
         {
             // Kick players below minimum level
             if (!__instance.IsLocalPlayer() && __instance.Data.PlayerLevel < BetterGameSettings.KickLevelBelow.GetInt())
