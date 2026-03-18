@@ -19,6 +19,8 @@ internal static class LobbyPatch
         OptionPlayerItem.ResetAllValues();
     }
 
+    private static Transform? GameStartObj;
+
     // Disable annoying lobby music if setting is enabled
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Update))]
     [HarmonyPostfix]
@@ -26,6 +28,19 @@ internal static class LobbyPatch
     {
         if (BAUConfigs.DisableLobbyTheme.Value)
             SoundManager.instance.StopSound(LobbyBehaviour.Instance.MapTheme);
+
+        // Adjust GameStartManager position for better UI layout
+        if (GameStartObj == null)
+        {
+            if (HudManager.InstanceExists)
+            {
+                GameStartObj = HudManager.Instance.transform.Find("GameStartManager");
+            }
+        }
+        else
+        {
+            GameStartObj.SetLocalY(-2.8f);
+        }
     }
 
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.RpcExtendLobbyTimer))]
@@ -99,7 +114,7 @@ internal static class LobbyPatch
         __instance.GameStartTextParent.SetActive(false);
         __instance.StartButton.gameObject.SetActive(true);
 
-        if (__instance.startState == GameStartManager.StartingStates.Countdown)
+        if (__instance.startState == global::GameStartManager.StartingStates.Countdown)
         {
             // Show cancel button with countdown
             __instance.StartButton.buttonText.text = string.Format("{0}: {1}", Translator.GetString(StringNames.Cancel), (int)__instance.countDownTimer + 1);
@@ -118,7 +133,7 @@ internal static class LobbyPatch
         if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_CancelStartingGame)) return true;
 
         // If countdown is active, clicking cancels the start
-        if (__instance.startState == GameStartManager.StartingStates.Countdown)
+        if (__instance.startState == global::GameStartManager.StartingStates.Countdown)
         {
             SoundManager.instance.StopSound(__instance.gameStartSound);
             __instance.ResetStartState();
@@ -128,7 +143,7 @@ internal static class LobbyPatch
         // Shift+click starts game immediately (bypasses countdown)
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            __instance.startState = GameStartManager.StartingStates.Countdown;
+            __instance.startState = global::GameStartManager.StartingStates.Countdown;
             __instance.FinallyBegin();
             return false;
         }

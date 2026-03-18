@@ -3,7 +3,6 @@ using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
 using HarmonyLib;
-using UnityEngine;
 
 namespace BetterAmongUs.Patches.Gameplay.Managers;
 
@@ -38,22 +37,10 @@ internal static class HudManagerPatch
         }, 1f, shouldLog: false);
     }
 
-    private static GameObject? gameStart;
-
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     [HarmonyPostfix]
     private static void HudManager_Update_Postfix(HudManager __instance)
     {
-        // Adjust GameStartManager position for better UI layout
-        if (gameStart == null)
-        {
-            gameStart = GameObject.Find("GameStartManager");
-        }
-        if (gameStart != null)
-        {
-            gameStart.transform.SetLocalY(-2.8f);
-        }
-
         // Manage in-game chat visibility based on settings and game state
         if (GameState.InGame)
         {
