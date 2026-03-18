@@ -54,7 +54,7 @@ internal static class OptionsMenuBehaviourPatch
 
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.VentColorGroups"), BAUConfigs.VentColorGroups, 2, __instance, toggleCheck: () =>
         {
-            bool cannotToggle = GameState.IsInGame;
+            bool cannotToggle = GameState.IsInGame && !GameState.IsLobby;
             if (cannotToggle)
             {
                 BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
@@ -63,7 +63,7 @@ internal static class OptionsMenuBehaviourPatch
         });
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.MinimapIcons"), BAUConfigs.MinimapIcons, 2, __instance, toggleCheck: () =>
         {
-            bool cannotToggle = GameState.IsInGame;
+            bool cannotToggle = GameState.IsInGame && !GameState.IsLobby;
             if (cannotToggle)
             {
                 BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
