@@ -17,7 +17,7 @@ internal static class GameSummaryPatch
     private static void EndGameManager_SetEverythingUp_Postfix(EndGameManager __instance)
     {
         // Check for null references
-        if (__instance == null) 
+        if (__instance == null)
             return;
 
         // Log game end to console
@@ -43,7 +43,8 @@ internal static class GameSummaryPatch
         var summaryObject = CreateSummaryObject(endGameManager);
         var summaryText = summaryObject.GetComponent<TextMeshPro>();
 
-        if (summaryText == null) return;
+        if (summaryText == null)
+            return;
 
         ConfigureSummaryText(summaryText);
 

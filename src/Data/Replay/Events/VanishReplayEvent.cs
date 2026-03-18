@@ -16,10 +16,13 @@ internal sealed class VanishReplayEvent : IReplayEvent<int>
     public void Play()
     {
         var player = Utils.PlayerFromPlayerId(EventData);
-        if (player?.Data.RoleType is RoleTypes.Phantom)
-        {
-            player?.SetRoleInvisibility(true, true, true);
-        }
+        if (player == null)
+            return;
+
+        if (player.Data.RoleType != RoleTypes.Phantom)
+            return;
+
+        player.SetRoleInvisibility(true, true, true);
     }
 
     public void Record(PlayerControl player)

@@ -17,7 +17,9 @@ internal sealed class DeserializeNetObjectHandler : RPCHandler
         if (innerNetObject?.TryCast<CustomNetworkTransform>() && (GameState.IsMeeting && MeetingHudPatch.timeOpen > 5))
         {
             var player = innerNetObject.Cast<CustomNetworkTransform>()?.myPlayer;
-            if (player == null) return;
+            if (player == null)
+                return;
+
             if (BetterNotificationManager.NotifyCheat(player, "Attempting to move in meeting", forceBan: true))
             {
                 LogRpcInfo($"Player attempted to move during meeting", player);

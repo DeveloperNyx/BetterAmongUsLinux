@@ -61,7 +61,8 @@ internal static class SplashIntroPatch
 
     private static void HandleAudioDestruction(SplashManager __instance)
     {
-        if (!BetterIntro) return;
+        if (!BetterIntro)
+            return;
 
         if (Time.time - __instance.startTime > AudioDestroyTime)
         {
@@ -86,7 +87,8 @@ internal static class SplashIntroPatch
 
     private static void StartBetterIntro(SplashManager __instance)
     {
-        if (BetterIntro) return;
+        if (BetterIntro)
+            return;
 
         // Start BAU custom intro sequence
         __instance.startTime = Time.time;

@@ -147,14 +147,23 @@ internal class PlayerInfoDisplay : MonoBehaviour
     /// </summary>
     private void UpdatePlayerInfo()
     {
-        if (_player == null) return;
-        if (_player.Data == null) return;
+        if (_player == null)
+            return;
 
-        if (_nameText == null) return;
-        if (_cachedTranslations == null) return;
+        if (_player.Data == null)
+            return;
 
-        if (_sbTag == null || _sbTagTop == null || _sbTagBottom == null) return;
-        if (_topText == null || _bottomText == null || _infoText == null) return;
+        if (_nameText == null)
+            return;
+
+        if (_cachedTranslations == null)
+            return;
+
+        if (_sbTag == null || _sbTagTop == null || _sbTagBottom == null)
+            return;
+
+        if (_topText == null || _bottomText == null || _infoText == null)
+            return;
 
         var betterData = _player.BetterData();
 
@@ -210,7 +219,8 @@ internal class PlayerInfoDisplay : MonoBehaviour
         else
         {
             var targetData = Utils.PlayerDataFromPlayerId(_player.shapeshiftTargetPlayerId);
-            if (targetData == null) return;
+            if (targetData == null)
+                return;
 
             var betterTargetData = targetData.BetterData();
             string name = betterTargetData != null ? betterTargetData.RealName : targetData.PlayerName;
@@ -234,7 +244,8 @@ internal class PlayerInfoDisplay : MonoBehaviour
     /// <param name="lastValue">Reference to last value for comparison.</param>
     private static void UpdateTextIfChanged(TextMeshPro textMesh, StringBuilder sb, ref string lastValue)
     {
-        if (textMesh == null) return;
+        if (textMesh == null)
+            return;
 
         string newText = Utils.FormatInfo(sb);
         if (newText != lastValue)
@@ -324,7 +335,8 @@ internal class PlayerInfoDisplay : MonoBehaviour
     [HideFromIl2Cpp]
     private void SetPlayerOutline(StringBuilder sbTag)
     {
-        if (_player?.Data == null) return;
+        if (_player?.Data == null)
+            return;
 
         string hashPuid = Utils.GetHashPuid(_player);
         string friendCode = _player.Data.FriendCode;
@@ -375,11 +387,14 @@ internal class PlayerInfoDisplay : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets in-game specific information.
+    /// Sets lobby specific information.
     /// </summary>
     [HideFromIl2Cpp]
     private void SetLobbyInfo(ref string newName, ExtendedPlayerInfo betterData, StringBuilder sbTag)
     {
+        if (betterData == null)
+            return;
+
         if (_player.IsHost() && BAUConfigs.LobbyPlayerInfo.Value)
             newName = _player.GetPlayerNameAndColor();
 
@@ -433,7 +448,9 @@ internal class PlayerInfoDisplay : MonoBehaviour
     private void UpdateColorBlindTextPosition()
     {
         var text = _player.cosmetics.colorBlindText;
-        if (!text.enabled) return;
+        if (!text.enabled)
+            return;
+
         if (!_player.onLadder && !_player.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
         {
             text.transform.localPosition = new Vector3(0f, -1.3f, 0.4999f);

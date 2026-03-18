@@ -26,7 +26,9 @@ internal static class PlayerControlHelper
 
         foreach (var client in AmongUsClient.Instance.allClients)
         {
-            if (client?.Character?.PlayerId == player.PlayerId)
+            if (client?.Character == null) continue;
+
+            if (client.Character.PlayerId == player.PlayerId)
                 return client;
         }
         return null;
@@ -46,7 +48,8 @@ internal static class PlayerControlHelper
     /// <returns>The colored player name string.</returns>
     internal static string GetPlayerNameAndColor(this PlayerControl player)
     {
-        if (player?.Data == null) return string.Empty;
+        if (player?.Data == null)
+            return string.Empty;
 
         try
         {
@@ -72,8 +75,11 @@ internal static class PlayerControlHelper
             return true;
         }
 
+        if (player.cosmetics?.nameText == null)
+            return false;
+
         string loading = Translator.GetString("Player.Loading");
-        string? nameText = player.cosmetics?.nameText?.text;
+        string nameText = player.cosmetics.nameText.text;
 
         if (nameText == "???" || nameText == "Player" || nameText == loading ||
             string.IsNullOrEmpty(nameText) ||
@@ -188,7 +194,8 @@ internal static class PlayerControlHelper
     /// <returns>The vent ID, or -1 if not in a vent.</returns>
     internal static int GetPlayerVentId(this PlayerControl player)
     {
-        if (player == null) return -1;
+        if (player == null)
+            return -1;
 
         if (!(ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out var systemType) &&
               systemType.TryCast<VentilationSystem>() is VentilationSystem ventilationSystem))
@@ -202,21 +209,24 @@ internal static class PlayerControlHelper
     /// </summary>
     /// <param name="player">The player to get the position for.</param>
     /// <returns>The player's position as a Vector2.</returns>
-    internal static Vector2 GetCustomPosition(this PlayerControl player) => new(player.transform.position.x, player.transform.position.y);
+    internal static Vector2 GetCustomPosition(this PlayerControl player) =>
+        player.transform.position;
 
     /// <summary>
     /// Checks if a player is alive.
     /// </summary>
     /// <param name="player">The player to check.</param>
     /// <returns>True if the player is alive.</returns>
-    internal static bool IsAlive(this PlayerControl player) => player?.Data != null && !player.Data.IsDead;
+    internal static bool IsAlive(this PlayerControl player) =>
+        player?.Data != null && !player.Data.IsDead;
 
     /// <summary>
     /// Checks if a player is in a vent.
     /// </summary>
     /// <param name="player">The player to check.</param>
     /// <returns>True if the player is in a vent.</returns>
-    internal static bool IsInVent(this PlayerControl player) => player != null && (player.inVent || player.walkingToVent || player.MyPhysics?.Animations?.IsPlayingEnterVentAnimation() == true);
+    internal static bool IsInVent(this PlayerControl player) =>
+        player != null && (player.inVent || player.walkingToVent || player.MyPhysics?.Animations?.IsPlayingEnterVentAnimation() == true);
 
     /// <summary>
     /// Gets the role name of a player.
@@ -362,7 +372,9 @@ internal static class PlayerControlHelper
     /// <returns>The hashed PUID string.</returns>
     internal static string GetHashPuid(this NetworkedPlayerInfo data)
     {
-        if (data?.Puid == null) return "";
+        if (data?.Puid == null)
+            return "";
+
         return Utils.GetHashStr(data.Puid);
     }
 

@@ -21,7 +21,8 @@ internal static class ChatPatch
 
     internal static void ClearChat()
     {
-        if (!HudManager.InstanceExists) return;
+        if (!HudManager.InstanceExists)
+            return;
 
         // Clear all chat bubbles
         HudManager.Instance.Chat.chatBubblePool.ReclaimAll();
@@ -29,7 +30,8 @@ internal static class ChatPatch
 
     internal static void ClearPlayerChats()
     {
-        if (!HudManager.InstanceExists) return;
+        if (!HudManager.InstanceExists)
+            return;
 
         // Clear only player chat bubbles (keep command bubbles)
         foreach (var obj in HudManager.Instance.Chat.chatBubblePool.activeChildren.ToArray())
@@ -46,7 +48,9 @@ internal static class ChatPatch
 
     internal static void ClearCommands()
     {
-        if (!HudManager.InstanceExists) return;
+        if (!HudManager.InstanceExists)
+            return;
+
         // Clear only command chat bubbles (keep player chat)
         foreach (var obj in HudManager.Instance.Chat.chatBubblePool.activeChildren.ToArray())
         {
@@ -129,12 +133,22 @@ internal static class ChatPatch
     [HarmonyPostfix]
     private static void ChatController_SetChatBubbleName_Postfix(ChatController __instance, ChatBubble bubble, NetworkedPlayerInfo playerInfo, bool isDead, bool didVote)
     {
-        if (didVote) return;
-        if (bubble == null || bubble.NameText == null || playerInfo == null) return;
+        if (playerInfo == null)
+            return;
+
+        if (didVote)
+            return;
+
+        if (bubble?.NameText == null)
+            return;
 
         var sourcePlayer = playerInfo.Object;
+        if (sourcePlayer == null)
+            return;
+
         var localPlayer = PlayerControl.LocalPlayer;
-        if (sourcePlayer == null || localPlayer == null) return;
+        if (localPlayer == null)
+            return;
 
         StringBuilder sbTag = new();
         StringBuilder sbInfo = new();
@@ -152,7 +166,8 @@ internal static class ChatPatch
             Role = "";
 
             var betterData = sourcePlayer.BetterData();
-            if (betterData == null) return;
+            if (betterData == null)
+                return;
 
             // Show BAU user tag
             if (sourcePlayer.IsLocalPlayer() || betterData.IsBetterUser)

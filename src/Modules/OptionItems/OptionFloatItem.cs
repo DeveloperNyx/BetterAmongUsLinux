@@ -80,7 +80,9 @@ public class OptionFloatItem : OptionItem<float>
     protected override void CreateBehavior()
     {
         TryLoad();
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
+
         AllOptionsTemp.Add(this);
         var numberOption = UnityEngine.Object.Instantiate(Tab.AUTab.numberOptionOrigin, Tab.AUTab.settingsContainer);
         Option = numberOption;

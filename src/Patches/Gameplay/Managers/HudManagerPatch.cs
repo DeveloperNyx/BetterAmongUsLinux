@@ -3,7 +3,6 @@ using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
 using HarmonyLib;
-using TMPro;
 using UnityEngine;
 
 namespace BetterAmongUs.Patches.Gameplay.Managers;
@@ -22,43 +21,7 @@ internal static class HudManagerPatch
     private static void HudManager_Start_Postfix(HudManager __instance)
     {
         // Create custom BAU notification system if it doesn't exist
-        if (BetterNotificationManager.BAUNotificationManagerObj == null)
-        {
-            var ChatNotifications = __instance.Chat.chatNotification;
-            if (ChatNotifications != null)
-            {
-                ChatNotifications.timeOnScreen = 1f;
-                ChatNotifications.gameObject.SetActive(true);
-
-                // Clone chat notification system for BAU notifications
-                GameObject BAUNotification = UnityEngine.Object.Instantiate(ChatNotifications.gameObject);
-                BAUNotification.name = "BAUNotification";
-                BAUNotification.GetComponent<ChatNotification>().DestroyMono();
-
-                // Remove unnecessary elements from the clone
-                GameObject.Find($"{BAUNotification.name}/Sizer/PoolablePlayer").DestroyObj();
-                GameObject.Find($"{BAUNotification.name}/Sizer/ColorText").DestroyObj();
-
-                // Position notification at bottom-left corner
-                BAUNotification.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(-1.57f, 5.3f, -15f);
-                GameObject.Find($"{BAUNotification.name}/Sizer/NameText").transform.localPosition = new Vector3(-3.3192f, -0.0105f);
-
-                // Cache TextMeshPro component for text updates
-                BetterNotificationManager.NameText = GameObject.Find($"{BAUNotification.name}/Sizer/NameText").GetComponent<TextMeshPro>();
-                UnityEngine.Object.DontDestroyOnLoad(BAUNotification);
-                BetterNotificationManager.BAUNotificationManagerObj = BAUNotification;
-                BAUNotification.SetActive(false);
-
-                // Reset original chat notification settings
-                ChatNotifications.timeOnScreen = 0f;
-                ChatNotifications.gameObject.SetActive(false);
-
-                // Configure text wrapping for multi-line notifications
-                BetterNotificationManager.TextArea.enableWordWrapping = true;
-                BetterNotificationManager.TextArea.m_firstOverflowCharacterIndex = 0;
-                BetterNotificationManager.TextArea.overflowMode = TextOverflowModes.Overflow;
-            }
-        }
+        BetterNotificationManager.Init();
 
         // Show welcome message after 1 second delay (only once per session)
         LateTask.Schedule(() =>
@@ -72,47 +35,45 @@ internal static class HudManagerPatch
                 Utils.AddChatPrivate(WelcomeMessage, overrideName: " ");
                 HasBeenWelcomed = true;
             }
-        }, 1f, "HudManagerPatch Start");
+        }, 1f, shouldLog: false);
     }
+
+    private static GameObject? gameStart;
 
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     [HarmonyPostfix]
     private static void HudManager_Update_Postfix(HudManager __instance)
     {
-        try
-        {
-            // Adjust GameStartManager position for better UI layout
-            GameObject gameStart = GameObject.Find("GameStartManager");
-            if (gameStart != null)
-                gameStart.transform.SetLocalY(-2.8f);
+        // Adjust GameStartManager position for better UI layout
+        gameStart ??= GameObject.Find("GameStartManager");
+        gameStart?.transform.SetLocalY(-2.8f);
 
-            // Manage in-game chat visibility based on settings and game state
-            if (GameState.InGame)
+        // Manage in-game chat visibility based on settings and game state
+        if (GameState.InGame)
+        {
+            if (__instance.Chat == null)
+                return;
+
+            if (!BAUConfigs.ChatInGameplay.Value)
             {
-                if (!BAUConfigs.ChatInGameplay.Value)
+                // Vanilla chat behavior: only show chat when dead or during meetings
+                if (!PlayerControl.LocalPlayer.IsAlive())
                 {
-                    // Vanilla chat behavior: only show chat when dead or during meetings
-                    if (!PlayerControl.LocalPlayer.IsAlive())
-                    {
-                        __instance.Chat.gameObject.SetActive(true);
-                    }
-                    else if (GameState.IsInGamePlay && !(GameState.IsMeeting || GameState.IsExilling))
-                    {
-                        __instance.Chat.gameObject.SetActive(false);
-                    }
+                    __instance.Chat.gameObject.SetActive(true);
                 }
-                else
+                else if (GameState.IsInGamePlay && !(GameState.IsMeeting || GameState.IsExilling))
                 {
-                    // BAU chat behavior: always show chat when enabled
-                    if (__instance?.Chat?.gameObject.active == false)
-                    {
-                        __instance.Chat.gameObject.SetActive(true);
-                    }
+                    __instance.Chat.gameObject.SetActive(false);
                 }
             }
-        }
-        catch
-        {
+            else
+            {
+                // BAU chat behavior: always show chat when enabled
+                if (__instance.Chat.gameObject.active == false)
+                {
+                    __instance.Chat.gameObject.SetActive(true);
+                }
+            }
         }
     }
 }

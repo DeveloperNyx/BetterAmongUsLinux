@@ -16,11 +16,17 @@ internal sealed class ProtectReplayEvent : IReplayEvent<(int playerId, int targe
     public void Play()
     {
         var player = Utils.PlayerFromPlayerId(EventData.playerId);
+        if (player == null)
+            return;
+
         var target = Utils.PlayerFromPlayerId(EventData.targetId);
-        if (player?.Data.RoleType is RoleTypes.GuardianAngel)
-        {
-            player?.ProtectPlayer(target, player.Data.DefaultOutfit.ColorId);
-        }
+        if (target == null)
+            return;
+
+        if (player.Data.RoleType != RoleTypes.GuardianAngel)
+            return;
+
+        player.ProtectPlayer(target, player.Data.DefaultOutfit.ColorId);
     }
 
     public void Record(PlayerControl player, PlayerControl target)

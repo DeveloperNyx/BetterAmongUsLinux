@@ -5,12 +5,12 @@
 /// </summary>
 /// <param name="command">The command this argument belongs to.</param>
 /// <param name="argInfo">Information about the argument.</param>
-internal abstract class BaseArgument(BaseCommand? command, string argInfo)
+internal abstract class BaseArgument(BaseCommand command, string argInfo)
 {
     /// <summary>
     /// Gets the command this argument belongs to.
     /// </summary>
-    internal BaseCommand? Command { get; } = command;
+    internal BaseCommand Command { get; } = command;
 
     /// <summary>
     /// Gets information about the argument.
@@ -36,5 +36,6 @@ internal abstract class BaseArgument(BaseCommand? command, string argInfo)
     /// Gets the closest suggestion for the current argument value.
     /// </summary>
     /// <returns>The closest matching suggestion, or empty string if none found.</returns>
-    internal string GetClosestSuggestion() => ArgSuggestions.FirstOrDefault(name => name.StartsWith(Arg, StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
+    internal string GetClosestSuggestion() =>
+        ArgSuggestions.FirstOrDefault(name => name.StartsWith(Arg, StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
 }

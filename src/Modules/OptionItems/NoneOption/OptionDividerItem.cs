@@ -47,7 +47,9 @@ internal sealed class OptionDividerItem : OptionItem
     /// </summary>
     private void CreateBehavior()
     {
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
+
         AllOptionsTemp.Add(this);
         CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(Tab.AUTab.categoryHeaderOrigin, Tab.AUTab.settingsContainer);
         Obj = categoryHeaderMasked.gameObject;

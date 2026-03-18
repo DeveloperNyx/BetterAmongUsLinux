@@ -15,10 +15,13 @@ internal sealed class UpdateSystemReplayEvent : IReplayEvent<(byte systemType, i
     public void Play()
     {
         var player = Utils.PlayerFromPlayerId(EventData.playerId);
-        if (player != null)
-        {
-            ShipStatus.Instance?.UpdateSystem((SystemTypes)EventData.systemType, player, EventData.amount);
-        }
+        if (player == null)
+            return;
+
+        if (ShipStatus.Instance == null)
+            return;
+
+        ShipStatus.Instance?.UpdateSystem((SystemTypes)EventData.systemType, player, EventData.amount);
     }
 
     public void Record(SystemTypes system, PlayerControl player, byte amount)

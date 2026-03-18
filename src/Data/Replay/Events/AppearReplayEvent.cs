@@ -16,10 +16,13 @@ internal sealed class AppearReplayEvent : IReplayEvent<(int playerId, bool anima
     public void Play()
     {
         var player = Utils.PlayerFromPlayerId(EventData.playerId);
-        if (player?.Data.RoleType is RoleTypes.Phantom)
-        {
-            player?.SetRoleInvisibility(false, EventData.animate, true);
-        }
+        if (player == null)
+            return;
+
+        if (player.Data.RoleType != RoleTypes.Phantom)
+            return;
+
+        player.SetRoleInvisibility(false, EventData.animate, true);
     }
 
     public void Record(PlayerControl player, bool animate)

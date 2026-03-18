@@ -27,7 +27,9 @@ internal static class PrivateLobbyPatch
         }
 
         // Only create toggle UI once
-        if (toggle != null) return;
+        if (toggle != null)
+            return;
+
         buttons.Clear();
 
         // Clone April Fools toggle as template for private lobby toggle
@@ -39,7 +41,8 @@ internal static class PrivateLobbyPatch
             // Get the ON and OFF buttons from the toggle
             buttons.Add(toggle.transform.Find("AprilOn").GetComponent<PassiveButton>());
             buttons.Add(toggle.transform.Find("AprilOff").GetComponent<PassiveButton>());
-            if (buttons.Count < 2) return;
+            if (buttons.Count < 2)
+                return;
 
             toggle.gameObject.SetActive(true);
 
@@ -83,7 +86,8 @@ internal static class PrivateLobbyPatch
 
     private static void TogglePrivateOnlyLobby(bool modeOn)
     {
-        if (buttons.Count < 2) return;
+        if (buttons.Count < 2)
+            return;
 
         // Show both buttons first
         buttons[0].gameObject.SetActive(true);

@@ -67,7 +67,8 @@ internal static class BetterAntiCheat
     /// <param name="oldReader">The MessageReader containing RPC data.</param>
     internal static void HandleCheatRPCBeforeCheck(PlayerControl player, byte callId, MessageReader oldReader)
     {
-        if (!IsEnabled) return;
+        if (!IsEnabled)
+            return;
 
         MessageReader reader = MessageReader.Get(oldReader);
         RPCHandler.HandleRPC(callId, player, reader, HandlerFlag.CheatRpcCheck);
@@ -82,9 +83,18 @@ internal static class BetterAntiCheat
     /// <param name="oldReader">The MessageReader containing RPC data.</param>
     internal static void CheckRPC(PlayerControl player, byte callId, MessageReader oldReader)
     {
-        if (player == null || player?.Data == null) return;
-        if (!IsEnabled || !BAUConfigs.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !BetterGameSettings.DetectInvalidRPCs.GetBool()) return;
-        if (player.IsLocalPlayer() && player.IsHost()) return;
+        if (!IsEnabled || !BAUConfigs.AntiCheat.Value)
+            return;
+
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) ||
+            !BetterGameSettings.DetectInvalidRPCs.GetBool())
+            return;
+
+        if (player?.Data == null)
+            return;
+
+        if (player.IsLocalPlayer() && player.IsHost())
+            return;
 
         MessageReader reader = MessageReader.Get(oldReader);
         RPCHandler.HandleRPC(callId, player, reader, HandlerFlag.AntiCheat);
@@ -224,7 +234,8 @@ internal static class BetterAntiCheat
     /// <param name="oldReader">The MessageReader containing RPC data.</param>
     internal static void HandleRPC(PlayerControl player, byte callId, MessageReader oldReader)
     {
-        if (player == null || player?.Data == null || player.IsLocalPlayer()) return;
+        if (player?.Data == null || player.IsLocalPlayer())
+            return;
 
         MessageReader reader = MessageReader.Get(oldReader);
         RPCHandler.HandleRPC(callId, player, reader, HandlerFlag.Handle);

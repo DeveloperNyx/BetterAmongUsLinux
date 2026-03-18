@@ -16,7 +16,11 @@ internal class PlatformSpoofPatch
     [HarmonyPostfix]
     internal static void PlatformSpecificData_Deserialize_Postfix(PlatformSpecificData __instance)
     {
-        if (!BAUConfigs.AntiCheat.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat) || !GameState.IsVanillaServer) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat))
+            return;
+
+        if (!BAUConfigs.AntiCheat.Value || !GameState.IsVanillaServer)
+            return;
 
         if (GameState.IsLobby)
         {

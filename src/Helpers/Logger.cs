@@ -24,7 +24,8 @@ internal static class Logger_
     {
         try
         {
-            if (hostOnly && !GameState.IsHost) return;
+            if (hostOnly && !GameState.IsHost)
+                return;
 
             string mark = $"{DateTime.Now:HH:mm} [BetterLog][{tag}]";
             string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "better-log.txt");
@@ -163,7 +164,8 @@ internal static class Logger_
     /// <param name="hostOnly">Whether to log only when the client is host.</param>
     internal static void InGame(string info, bool hostOnly = false)
     {
-        if (hostOnly && !GameState.IsHost) return;
+        if (hostOnly && !GameState.IsHost)
+            return;
 
         if (HudManager.InstanceExists) HudManager.Instance.Notifier.AddDisconnectMessage(info);
         Log(info, "InGame", hostOnly: hostOnly);
@@ -179,7 +181,8 @@ internal static class Logger_
     {
         try
         {
-            if (hostOnly && !GameState.IsHost) return;
+            if (hostOnly && !GameState.IsHost)
+                return;
 
             string mark = $"{DateTime.Now:HH:mm} [BetterLog][PrivateLog][{tag}]";
             string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "better-log.txt");
@@ -208,7 +211,8 @@ internal class CustomLogListener : ILogListener
     public void LogEvent(object sender, LogEventArgs eventArgs)
     {
         if (eventArgs.Source.SourceName.ToLower().Contains("unity")
-            || eventArgs.Source.SourceName.ToLower().Contains("betteramongus")) return;
+            || eventArgs.Source.SourceName.ToLower().Contains("betteramongus"))
+            return;
 
         if (eventArgs.Level is LogLevel.None or LogLevel.Info)
         {

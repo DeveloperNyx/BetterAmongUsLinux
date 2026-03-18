@@ -64,7 +64,9 @@ public abstract class OptionItem
     /// <param name="custom">Custom text to display instead of the value.</param>
     internal void PopNotification(string custom = "")
     {
-        if (_id == null) return;
+        if (_id == null)
+            return;
+
         string value = custom == string.Empty ? ValueAsString() : custom;
         string msg = $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{GetParentPath()} " +
         $"<color=#868686><size=85%>{Translator.GetString("BetterSetting.SetTo")}</size></color> {value}";
@@ -286,7 +288,8 @@ public abstract class OptionItem
     /// <param name="text">The description text to display.</param>
     internal void CreateDescriptionButton(string text)
     {
-        if (Option == null) return;
+        if (Option == null)
+            return;
 
         NumberOption optionBehaviourNum = UnityEngine.Object.Instantiate(Tab.AUTab.numberOptionOrigin, Vector3.zero, Quaternion.identity, Tab.AUTab.settingsContainer);
         SetupAUOption(optionBehaviourNum);
@@ -440,8 +443,10 @@ public abstract class OptionItem<T> : OptionItem
 
         return Value;
     }
-    internal virtual T? GetDefaultValue() => DefaultValue;
-    public override string ValueAsString() => Value?.ToString() ?? string.Empty;
+    internal virtual T? GetDefaultValue() =>
+        DefaultValue;
+    public override string ValueAsString() =>
+        Value?.ToString() ?? string.Empty;
     internal override void SetToDefault()
     {
         Value = DefaultValue;
@@ -525,7 +530,8 @@ public abstract class OptionItem<T> : OptionItem
     /// <param name="forceLoad">Whether to force reload even if already loaded.</param>
     internal override void TryLoad(bool forceLoad = false)
     {
-        if (!CanLoad) return;
+        if (!CanLoad)
+            return;
 
         if (!HasLoadValue || forceLoad)
         {
@@ -539,9 +545,12 @@ public abstract class OptionItem<T> : OptionItem
     /// </summary>
     protected virtual void Load()
     {
-        if (!CanLoad) return;
+        if (!CanLoad)
+            return;
 
-        if (_id == null) return;
+        if (_id == null)
+            return;
+
         Value = BetterDataManager.LoadSetting(Id, DefaultValue);
     }
 
@@ -550,9 +559,12 @@ public abstract class OptionItem<T> : OptionItem
     /// </summary>
     internal virtual void Save()
     {
-        if (!CanLoad) return;
+        if (!CanLoad)
+            return;
 
-        if (_id == null) return;
+        if (_id == null)
+            return;
+
         BetterDataManager.SaveSetting(Id, Value);
     }
 }

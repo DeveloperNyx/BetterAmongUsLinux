@@ -155,13 +155,16 @@ internal static class Utils
     /// <param name="setRight">Whether to align the message to the right side.</param>
     internal static void AddChatPrivate(string text, string overrideName = "", bool setRight = false)
     {
-        if (!GameState.IsInGame) return;
+        if (!GameState.IsInGame)
+            return;
 
         var chat = HudManager.Instance?.Chat;
-        if (chat == null) return;
+        if (chat == null)
+            return;
 
         var data = PlayerControl.LocalPlayer?.Data;
-        if (data == null) return;
+        if (data == null)
+            return;
 
         var pooledBubble = chat.GetPooledBubble();
         var messageName = $"<color=#ffffff><b>(<color=#00ff44>{Translator.GetString("SystemMessage")}</color>)</b>" + ChatPatch.COMMAND_POSTFIX_ID;
@@ -233,7 +236,10 @@ internal static class Utils
     /// <returns>The hashed PUID string.</returns>
     internal static string GetHashPuid(PlayerControl player)
     {
-        return player?.Data?.Puid == null ? "" : GetHashStr(player.Data.Puid);
+        if (player?.Data?.Puid == null)
+            return "";
+
+        return GetHashStr(player.Data.Puid);
     }
 
     /// <summary>

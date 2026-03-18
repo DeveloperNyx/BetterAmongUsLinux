@@ -15,7 +15,8 @@ internal static class Il2CppExtensions
     /// <param name="action">The action to perform on each element.</param>
     internal static void ForEachIl2Cpp<T>(this Il2CppSystem.Collections.Generic.IEnumerable<T> source, Action<T> action)
     {
-        if (source == null || action == null) return;
+        if (source == null || action == null)
+            return;
 
         var list = new Il2CppSystem.Collections.Generic.List<T>(source);
         for (int i = 0; i < list.Count; i++)
@@ -54,7 +55,8 @@ internal static class Il2CppExtensions
     /// <param name="action">The action to perform on each element.</param>
     internal static void ForEachIl2Cpp<T>(this Il2CppSystem.Collections.Generic.List<T> source, Action<T> action)
     {
-        if (source == null || action == null) return;
+        if (source == null || action == null)
+            return;
 
         // Direct iteration - no conversion needed!
         for (int i = 0; i < source.Count; i++)

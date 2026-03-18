@@ -69,7 +69,11 @@ internal static class MiniMapBehaviourPatch
     [HarmonyPostfix]
     private static void MapBehaviour_Show_Postfix(MapBehaviour __instance)
     {
-        if (!BAUConfigs.MinimapIcons.Value || BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_MinimapIcons)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_MinimapIcons))
+            return;
+
+        if (!BAUConfigs.MinimapIcons.Value)
+            return;
 
         // Make infected overlay buttons semi-transparent and smaller
         foreach (var button in __instance.infectedOverlay.allButtons)

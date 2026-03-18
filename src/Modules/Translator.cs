@@ -79,7 +79,8 @@ internal static class Translator
         try
         {
             using var resourceStream = assembly.GetManifestResourceStream(resourceName);
-            if (resourceStream == null) return;
+            if (resourceStream == null)
+                return;
 
             using var reader = new StreamReader(resourceStream);
             var jsonContent = reader.ReadToEnd();

@@ -59,7 +59,7 @@ internal static class PlayerControlPatch
     private static void PlayerControl_MurderPlayer_Postfix(PlayerControl __instance, PlayerControl target)
     {
         // Check for null references
-        if (__instance == null || target == null || target.Data == null || __instance.Data == null) 
+        if (__instance == null || target == null || target.Data == null || __instance.Data == null)
             return;
 
         // Log kill event with player names and roles
@@ -73,7 +73,8 @@ internal static class PlayerControlPatch
     [HarmonyPostfix]
     private static void PlayerControl_Shapeshift_Postfix(PlayerControl __instance, PlayerControl targetPlayer, bool animate)
     {
-        if (targetPlayer == null) return;
+        if (targetPlayer == null)
+            return;
 
         // Log shapeshift events (both shifting and unshifting)
         if (__instance != targetPlayer)

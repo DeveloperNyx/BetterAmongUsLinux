@@ -48,7 +48,8 @@ internal static class FindGameMoreInfoPopupPatch
 
     private static void ShowAll()
     {
-        if (_findGameMoreInfoPopup == null) return;
+        if (_findGameMoreInfoPopup == null)
+            return;
 
         _sb.Clear();
         var options = _findGameMoreInfoPopup.gameListing.Options;

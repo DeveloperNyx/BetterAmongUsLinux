@@ -42,7 +42,8 @@ internal sealed class UpdateManager : MonoBehaviour
     /// </summary>
     internal void OnMainMenu()
     {
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_ModUpdate)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_ModUpdate))
+            return;
 
         var doNotPress = FindObjectOfType<DoNotPressButton>(true);
         if (doNotPress != null)
@@ -59,7 +60,9 @@ internal sealed class UpdateManager : MonoBehaviour
                 button.OnClick = new();
                 button.OnClick.AddListener(() =>
                 {
-                    if (AmUpdateing || WaitForRestart) return;
+                    if (AmUpdateing || WaitForRestart)
+                        return;
+
                     this.StartCoroutine(CoPressDownload(doNotPress));
                 });
             }

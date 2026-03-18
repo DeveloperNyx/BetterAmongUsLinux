@@ -146,7 +146,8 @@ internal class BAUPlugin : BasePlugin
     /// </summary>
     private void OnChainloaderFinished()
     {
-        if (!BAUModdedSupportEvents.InvokeAll_OnBAULoad(this)) return;
+        if (!BAUModdedSupportEvents.InvokeAll_OnBAULoad(this))
+            return;
 
         BAUModdedSupportFlags.Initialize();
         GithubAPI.Connect();
@@ -214,7 +215,8 @@ internal class BAUPlugin : BasePlugin
     /// Gets the persistent data path for Among Us.
     /// </summary>
     /// <returns>The persistent data path string.</returns>
-    internal static string GetDataPathToAmongUs() => Application.persistentDataPath;
+    internal static string GetDataPathToAmongUs()
+        => Application.persistentDataPath;
 
     /// <summary>
     /// Gets the game installation path for Among Us.

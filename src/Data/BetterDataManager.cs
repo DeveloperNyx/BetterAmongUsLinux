@@ -57,7 +57,7 @@ internal static class BetterDataManager
     /// <summary>
     /// Current compressed settings file path.
     /// </summary>
-    internal static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{BAUConfigs.SettingsPreset?.Value ?? 0}.dat");
+    internal static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{BAUConfigs.SettingsPreset.Value}.dat");
 
     /// <summary>
     /// File containing banned player identifiers.

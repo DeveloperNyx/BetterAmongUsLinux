@@ -24,7 +24,9 @@ internal sealed class ExtendedPlayerControl : MonoBehaviour, IMonoExtension<Play
 
     private void Awake()
     {
-        if (!this.RegisterExtension()) return;
+        if (!this.RegisterExtension())
+            return;
+
         this.StartCoroutine(CoAddBetterData());
         _Player.gameObject.AddComponent<PlayerInfoDisplay>().Init(_Player);
     }

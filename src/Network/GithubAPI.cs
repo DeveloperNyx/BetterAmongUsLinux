@@ -38,7 +38,9 @@ internal sealed class GithubAPI : MonoBehaviour
     /// </remarks>
     internal static void Connect()
     {
-        if (hasTryConnect) return;
+        if (hasTryConnect)
+            return;
+
         hasTryConnect = true;
 
         var obj = new GameObject("GithubAPI(BAU)") { hideFlags = HideFlags.HideAndDontSave };

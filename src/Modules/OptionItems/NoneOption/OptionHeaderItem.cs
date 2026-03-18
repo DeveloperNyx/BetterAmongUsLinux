@@ -50,7 +50,9 @@ internal sealed class OptionHeaderItem : OptionItem
     /// </summary>
     private void CreateBehavior()
     {
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
+
         AllOptionsTemp.Add(this);
         categoryHeaderMasked = UnityEngine.Object.Instantiate(Tab.AUTab.categoryHeaderOrigin, Tab.AUTab.settingsContainer);
         Obj = categoryHeaderMasked.gameObject;

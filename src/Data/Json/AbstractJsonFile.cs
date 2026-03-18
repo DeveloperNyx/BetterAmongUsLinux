@@ -32,7 +32,9 @@ internal abstract class AbstractJsonFile
     /// </summary>
     internal virtual void Init()
     {
-        if (_hasInit) return;
+        if (_hasInit)
+            return;
+
         _hasInit = true;
 
         if (!IsFileValid())

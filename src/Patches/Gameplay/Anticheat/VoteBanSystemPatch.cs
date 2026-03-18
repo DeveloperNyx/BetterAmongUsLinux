@@ -98,7 +98,8 @@ internal static class VoteBanSystemPatch
     private static void VoteBanSystem_AddVote_Postfix(VoteBanSystem __instance, int srcClient, int clientId)
     {
         // Skip logging if anti-cheat disabled
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat))
+            return;
 
         // Log the vote if it was allowed
         if (DoLog)

@@ -88,7 +88,8 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
         if (Time.frameCount - _lastUpdateFrame < UPDATE_COOLDOWN)
             return;
 
-        if (_pva == null) return;
+        if (_pva == null)
+            return;
 
         _sbTag.Clear();
         _sbInfo.Clear();
@@ -141,7 +142,8 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
     /// </summary>
     private void UpdateInfo()
     {
-        if (_player?.Data == null || _player.BetterData() == null) return;
+        if (_player?.Data == null || _player.BetterData() == null)
+            return;
 
         SetPlayerTags(_sbTag);
         FormatPlayerInfo(_sbTag, _sbInfo);
@@ -160,7 +162,8 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
     [HideFromIl2Cpp]
     private void SetPlayerTags(StringBuilder sbTag)
     {
-        if (_player?.Data == null) return;
+        if (_player?.Data == null)
+            return;
 
         if (ContainsPlayerData(BetterDataManager.BetterDataFile.SickoData, _player.Data))
             sbTag.Append($"<color=#00f583>{_cachedTranslations.SickoUser}</color>+++");
@@ -180,7 +183,8 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
     [HideFromIl2Cpp]
     private static void FormatPlayerInfo(StringBuilder sbTag, StringBuilder sbInfo)
     {
-        if (sbTag.Length == 0) return;
+        if (sbTag.Length == 0)
+            return;
 
         string tagString = sbTag.ToString();
         string[] tags = tagString.Split(["+++"], System.StringSplitOptions.RemoveEmptyEntries);
@@ -257,7 +261,8 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
     /// <param name="lastValue">Reference to last value for comparison.</param>
     private static void UpdateTextIfChanged(TextMeshPro textMesh, string newText, ref string lastValue)
     {
-        if (textMesh == null) return;
+        if (textMesh == null)
+            return;
 
         if (newText != lastValue)
         {

@@ -55,8 +55,11 @@ internal sealed class HandshakeHandler
     /// </summary>
     internal void ResendSecretToPlayer()
     {
-        if (!BAUConfigs.SendBetterRpc.Value) return;
-        if (HasSendSharedSecret && _extendedData.IsVerifiedBetterUser) return;
+        if (!BAUConfigs.SendBetterRpc.Value)
+            return;
+
+        if (HasSendSharedSecret && _extendedData.IsVerifiedBetterUser)
+            return;
 
         HasSendSharedSecret = false;
         SendSecretToPlayer();
@@ -68,8 +71,11 @@ internal sealed class HandshakeHandler
     // Local client sends to client
     private void SendSecretToPlayer()
     {
-        if (_extendedData._Data.Object.IsLocalPlayer()) return;
-        if (HasSendSharedSecret) return;
+        if (_extendedData._Data.Object.IsLocalPlayer())
+            return;
+
+        if (HasSendSharedSecret)
+            return;
 
         HasSendSharedSecret = true;
 
@@ -88,7 +94,8 @@ internal sealed class HandshakeHandler
     // Client receives from local client
     internal void HandleSecretFromSender(MessageReader reader)
     {
-        if (_extendedData._Data?.Object?.IsLocalPlayer() == true) return;
+        if (_extendedData._Data?.Object?.IsLocalPlayer() == true)
+            return;
 
         bool senderSupportsCrypto = reader.ReadBoolean();
         byte[] sendersPublicKey = reader.ReadBytes();
@@ -151,8 +158,11 @@ internal sealed class HandshakeHandler
     /// </summary>
     internal void TryHandlePendingVerificationData()
     {
-        if (!_pendingVerificationData.HasValue) return;
-        if (SharedSecret.GetSharedSecret().Length == 0) return;
+        if (!_pendingVerificationData.HasValue)
+            return;
+
+        if (SharedSecret.GetSharedSecret().Length == 0)
+            return;
 
         var (tempKey, receivedHash) = _pendingVerificationData.Value;
 

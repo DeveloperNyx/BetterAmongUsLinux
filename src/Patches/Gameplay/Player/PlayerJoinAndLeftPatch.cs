@@ -120,7 +120,9 @@ internal static class PlayerJoinAndLeftPatch
     internal static void BetterShowNotification(NetworkedPlayerInfo playerData, DisconnectReasons reason = DisconnectReasons.Unknown, string forceReasonText = "")
     {
         // Prevent showing duplicate notifications
-        if (playerData.BetterData().AntiCheatInfo.BannedByAntiCheat || playerData.BetterData().HasShowDcMsg) return;
+        if (playerData.BetterData().AntiCheatInfo.BannedByAntiCheat || playerData.BetterData().HasShowDcMsg)
+            return;
+
         playerData.BetterData().HasShowDcMsg = true;
 
         string? playerName = playerData.BetterData().RealName;

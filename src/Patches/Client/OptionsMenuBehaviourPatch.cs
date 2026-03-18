@@ -34,7 +34,8 @@ internal static class OptionsMenuBehaviourPatch
 
     private static void SetupAllClientOptions(OptionsMenuBehaviour __instance)
     {
-        if (__instance.DisableMouseMovement == null) return;
+        if (__instance.DisableMouseMovement == null)
+            return;
 
         // Clear previous client options to prevent duplicates
         ClientOptionItem.ClientOptions.Clear();
@@ -42,7 +43,7 @@ internal static class OptionsMenuBehaviourPatch
         // Toggle options with config binding
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.AntiCheat"), BAUConfigs.AntiCheat, 1, __instance);
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.SendBetterRpc"), BAUConfigs.SendBetterRpc, 1, __instance, SendBetterRpcAction);
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.BetterNotifications"), BAUConfigs.BetterNotifications, 1, __instance, ClearNotifications);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.BetterNotifications"), BAUConfigs.BetterNotifications, 1, __instance, BetterNotificationManager.ClearNotifications);
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ForceOwnLanguage"), BAUConfigs.ForceOwnLanguage, 1, __instance);
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ChatDarkMode"), BAUConfigs.ChatDarkMode, 1, __instance, ChatPatch.SetChatTheme);
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ChatInGame"), BAUConfigs.ChatInGameplay, 1, __instance);
@@ -101,7 +102,7 @@ internal static class OptionsMenuBehaviourPatch
     {
         // Clean up BAU mod components and return to vanilla Among Us
         ConsoleManager.DetachConsole();
-        BetterNotificationManager.BAUNotificationManagerObj?.DestroyObj();
+        BetterNotificationManager.Detach();
         Harmony.UnpatchAll();
         ModManager.Instance.ModStamp.gameObject.SetActive(false);
         SceneChanger.ChangeScene("MainMenu");
@@ -110,21 +111,14 @@ internal static class OptionsMenuBehaviourPatch
     private static void SendBetterRpcAction()
     {
         // Resend handshake secret to all other players when option is toggled
-        if (!GameState.IsInGame) return;
+        if (!GameState.IsInGame)
+            return;
 
         foreach (var player in BAUPlugin.AllPlayerControls)
         {
             if (player.IsLocalPlayer()) continue;
             player.BetterData().HandshakeHandler.ResendSecretToPlayer();
         }
-    }
-
-    private static void ClearNotifications()
-    {
-        // Clear all active notifications when option is toggled
-        BetterNotificationManager.NotifyQueue.Clear();
-        BetterNotificationManager.showTime = 0f;
-        BetterNotificationManager.Notifying = false;
     }
 
     private static void ToggleLobbyTheme()
@@ -145,7 +139,8 @@ internal static class OptionsMenuBehaviourPatch
     private static void OpenSaveData()
     {
         // Open BAU save data folder in file explorer
-        if (!File.Exists(BetterDataManager.dataPath)) return;
+        if (!File.Exists(BetterDataManager.dataPath))
+            return;
 
         Process.Start(new ProcessStartInfo
         {
@@ -204,7 +199,8 @@ internal static class OptionsMenuBehaviourPatch
             if (tabButton.gameObject.activeInHierarchy) activeCount++;
         }
 
-        if (activeCount == 0) return;
+        if (activeCount == 0)
+            return;
 
         // Calculate total width needed for all active tabs
         float totalWidth = (activeCount - 1) * buttonSpacing + activeCount * buttonWidth;

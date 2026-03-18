@@ -51,7 +51,9 @@ internal sealed class OptionTitleItem : OptionItem
     /// </remarks>
     private void CreateBehavior()
     {
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
+
         AllOptionsTemp.Add(this);
         optionBehaviour = UnityEngine.Object.Instantiate(Tab.AUTab.checkboxOrigin, Tab.AUTab.settingsContainer);
         Obj = optionBehaviour.gameObject;

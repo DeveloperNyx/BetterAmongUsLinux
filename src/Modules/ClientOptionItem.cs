@@ -140,7 +140,8 @@ internal sealed class ClientOptionItem
 
         passiveButton.OnClick.AddListener(() =>
         {
-            if (toggleCheck?.Invoke() == false) return;
+            if (toggleCheck?.Invoke() == false)
+                return;
 
             if (Config != null)
             {
@@ -168,7 +169,9 @@ internal sealed class ClientOptionItem
 
         passiveButton.OnClick.AddListener(() =>
         {
-            if (clickCheck?.Invoke() == false) return;
+            if (clickCheck?.Invoke() == false)
+                return;
+
             onClick?.Invoke();
         });
     }
@@ -178,7 +181,8 @@ internal sealed class ClientOptionItem
     /// </summary>
     internal void UpdateToggle()
     {
-        if (ToggleButton == null || Config == null) return;
+        if (ToggleButton == null || Config == null)
+            return;
 
         UpdateToggleVisuals(Config.Value);
     }

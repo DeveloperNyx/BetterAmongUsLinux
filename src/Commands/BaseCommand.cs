@@ -13,7 +13,7 @@ internal abstract class BaseCommand
     /// <summary>
     /// Gets an array of all registered commands.
     /// </summary>
-    internal static readonly BaseCommand?[] allCommands = [.. RegisterCommandAttribute.Instances];
+    internal static readonly BaseCommand[] allCommands = [.. RegisterCommandAttribute.Instances];
 
     /// <summary>
     /// Gets the type of the command.

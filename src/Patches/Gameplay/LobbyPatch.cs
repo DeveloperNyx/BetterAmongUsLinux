@@ -85,7 +85,8 @@ internal static class LobbyPatch
     [HarmonyPostfix]
     private static void GameStartManager_Update_Postfix(GameStartManager __instance)
     {
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_CancelStartingGame)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_CancelStartingGame))
+            return;
 
         // Hide start button for non-hosts
         if (!GameState.IsHost)

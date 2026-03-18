@@ -43,7 +43,8 @@ internal sealed class BetterDataFile : AbstractJsonFile
     /// </summary>
     /// <param name="data">The player information to check.</param>
     /// <returns>True if the player matches a cheat entry, false otherwise.</returns>
-    internal bool CheckPlayerData(NetworkedPlayerInfo data) => CheckPlayerDataWithReason(data).check;
+    internal bool CheckPlayerData(NetworkedPlayerInfo data) =>
+        CheckPlayerDataWithReason(data).check;
 
     /// <summary>
     /// Checks if player data matches any known cheat entries and provides a reason if found.

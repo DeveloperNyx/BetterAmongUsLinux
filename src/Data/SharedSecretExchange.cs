@@ -184,7 +184,9 @@ internal sealed class SharedSecretExchange
     /// </summary>
     internal void ClearData()
     {
-        if (HasBeenCleared) return;
+        if (HasBeenCleared)
+            return;
+
         HasBeenCleared = true;
         publicKey = [];
         tempKey = 0;

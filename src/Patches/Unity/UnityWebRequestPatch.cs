@@ -34,7 +34,8 @@ internal static class UnityWebRequestPatch
     [HarmonyPrefix]
     private static void UnityWebRequest_SendWebRequest_Prefix(UnityWebRequest __instance)
     {
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BAUHttpHeader)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BAUHttpHeader))
+            return;
 
         // Check if this is a game API request
         var path = new Uri(__instance.url).AbsolutePath;
@@ -50,7 +51,8 @@ internal static class UnityWebRequestPatch
     [HarmonyPostfix]
     private static void UnityWebRequest_SendWebRequest_Postfix(UnityWebRequest __instance, UnityWebRequestAsyncOperation __result)
     {
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BAUHttpHeader)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_BAUHttpHeader))
+            return;
 
         var path = new Uri(__instance.url).AbsolutePath;
         if (path.Contains("/api/games"))
@@ -58,7 +60,8 @@ internal static class UnityWebRequestPatch
             // Add callback when request completes
             __result.add_completed((Action<AsyncOperation>)(_ =>
             {
-                if (!HttpUtils.IsSuccess(__instance.responseCode)) return;
+                if (!HttpUtils.IsSuccess(__instance.responseCode))
+                    return;
 
                 // Check if server supports BAU mod
                 var responseHeader = __instance.GetResponseHeader("BAU-Mod-Processed");

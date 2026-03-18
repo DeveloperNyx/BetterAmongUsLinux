@@ -30,7 +30,9 @@ internal sealed class BetterPingTracker : MonoBehaviour
     /// <param name="pingAspectPosition">The AspectPosition component for positioning the display.</param>
     internal void SetUp(TextMeshPro pingText, AspectPosition pingAspectPosition)
     {
-        if (Instance != null) return;
+        if (Instance != null)
+            return;
+
         if (pingText == null || pingAspectPosition == null)
         {
             Logger_.Error("BetterPingTracker.SetUp() called with null parameters!");
@@ -47,7 +49,8 @@ internal sealed class BetterPingTracker : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (aspectPosition == null || text == null) return;
+        if (aspectPosition == null || text == null)
+            return;
 
         // Update position and appearance
         aspectPosition.DistanceFromEdge = new Vector3(4f, 0.1f, -5);

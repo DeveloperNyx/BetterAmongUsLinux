@@ -48,7 +48,8 @@ internal static class RPC
     /// <param name="oldReader">The message reader containing the RPC data.</param>
     internal static void HandleCustomRPCPacked(PlayerControl player, MessageReader oldReader)
     {
-        if (player == null || player.IsLocalPlayer() || player.Data == null) return;
+        if (player == null || player.IsLocalPlayer() || player.Data == null)
+            return;
 
         MessageReader reader = MessageReader.Get(oldReader);
 
@@ -87,7 +88,8 @@ internal static class RPC
     /// </remarks>
     internal static void HandleCustomRPCLegacy(PlayerControl player, byte callId, MessageReader oldReader)
     {
-        if (player == null || player.IsLocalPlayer() || player.Data == null || Enum.IsDefined(typeof(RpcCalls), callId)) return;
+        if (player == null || player.IsLocalPlayer() || player.Data == null || Enum.IsDefined(typeof(RpcCalls), callId))
+            return;
 
         if (Enum.IsDefined(typeof(CustomRPC), (int)unchecked(callId)))
         {

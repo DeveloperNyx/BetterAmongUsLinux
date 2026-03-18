@@ -37,14 +37,16 @@ internal sealed class OutfitData
     /// Gets the outfit data for the currently selected preset.
     /// </summary>
     /// <returns>The outfit data for the current preset.</returns>
-    internal static OutfitData GetOutfitData() => BetterDataManager.BetterDataFile.OutfitData.ElementAt(BetterDataManager.BetterDataFile.SelectedOutfitPreset);
+    internal static OutfitData GetOutfitData() =>
+        BetterDataManager.BetterDataFile.OutfitData.ElementAt(BetterDataManager.BetterDataFile.SelectedOutfitPreset);
 
     /// <summary>
     /// Gets the outfit data for a specific preset index.
     /// </summary>
     /// <param name="index">The index of the preset to retrieve.</param>
     /// <returns>The outfit data for the specified preset.</returns>
-    internal static OutfitData GetOutfitData(int index) => BetterDataManager.BetterDataFile.OutfitData.ElementAt(index);
+    internal static OutfitData GetOutfitData(int index) =>
+        BetterDataManager.BetterDataFile.OutfitData.ElementAt(index);
 
     private static bool ignoreChange;
 
@@ -57,7 +59,9 @@ internal sealed class OutfitData
 
         var Save = () =>
         {
-            if (ignoreChange) return;
+            if (ignoreChange)
+                return;
+
             GetOutfitData().SetFromData();
             BetterDataManager.BetterDataFile.Save();
         };

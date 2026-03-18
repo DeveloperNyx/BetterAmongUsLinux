@@ -9,7 +9,8 @@ internal sealed class DumpCommand : BaseCommand
 {
     internal override string Name => "dump";
     internal override string Description => "Dump the entire log to the user's desktop";
-    internal override bool ShowCommand() => !ModInfo.Starlight;
+    internal override bool ShowCommand() =>
+        !ModInfo.Starlight;
 
     internal override bool CanRunCommand(out string reason)
     {

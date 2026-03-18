@@ -39,16 +39,19 @@ internal sealed class ExtendedPlayerInfo : MonoBehaviour, IMonoExtension<Network
     [HideFromIl2Cpp]
     internal void SetInfo(NetworkedPlayerInfo data)
     {
-        if (hasSet) return;
-        _PlayerId = data.PlayerId;
+        if (hasSet)
+            return;
+
         hasSet = true;
+        _PlayerId = data.PlayerId;
     }
 
     private float timeAccumulator = 0f;
 
     private void Awake()
     {
-        if (!this.RegisterExtension()) return;
+        if (!this.RegisterExtension())
+            return;
 
         if (HandshakeHandler != null)
         {
@@ -254,7 +257,7 @@ internal static class PlayerControlDataExtension
     /// <param name="callback">The callback to execute with the extended data.</param>
     internal static void BetterDataWait(this PlayerControl player, Action<ExtendedPlayerInfo> callback)
     {
-        MonoExtensionManager.RunWhenNotNull<ExtendedPlayerInfo>(player, () => player?.BetterData(), callback);
+        MonoExtensionManager.RunWhenNotNull(player, () => player?.BetterData(), callback);
     }
 
     /// <summary>

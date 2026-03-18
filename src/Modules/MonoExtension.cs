@@ -184,7 +184,8 @@ internal static class MonoExtensionManager
     /// <param name="extension">The extension to unregister.</param>
     internal static void UnregisterExtension(this IMonoExtension extension)
     {
-        if (extension.BaseMono == null) return;
+        if (extension.BaseMono == null)
+            return;
 
         if (_extensionsByBaseType.TryGetValue(extension.BaseMono.GetType(), out var extensions))
         {

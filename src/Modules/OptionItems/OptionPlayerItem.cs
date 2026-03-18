@@ -82,7 +82,9 @@ public sealed class OptionPlayerItem : OptionItem<int>
     /// </summary>
     protected sealed override void CreateBehavior()
     {
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
+
         AllOptionsTemp.Add(this);
         var numberOption = UnityEngine.Object.Instantiate(Tab.AUTab.numberOptionOrigin, Tab.AUTab.settingsContainer);
         Option = numberOption;
@@ -202,7 +204,8 @@ public sealed class OptionPlayerItem : OptionItem<int>
     /// <param name="updateTabVisuals">Whether to update the parent tab visuals as well.</param>
     internal sealed override void UpdateVisuals(bool updateTabVisuals = true)
     {
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
 
         if (Option is NumberOption numberOption)
         {
@@ -251,13 +254,15 @@ public sealed class OptionPlayerItem : OptionItem<int>
     /// Gets the integer value (player index) of this option.
     /// </summary>
     /// <returns>The current player index.</returns>
-    public sealed override int GetInt() => GetValue();
+    public sealed override int GetInt() =>
+        GetValue();
 
     /// <summary>
     /// Gets the float representation of the player index.
     /// </summary>
     /// <returns>The current player index as a float.</returns>
-    public sealed override float GetFloat() => GetValue();
+    public sealed override float GetFloat() =>
+        GetValue();
 
     /// <summary>
     /// Checks if the option value matches a specific integer.

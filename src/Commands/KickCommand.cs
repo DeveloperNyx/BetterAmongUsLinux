@@ -22,17 +22,17 @@ internal sealed class KickCommand : BaseCommand
     }
     public KickCommand()
     {
-        playerArgument = new PlayerArgument(this);
-        boolArgument = new BoolArgument(this, "{ban}");
-        Arguments = [playerArgument, boolArgument];
+        _playerArgument = new PlayerArgument(this);
+        _boolArgument = new BoolArgument(this, "{ban}");
+        Arguments = [_playerArgument, _boolArgument];
     }
-    private PlayerArgument playerArgument { get; }
-    private BoolArgument boolArgument { get; }
+    private readonly PlayerArgument _playerArgument;
+    private readonly BoolArgument _boolArgument;
 
     internal override void Run()
     {
-        var player = playerArgument.TryGetTarget();
-        var isBan = boolArgument.GetBool();
+        var player = _playerArgument.TryGetTarget();
+        var isBan = _boolArgument.GetBool();
         if (player != null && isBan != null && !player.IsHost())
         {
             player.Kick((bool)isBan);

@@ -16,11 +16,17 @@ internal sealed class ShapeshiftReplayEvent : IReplayEvent<(int playerId, int ta
     public void Play()
     {
         var player = Utils.PlayerFromPlayerId(EventData.playerId);
+        if (player == null)
+            return;
+
         var target = Utils.PlayerFromPlayerId(EventData.targetId);
-        if (player?.Data.RoleType is RoleTypes.Shapeshifter)
-        {
-            player?.Shapeshift(target, EventData.animate);
-        }
+        if (target == null)
+            return;
+
+        if (player.Data.RoleType != RoleTypes.Shapeshifter)
+            return;
+
+        player.Shapeshift(target, EventData.animate);
     }
 
     public void Record(PlayerControl killer, PlayerControl target, bool animate)

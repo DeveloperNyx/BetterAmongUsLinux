@@ -7,7 +7,7 @@ namespace BetterAmongUs.Commands.Arguments;
 /// </summary>
 /// <param name="command">The command this argument belongs to.</param>
 /// <param name="argInfo">Information about the argument (default: "{player}").</param>
-internal sealed class PlayerArgument(BaseCommand? command, string argInfo = "{player}") : BaseArgument(command, argInfo)
+internal sealed class PlayerArgument(BaseCommand command, string argInfo = "{player}") : BaseArgument(command, argInfo)
 {
     /// <summary>
     /// Gets the player argument suggestions for auto-completion.

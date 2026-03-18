@@ -98,7 +98,8 @@ internal sealed class OptionTab
     /// <param name="doNotDestroyMapPicker">Whether to preserve the map picker UI.</param>
     private void CreateBehavior(bool doNotDestroyMapPicker)
     {
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
 
         var SettingsButton = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsButton, GameSettingMenu.Instance.GameSettingsButton.transform.parent);
         TabButton = SettingsButton;
@@ -147,7 +148,8 @@ internal sealed class OptionTab
     /// </summary>
     private void ShowOptions()
     {
-        if (AUTab == null) return;
+        if (AUTab == null)
+            return;
 
         AUTab.gameObject.SetActive(true);
         float spacingNum = 0f;

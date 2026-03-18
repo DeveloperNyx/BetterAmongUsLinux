@@ -16,7 +16,8 @@ internal static class MeetingHudPatch
     [HarmonyPostfix]
     private static void MeetingHud_Start_Postfix(MeetingHud __instance)
     {
-        if (__instance == null || __instance.playerStates == null) return;
+        if (__instance == null || __instance.playerStates == null)
+            return;
 
         // Add meeting info display to each player state
         foreach (var pva in __instance.playerStates)
@@ -29,7 +30,8 @@ internal static class MeetingHudPatch
             pva.gameObject.AddComponent<MeetingInfoDisplay>().Init(target, pva);
         }
 
-        if (!GameState.IsOnlineGame) return;
+        if (!GameState.IsOnlineGame)
+            return;
 
         // Add host icon to meeting hud
         if (__instance.ProceedButton != null && __instance.HostIcon != null)
@@ -50,16 +52,21 @@ internal static class MeetingHudPatch
     // Updates host icon with current host info
     internal static void UpdateHostIcon()
     {
-        if (MeetingHud.Instance == null) return;
-        if (GameData.Instance == null) return;
+        if (MeetingHud.Instance == null)
+            return;
+
+        if (GameData.Instance == null)
+            return;
 
         var host = GameData.Instance.GetHost();
-        if (host == null || host.BetterData() == null) return;
+        if (host?.BetterData() == null)
+            return;
 
         var hostColor = host.Color;
         var hostRealName = host.BetterData().RealName;
 
-        if (MeetingHud.Instance.HostIcon == null || MeetingHud.Instance.ProceedButton == null) return;
+        if (MeetingHud.Instance.HostIcon == null || MeetingHud.Instance.ProceedButton == null)
+            return;
 
         PlayerMaterial.SetColors(hostColor, MeetingHud.Instance.HostIcon);
         MeetingHud.Instance.ProceedButton.gameObject.GetComponentInChildren<TextMeshPro>().text = string.Format(Translator.GetString("HostInMeeting"), hostRealName);

@@ -85,7 +85,9 @@ public class OptionStringItem : OptionItem<int>
     protected sealed override void CreateBehavior()
     {
         TryLoad();
-        if (!GameSettingMenu.Instance) return;
+        if (!GameSettingMenu.Instance)
+            return;
+
         AllOptionsTemp.Add(this);
         var numberOption = UnityEngine.Object.Instantiate(Tab.AUTab.numberOptionOrigin, Tab.AUTab.settingsContainer);
         Option = numberOption;
@@ -175,7 +177,8 @@ public class OptionStringItem : OptionItem<int>
     /// Gets the translated string representation of the current selection.
     /// </summary>
     /// <returns>The translated string for the current index.</returns>
-    public override string ValueAsString() => Translator.GetString(TranslatorStrings[Value], showInvalid: false);
+    public override string ValueAsString() =>
+        Translator.GetString(TranslatorStrings[Value], showInvalid: false);
 
     /// <summary>
     /// Gets the effective string value index, accounting for random selection.

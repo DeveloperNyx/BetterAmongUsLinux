@@ -14,7 +14,8 @@ internal static class ServerDropdownPatch
     [HarmonyPrefix]
     private static void FindAGameManager_Start_Prefix(FindAGameManager __instance)
     {
-        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_ServerDropDown)) return;
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_ServerDropDown))
+            return;
 
         var aspectPosition = __instance.serverDropdown.transform.parent.GetComponent<AspectPosition>();
         if (aspectPosition != null)

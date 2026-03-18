@@ -5,7 +5,7 @@
 /// </summary>
 /// <param name="command">The command this argument belongs to.</param>
 /// <param name="argInfo">Information about the argument (default: "{bool}").</param>
-internal sealed class BoolArgument(BaseCommand? command, string argInfo = "{bool}") : BaseArgument(command, argInfo)
+internal sealed class BoolArgument(BaseCommand command, string argInfo = "{bool}") : BaseArgument(command, argInfo)
 {
     /// <summary>
     /// Gets the boolean argument suggestions for auto-completion.

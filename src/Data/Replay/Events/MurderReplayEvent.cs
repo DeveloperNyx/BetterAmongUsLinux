@@ -15,8 +15,14 @@ internal sealed class MurderReplayEvent : IReplayEvent<(int killerId, int target
     public void Play()
     {
         var killer = Utils.PlayerFromPlayerId(EventData.killerId);
+        if (killer == null)
+            return;
+
         var target = Utils.PlayerFromPlayerId(EventData.targetId);
-        killer?.MurderPlayer(target, MurderResultFlags.Succeeded);
+        if (target == null)
+            return;
+
+        killer.MurderPlayer(target, MurderResultFlags.Succeeded);
     }
 
     public void Record(PlayerControl killer, PlayerControl target)

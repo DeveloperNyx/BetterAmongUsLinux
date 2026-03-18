@@ -56,8 +56,13 @@ internal static class PlayerTabPatch
             var data = OutfitData.GetOutfitData(currentI);
             var button = playerTab.CreateOutfitPresetButton(name, new Vector3(2.5f, 1.55f - currentI * 0.45f, 0f), out var playerPreview, () =>
             {
+                if (BetterDataManager.BetterDataFile.SelectedOutfitPreset == currentI)
+                    return;
+
                 // Ignore if cooldown active or same preset selected
-                if (cooldown > 0f || BetterDataManager.BetterDataFile.SelectedOutfitPreset == currentI) return;
+                if (cooldown > 0f)
+                    return;
+
                 cooldown = 0.5f;
 
                 // Update selected preset

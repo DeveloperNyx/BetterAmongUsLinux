@@ -183,7 +183,9 @@ public static class BAUModdedSupportFlags
     /// </summary>
     internal static void Initialize()
     {
-        if (_initialized) return;
+        if (_initialized)
+            return;
+
         _initialized = true;
         foreach (var pluginInfo in IL2CPPChainloader.Instance.Plugins.Values)
         {
@@ -200,11 +202,13 @@ public static class BAUModdedSupportFlags
         var field = plugin.GetType().GetField("BAUFlags",
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
 
-        if (field == null) return;
+        if (field == null)
+            return;
 
         var value = field.IsStatic ? field.GetValue(null) : field.GetValue(plugin);
 
-        if (value is not IEnumerable<string> strings) return;
+        if (value is not IEnumerable<string> strings)
+            return;
 
         var pluginName = plugin.GetType().GetCustomAttribute<BepInPlugin>()?.Name ?? plugin.GetType().Name;
 
