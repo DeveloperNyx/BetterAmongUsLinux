@@ -58,7 +58,8 @@ internal static class ModInfo
     /// </summary>
     internal static string[] SupportedAmongUsVersions =
     [
-        "2025.11.18",
+        "2026.3.17",
+        "2025.11.18"
     ];
 
     /// <summary>
