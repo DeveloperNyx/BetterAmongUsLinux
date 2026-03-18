@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Il2CppInterop.Runtime.Attributes;
+using UnityEngine;
 
 namespace BetterAmongUs.Mono;
 
@@ -11,6 +12,7 @@ internal class AnimatedMapIcon : MonoBehaviour
     /// Event that determines whether the icon should animate.
     /// Returns true if animation should occur, false otherwise.
     /// </summary>
+    [HideFromIl2Cpp]
     internal event Func<bool>? ShouldAnimate;
 
     private Vector3 originalScale;
