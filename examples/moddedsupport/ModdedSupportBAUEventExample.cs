@@ -34,14 +34,14 @@ internal class ModdedSupportBAUEventExample
     /// Array of game options objects from BetterAmongUs.
     /// The exact type of these objects depends on BAU's internal implementation.
     /// Common option types to check for:
-    /// <see cref="Modules.OptionItems.OptionItem"/>,
-    /// <see cref="Modules.OptionItems.OptionItem{T}"/>, 
-    /// <see cref="Modules.OptionItems.OptionCheckboxItem"/>,
-    /// <see cref="Modules.OptionItems.OptionFloatItem"/>,
-    /// <see cref="Modules.OptionItems.OptionIntItem"/>,
-    /// <see cref="Modules.OptionItems.OptionPercentItem"/>,
-    /// <see cref="Modules.OptionItems.OptionPlayerItem"/>,
-    /// <see cref="Modules.OptionItems.OptionStringItem"/>,
+    /// Modules.OptionItems.OptionItem,
+    /// Modules.OptionItems.OptionItem{T}, 
+    /// Modules.OptionItems.OptionCheckboxItem,
+    /// Modules.OptionItems.OptionFloatItem,
+    /// Modules.OptionItems.OptionIntItem,
+    /// Modules.OptionItems.OptionPercentItem,
+    /// Modules.OptionItems.OptionPlayerItem,
+    /// Modules.OptionItems.OptionStringItem,
     /// </param>
     public void OnBAUOptionsLoaded(object[] options)
     {

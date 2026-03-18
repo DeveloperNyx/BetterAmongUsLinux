@@ -24,7 +24,7 @@ internal class ModdedSupportPluginExample : BasePlugin
     /// </summary>
     /// <remarks>
     /// Flags can disable specific BAU features or modify its behavior.
-    /// See <see cref="Modules.Support.BAUModdedSupportFlags"/> for available flag constants.
+    /// Check Modules.Support.BAUModdedSupportFlags for available flag constants.
     /// </remarks>
     public static string[] BAUFlags = [];
 
