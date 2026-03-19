@@ -26,7 +26,7 @@ internal static class ModInfo
     /// <summary>
     /// The beta number for beta releases.
     /// </summary>
-    internal const string BETA_NUM = "1";
+    internal const string BETA_NUM = "2";
 
     /// <summary>
     /// The hotfix number for hotfix releases.
