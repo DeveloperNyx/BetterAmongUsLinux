@@ -13,16 +13,21 @@ namespace BetterAmongUs.Patches.Gameplay.UI;
 [HarmonyPatch]
 internal static class PlayerTabPatch
 {
-    private static List<PassiveButton> presetButtons = []; // Outfit preset buttons
-    private static List<PoolablePlayer> presetPreviews = []; // Outfit previews
+    private static readonly List<PassiveButton?> _presetButtons = []; // Outfit preset buttons
+    private static readonly List<PoolablePlayer?> _presetPreviews = []; // Outfit previews
+    private static PlayerTab? _presetTabSetup;
+    private static readonly List<SpriteRenderer?> _favoriteIcons = [];
     private static float cooldown = 0f; // Button click cooldown
-    private static readonly List<SpriteRenderer> _favoriteIcons = [];
 
     [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
     [HarmonyPrefix]
     private static void PlayerTab_OnEnable_Prefix(PlayerTab __instance)
     {
-        SetupOutfitPresets(__instance);
+        if (_presetTabSetup == null)
+        {
+            _presetTabSetup = __instance;
+            SetupOutfitPresets(__instance);
+        }
     }
 
     [HarmonyPatch(typeof(PlayerTab), nameof(PlayerTab.OnEnable))]
@@ -35,18 +40,8 @@ internal static class PlayerTabPatch
     private static void SetupOutfitPresets(PlayerTab playerTab)
     {
         // Clean up old preset buttons and previews
-        foreach (var button in presetButtons.ToArray())
-        {
-            if (button == null) continue;
-            UnityEngine.Object.Destroy(button.gameObject);
-        }
-        presetButtons.Clear();
-        foreach (var preview in presetPreviews.ToArray())
-        {
-            if (preview == null) continue;
-            UnityEngine.Object.Destroy(preview.gameObject);
-        }
-        presetPreviews.Clear();
+        _presetButtons.Clear();
+        _presetPreviews.Clear();
 
         // Create preset buttons (0 = Among Us preset, 1-5 = custom presets)
         for (int i = 0; i <= 5; i++)
@@ -69,7 +64,7 @@ internal static class PlayerTabPatch
                 BetterDataManager.BetterDataFile.SelectedOutfitPreset = currentI;
 
                 // Reset all button hover states
-                foreach (var button in presetButtons)
+                foreach (var button in _presetButtons)
                 {
                     if (button == null) continue;
                     button.SetPassiveButtonHoverStateInactive();
@@ -93,14 +88,19 @@ internal static class PlayerTabPatch
             playerPreview.UpdateFromPlayerOutfit(data.ToPlayerOutfit(), PlayerMaterial.MaskType.None, false, true);
             playerPreview.ToggleName(false);
             playerPreview.transform.position += new Vector3(0f, 0f, -1f * currentI); // Fix rendering order
-            presetPreviews.Add(playerPreview);
+            _presetPreviews.Add(playerPreview);
 
-            presetButtons.Add(button);
+            _presetButtons.Add(button);
         }
     }
 
     private static void SetupFavoriteColor(PlayerTab playerTab)
     {
+        foreach (var icon in _favoriteIcons)
+        {
+            if (icon == null) continue;
+            UnityEngine.Object.Destroy(icon);
+        }
         _favoriteIcons.Clear();
 
         // Add favorite functionality to color chips
@@ -218,9 +218,9 @@ internal static class PlayerTabPatch
         }
 
         // Update preset button hover states
-        for (int i = 0; i < presetButtons.Count; i++)
+        for (int i = 0; i < _presetButtons.Count; i++)
         {
-            PassiveButton? button = presetButtons[i];
+            PassiveButton? button = _presetButtons[i];
             if (button == null) continue;
             if (i == BetterDataManager.BetterDataFile.SelectedOutfitPreset)
             {
@@ -228,7 +228,7 @@ internal static class PlayerTabPatch
             }
 
             // Update preview color
-            var preview = presetPreviews[i];
+            var preview = _presetPreviews[i];
             if (preview.Cosmetics.ColorId != DataManager.Player.Customization.Color)
             {
                 preview.SetBodyColor(DataManager.Player.Customization.Color);
