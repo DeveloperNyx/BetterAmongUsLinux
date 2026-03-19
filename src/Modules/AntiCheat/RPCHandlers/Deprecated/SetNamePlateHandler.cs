@@ -1,6 +1,6 @@
 using BetterAmongUs.Attributes;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers.Deprecated;
 
 [RegisterRPCHandler]
 internal sealed class SetNamePlateHandler : RPCHandler

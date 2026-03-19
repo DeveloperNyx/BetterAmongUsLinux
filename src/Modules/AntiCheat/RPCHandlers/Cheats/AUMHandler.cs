@@ -10,7 +10,7 @@ using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using Hazel;
 using InnerNet;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers.Cheats;
 
 [RegisterRPCHandler]
 internal sealed class AUMHandler : RPCHandler

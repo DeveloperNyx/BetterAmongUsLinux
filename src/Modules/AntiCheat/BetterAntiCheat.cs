@@ -4,6 +4,7 @@ using BetterAmongUs.Data.Config;
 using BetterAmongUs.Enums;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
+using BetterAmongUs.Modules.AntiCheat.RPCHandlers.NetObjectHandlers;
 using BetterAmongUs.Modules.Support;
 using BetterAmongUs.Mono;
 using BetterAmongUs.Network;

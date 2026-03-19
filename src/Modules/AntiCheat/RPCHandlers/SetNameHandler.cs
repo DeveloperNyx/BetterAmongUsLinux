@@ -4,7 +4,7 @@ using BetterAmongUs.Managers;
 using BetterAmongUs.Mono;
 using Hazel;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers;
 
 [RegisterRPCHandler]
 internal sealed class SetNameHandler : RPCHandler

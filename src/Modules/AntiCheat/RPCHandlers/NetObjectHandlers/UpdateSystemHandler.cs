@@ -4,7 +4,7 @@ using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using Hazel;
 using UnityEngine;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers.NetObjectHandlers;
 
 [RegisterRPCHandler]
 internal sealed class UpdateSystemHandler : RPCHandler

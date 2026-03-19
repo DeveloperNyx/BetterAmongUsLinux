@@ -6,7 +6,7 @@ using BetterAmongUs.Managers;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using Hazel;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers;
 
 [RegisterRPCHandler]
 internal sealed class SendChatHandler : RPCHandler

@@ -4,7 +4,7 @@ using BetterAmongUs.Patches.Gameplay.UI;
 using Hazel;
 using InnerNet;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers.NetObjectHandlers;
 
 internal sealed class DeserializeNetObjectHandler : RPCHandler
 {

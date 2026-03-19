@@ -6,7 +6,7 @@ using BetterAmongUs.Mono;
 using Hazel;
 using InnerNet;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers;
 
 [RegisterRPCHandler]
 internal sealed class MurderPlayerHandler : RPCHandler

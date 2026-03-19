@@ -3,7 +3,7 @@ using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using Hazel;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers;
 
 [RegisterRPCHandler]
 internal sealed class CloseDoorsOfTypeHandler : RPCHandler

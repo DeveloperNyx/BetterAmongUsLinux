@@ -5,7 +5,7 @@ using Hazel;
 using InnerNet;
 using UnityEngine;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers;
 
 [RegisterRPCHandler]
 internal sealed class CheckProtectHandler : RPCHandler

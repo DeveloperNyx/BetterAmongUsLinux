@@ -5,7 +5,7 @@ using BetterAmongUs.Managers;
 using Hazel;
 using InnerNet;
 
-namespace BetterAmongUs.Modules.AntiCheat;
+namespace BetterAmongUs.Modules.AntiCheat.RPCHandlers;
 
 [RegisterRPCHandler]
 internal sealed class ShapeshiftHandler : RPCHandler
