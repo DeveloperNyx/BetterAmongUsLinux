@@ -1,5 +1,6 @@
 using BetterAmongUs.Attributes;
 using BetterAmongUs.Helpers;
+using BetterAmongUs.Patches.Gameplay.UI.Settings;
 using Hazel;
 using UnityEngine;
 
@@ -51,9 +52,8 @@ internal sealed class UpdateSystemHandler : RPCHandler
 
     internal override bool HandleAntiCheatCancel(PlayerControl? sender, MessageReader reader)
     {
-        if (GameState.IsHost && sender.IsHost()) return true;
+        if (sender.IsHost()) return true;
 
-        MessageReader oldReader = MessageReader.Get(reader);
         byte count = reader.ReadByte();
 
         if (ShipStatus.Instance.Systems.TryGetValue(CatchedSystemType, out ISystemType system))
@@ -62,12 +62,31 @@ internal sealed class UpdateSystemHandler : RPCHandler
 
             if (systemHandlers.TryGetValue(systemKey, out var handler))
             {
-                oldReader.Recycle();
-                return handler.Invoke(sender, system, oldReader, count);
+                return handler.Invoke(sender, system, reader, count);
             }
         }
 
-        oldReader.Recycle();
+        return true;
+    }
+
+    internal override bool BetterHandle(PlayerControl? sender, MessageReader reader)
+    {
+        // Prevent dead impostors from sabotaging if setting is enabled 
+        if (CatchedSystemType is SystemTypes.Sabotage or SystemTypes.Electrical or SystemTypes.LifeSupp or
+            SystemTypes.Reactor or SystemTypes.Laboratory or SystemTypes.HeliSabotage or
+            SystemTypes.Comms or SystemTypes.MushroomMixupSabotage)
+        {
+            if (BetterGameSettings.DisableSabotages.GetBool())
+                return false;
+
+            if (BetterGameSettings.DisableSabotagesForDead.GetBool())
+            {
+                if (!sender.IsAlive())
+                {
+                    return false;
+                }
+            }
+        }
 
         return true;
     }

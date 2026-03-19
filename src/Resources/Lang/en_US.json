@@ -95,6 +95,7 @@
   "BetterSetting.Setting.DetectInvalidRPCs": "Detect invalid RPCs",
   "BetterSetting.Setting.RoleRandomizer": "Randomizer",
   "BetterSetting.Setting.DesyncRoles": "Desync roles to other clients",
+  "BetterSetting.Setting.DisableSabotagesForDead": "Disable sabotages for dead",
   "BetterSetting.Setting.DisableSabotages": "Disable sabotages",
   "BetterSetting.Setting.RemovePetOnDeath": "Remove pet on death",
   "BetterSetting.Setting.HideAndSeekImpNum": "# Seekers",

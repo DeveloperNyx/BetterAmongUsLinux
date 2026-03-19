@@ -23,8 +23,11 @@ internal sealed class BetterGameSettings
     internal static OptionIntItem? KickLevelBelow;
     internal static OptionCheckboxItem? DetectCheatClients;
     internal static OptionCheckboxItem? DetectInvalidRPCs;
+
     internal static OptionStringItem? RoleRandomizer;
     internal static OptionCheckboxItem? DesyncRoles;
+    internal static OptionCheckboxItem? DisableSabotagesForDead;
+
     internal static OptionCheckboxItem? CancelInvalidSabotage;
     internal static OptionCheckboxItem? CensorDetectionReason;
     internal static OptionCheckboxItem? DisableSabotages;
@@ -92,17 +95,19 @@ internal static class GameSettingsPatch
 
         // Gameplay Settings section
         {
-            // Show only for hosts in private lobbies
-            if (IsPreload || GameState.IsHost && GameState.IsPrivateOnlyLobby)
+            // Show only for hosts
+            if (IsPreload || GameState.IsHost)
             {
                 // Normal game mode settings
                 if (IsPreload || !GameState.IsHideNSeek)
                 {
                     OptionHeaderItem.Create(BetterSettingsTab, "BetterSetting.MainHeader.Gameplay");
                     BetterGameSettings.DisableSabotages = OptionCheckboxItem.Create(1500, BetterSettingsTab, "BetterSetting.Setting.DisableSabotages", false);
+                    BetterGameSettings.DisableSabotagesForDead = OptionCheckboxItem.Create(1600, BetterSettingsTab, "BetterSetting.Setting.DisableSabotagesForDead", false);
                 }
+
                 // Hide & Seek specific settings with dynamic impostor selection
-                else if (IsPreload || GameState.IsHideNSeek)
+                if (IsPreload || GameState.IsHideNSeek)
                 {
                     OptionHeaderItem.Create(BetterSettingsTab, "BetterSetting.MainHeader.HideNSeek");
                     OptionTitleItem.Create(BetterSettingsTab, $"<color={RoleTypes.Impostor.GetRoleHex()}>{Translator.GetString(StringNames.ImpostorsCategory)}</color>");

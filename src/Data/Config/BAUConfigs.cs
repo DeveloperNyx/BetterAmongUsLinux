@@ -74,11 +74,6 @@ internal static class BAUConfigs
     internal static BAUConfigEntry<string> CommandPrefix { get; } = new("Mod", "CommandPrefix", "/");
 
     /// <summary>
-    /// Gets the configuration entry for private only lobby setting.
-    /// </summary>
-    internal static BAUConfigEntry<bool> PrivateOnlyLobby { get; } = new("Mod", "PrivateOnlyLobby", false);
-
-    /// <summary>
     /// Gets the configuration entry for favorite color setting.
     /// </summary>
     internal static BAUConfigEntry<int> FavoriteColor { get; } = new("Mod", "FavoriteColor", -1);
@@ -94,10 +89,10 @@ internal static class BAUConfigs
     internal static void LoadConfigs()
     {
         BAUModdedSupportEvents.InvokeAll_OnBAUConfigEntriesLoaded([
-            PrivateOnlyLobby, AntiCheat, SendBetterRpc,
-            BetterNotifications, ForceOwnLanguage, ChatDarkMode,
-            ChatInGameplay, LobbyPlayerInfo, DisableLobbyTheme,
-            UnlockFPS, ShowFPS, MinimapIcons, VentColorGroups, CommandPrefix,
+            AntiCheat, SendBetterRpc, BetterNotifications,
+            ForceOwnLanguage, ChatDarkMode, ChatInGameplay, LobbyPlayerInfo,
+            DisableLobbyTheme, UnlockFPS, ShowFPS,
+            MinimapIcons, VentColorGroups, CommandPrefix,
             FavoriteColor, SettingsPreset
         ]);
 

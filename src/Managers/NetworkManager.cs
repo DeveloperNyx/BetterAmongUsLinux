@@ -462,7 +462,18 @@ internal static class NetworkManager
 
         BetterAntiCheat.HandleCheatRPCBeforeCheck(player, callId, reader);
 
-        if (BetterAntiCheat.CheckCancelRPC(player, callId, reader) != true)
+        if (GameState.IsHost)
+        {
+            var tempReader = MessageReader.Get(reader);
+            if (RPCHandler.HandleRPC(callId, player, tempReader, HandlerFlag.BetterHost) == false)
+            {
+                tempReader.Recycle();
+                return false;
+            }
+            tempReader.Recycle();
+        }
+
+        if (BetterAntiCheat.CheckCancelRPC(player, callId, reader) == false)
         {
             if (!player.IsLocalPlayer()) Logger_.LogCheat($"RPC canceled by Anti-Cheat: {Enum.GetName((RpcCalls)callId)}{Enum.GetName((CustomRPC)callId)} - {callId}");
             return false;
@@ -474,10 +485,32 @@ internal static class NetworkManager
         return true;
     }
 
-    [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), typeof(SystemTypes), typeof(PlayerControl), typeof(MessageReader))]
+
+    [HarmonyPatch]
     internal static class MessageReaderUpdateSystemPatch
     {
-        internal static bool Prefix([HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] MessageReader reader)
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), typeof(SystemTypes), typeof(PlayerControl), typeof(byte))]
+        [HarmonyPrefix]
+        internal static bool ShipStatus_UpdateSystemLocal_Prefix(SystemTypes systemType, PlayerControl player, byte amount)
+        {
+            MessageWriter messageWriter = MessageWriter.Get(0);
+            messageWriter.Write(amount);
+            MessageReader messageReader = MessageReader.Get(messageWriter.ToByteArray(false));
+            messageWriter.Recycle();
+
+            if (BetterAntiCheat.RpcUpdateSystemCheck(player, systemType, messageReader) != true)
+            {
+                messageReader.Recycle();
+                return false;
+            }
+            messageReader.Recycle();
+
+            return true;
+        }
+
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), typeof(SystemTypes), typeof(PlayerControl), typeof(MessageReader))]
+        [HarmonyPrefix]
+        internal static bool ShipStatus_UpdateSystem_Prefix(SystemTypes systemType, PlayerControl player, MessageReader msgReader)
         {
             player.BetterData().AntiCheatInfo.RPCSentPS++;
             if (player.BetterData().AntiCheatInfo.RPCSentPS >= ExtendedAntiCheatInfo.MAX_RPC_SENT)
@@ -485,7 +518,7 @@ internal static class NetworkManager
                 return false;
             }
 
-            if (BetterAntiCheat.RpcUpdateSystemCheck(player, systemType, reader) != true) return false;
+            if (BetterAntiCheat.RpcUpdateSystemCheck(player, systemType, msgReader) != true) return false;
 
             return true;
         }

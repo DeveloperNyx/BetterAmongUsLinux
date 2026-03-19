@@ -266,24 +266,24 @@ internal static class BetterAntiCheat
     /// <returns>True if the sabotage should be allowed, false otherwise.</returns>
     internal static bool RpcUpdateSystemCheck(PlayerControl player, SystemTypes systemType, MessageReader oldReader)
     {
-        if (Utils.SystemTypeIsSabotage(systemType) || systemType is SystemTypes.Doors)
-        {
-            if (GameState.IsPrivateOnlyLobby && BetterGameSettings.DisableSabotages.GetBool()) return false;
-        }
-
         MessageReader reader = MessageReader.Get(oldReader);
-
         RegisterRPCHandlerAttribute.GetClassInstance<UpdateSystemHandler>().CatchedSystemType = systemType;
-        bool notCanceled = RPCHandler.HandleRPC((byte)RpcCalls.UpdateSystem, player, reader, HandlerFlag.AntiCheatCancel);
-        if (!notCanceled)
+        if (!RPCHandler.HandleRPC((byte)RpcCalls.UpdateSystem, player, reader, HandlerFlag.AntiCheatCancel))
         {
-            var tempReader = MessageReader.Get(reader);
-            Logger_.LogCheat($"RPC canceled by Anti-Cheat: {Enum.GetName(typeof(SystemTypes), (int)systemType)} - {tempReader.ReadByte()}");
-            tempReader.Recycle();
+            reader.Recycle();
+            return false;
         }
-
         reader.Recycle();
-        return notCanceled;
+
+        MessageReader reader2 = MessageReader.Get(oldReader);
+        if (!RPCHandler.HandleRPC((byte)RpcCalls.UpdateSystem, player, reader2, HandlerFlag.BetterHost))
+        {
+            reader2.Recycle();
+            return false;
+        }
+        reader2.Recycle();
+
+        return true;
     }
 
     /// <summary>
