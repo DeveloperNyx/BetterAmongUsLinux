@@ -198,12 +198,11 @@ internal static class GameSettingsPatch
         if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_AllGameOptions))
             return;
 
-        if (BetterSettingsTab == null)
+        if (BetterSettingsTab == null || BetterSettingsTab.AUTab == null || BetterSettingsTab.TabButton == null)
             return;
 
-        // Hide custom tab when switching away
-        BetterSettingsTab.AUTab?.gameObject?.SetActive(false);
-        BetterSettingsTab.TabButton?.SelectButton(false);
+        BetterSettingsTab.AUTab.gameObject.SetActive(false);
+        BetterSettingsTab.TabButton.SelectButton(false);
 
         // Show custom tab when selected (tab 3)
         if (previewOnly && Controller.currentTouchType == Controller.TouchType.Joystick || !previewOnly)
@@ -211,8 +210,8 @@ internal static class GameSettingsPatch
             switch (tabNum)
             {
                 case 3:
-                    BetterSettingsTab.AUTab?.gameObject?.SetActive(true);
-                    BetterSettingsTab.TabButton?.SelectButton(true);
+                    BetterSettingsTab.AUTab.gameObject.SetActive(true);
+                    BetterSettingsTab.TabButton.SelectButton(true);
                     __instance.MenuDescriptionText.text = BetterSettingsTab.Description;
                     break;
             }
