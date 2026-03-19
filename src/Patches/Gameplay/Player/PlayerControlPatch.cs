@@ -1,4 +1,5 @@
-﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
@@ -6,6 +7,7 @@ using BetterAmongUs.Modules.OptionItems;
 using BetterAmongUs.Mono;
 using HarmonyLib;
 using System.Collections;
+using UnityEngine;
 
 namespace BetterAmongUs.Patches.Gameplay.Player;
 
@@ -76,11 +78,26 @@ internal static class PlayerControlPatch
         if (targetPlayer == null)
             return;
 
+        if (targetPlayer.Data.PlayerId == __instance.Data.PlayerId)
+        {
+            if (animate)
+            {
+                // SetColor early so color blind text doesn't reveal previous color during animation
+                __instance.StartCoroutine(CoSetColorEarly(__instance));
+            }
+        }
+
         // Log shapeshift events (both shifting and unshifting)
         if (__instance != targetPlayer)
             Logger_.LogPrivate($"{__instance.Data.PlayerName} Has Shapeshifted into {targetPlayer.Data.PlayerName}, did animate: {animate}", "EventLog");
         else
             Logger_.LogPrivate($"{__instance.Data.PlayerName} Has Un-Shapeshifted, did animate: {animate}", "EventLog");
+    }
+
+    private static IEnumerator CoSetColorEarly(PlayerControl __instance)
+    {
+        yield return new WaitForSeconds(0.3f);
+        __instance.cosmetics.SetColor(__instance.Data.Outfits[PlayerOutfitType.Default].ColorId);
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetRoleInvisibility))]
