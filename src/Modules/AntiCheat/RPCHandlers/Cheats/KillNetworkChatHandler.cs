@@ -30,7 +30,7 @@ internal sealed class KillNetworkChatHandler : RPCHandler
             sender.ReportPlayer(ReportReasons.Cheating_Hacking);
             BetterDataManager.BetterDataFile.KNData.Add(new(sender?.BetterData().RealName ?? sender.Data.PlayerName, sender.GetHashPuid(), sender.Data.FriendCode, "KillNetwork Chat RPC"));
             BetterDataManager.BetterDataFile.Save();
-            BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.KNC"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheat2"));
+            BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.KNChat"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheatClient"));
         }
     }
 }

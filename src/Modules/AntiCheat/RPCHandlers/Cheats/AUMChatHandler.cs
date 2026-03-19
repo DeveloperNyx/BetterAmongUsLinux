@@ -25,11 +25,12 @@ internal sealed class AUMChatHandler : RPCHandler
             var msgString = reader.ReadString();
             var colorId = reader.ReadInt32();
 
-            var flag3 = sender.BetterData().AntiCheatInfo.AUMChats.Count > 0 && sender.BetterData().AntiCheatInfo.AUMChats.Last() == msgString;
-            if (!flag3)
+            var betterData = sender.BetterData();
+            var alreadyContainsMessage = betterData.AntiCheatInfo.AUMChats.Count > 0 && betterData.AntiCheatInfo.AUMChats.Last() == msgString;
+            if (!alreadyContainsMessage)
             {
-                Utils.AddChatPrivate($"{msgString}", overrideName: $"<b><color=#870000>AUM Chat</color> - {sender.GetPlayerNameAndColor()}</b>");
-                sender.BetterData().AntiCheatInfo.AUMChats.Add(msgString);
+                Utils.AddChatPrivate($"{msgString}", overrideName: $"<b>{Translator.GetString("AntiCheat.Cheat.AUMChat").ToColor(Colors.AUMHexColor)} - {sender.GetPlayerNameAndColor()}</b>");
+                betterData.AntiCheatInfo.AUMChats.Add(msgString);
             }
 
             Logger_.Log($"{sender.Data.PlayerName} -> {msgString}", "AUMChatLog");
@@ -40,14 +41,14 @@ internal sealed class AUMChatHandler : RPCHandler
             if (!BAUConfigs.AntiCheat.Value || !BetterGameSettings.DetectCheatClients.GetBool())
                 return;
 
-            var flag = string.IsNullOrEmpty(nameString) && string.IsNullOrEmpty(msgString);
+            var isEmpty = string.IsNullOrEmpty(nameString) && string.IsNullOrEmpty(msgString);
 
-            if (!flag && !BetterDataManager.BetterDataFile.AUMData.Any(info => info.CheckPlayerData(sender.Data)))
+            if (!isEmpty && !BetterDataManager.BetterDataFile.AUMData.Any(info => info.CheckPlayerData(sender.Data)))
             {
                 sender.ReportPlayer(ReportReasons.Cheating_Hacking);
-                BetterDataManager.BetterDataFile.AUMData.Add(new(sender?.BetterData().RealName ?? sender.Data.PlayerName, sender.GetHashPuid(), sender.Data.FriendCode, "AUM Chat RPC"));
+                BetterDataManager.BetterDataFile.AUMData.Add(new(betterData.RealName ?? sender.Data.PlayerName, sender.GetHashPuid(), sender.Data.FriendCode, "AUM Chat RPC"));
                 BetterDataManager.BetterDataFile.Save();
-                BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.AUM"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheat2"));
+                BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.AUMChat"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheatClient"));
             }
         }
         catch
@@ -63,7 +64,7 @@ internal sealed class AUMChatHandler : RPCHandler
                 sender.ReportPlayer(ReportReasons.Cheating_Hacking);
                 BetterDataManager.BetterDataFile.AUMData.Add(new(sender?.BetterData().RealName ?? sender.Data.PlayerName, sender.GetHashPuid(), sender.Data.FriendCode, "AUM Chat RPC"));
                 BetterDataManager.BetterDataFile.Save();
-                BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.AUM"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheat2"));
+                BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.AUMChat"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheatClient"));
             }
         }
     }

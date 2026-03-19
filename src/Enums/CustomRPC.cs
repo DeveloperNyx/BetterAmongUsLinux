@@ -36,6 +36,11 @@ internal enum CustomRPC : int
     KillNetworkChat = 119,
 
     /// <summary>
+    /// RPC identifier for ModMenuCrew cheat detection.
+    /// </summary>
+    ModMenuCrew = 202,
+
+    /// <summary>
     /// RPC identifier for ModMenuCrew chat communication.
     /// </summary>
     ModMenuCrewChat = 201,

@@ -174,6 +174,11 @@ internal class ExtendedAntiCheatInfo
     internal List<string> AUMChats { get; set; } = [];
 
     /// <summary>
+    /// Gets or sets the list of MCC chat messages.
+    /// </summary>
+    internal List<string> MCCChats { get; set; } = [];
+
+    /// <summary>
     /// Gets or sets the RPCs sent per second.
     /// </summary>
     internal int RPCSentPS { get; set; } = 0;
