@@ -1,4 +1,6 @@
-﻿using BetterAmongUs.Structs;
+﻿using BetterAmongUs.Helpers;
+using BetterAmongUs.Modules;
+using BetterAmongUs.Structs;
 using System.Text.Json.Serialization;
 
 namespace BetterAmongUs.Data.Json;
@@ -34,8 +36,47 @@ internal sealed class BetterDataFile : AbstractJsonFile
     /// <returns>True if saving was successful, false otherwise.</returns>
     internal override bool Save()
     {
-        AllCheatData = [.. CheatData, .. SickoData, .. AUMData, .. KNData];
+        AllCheatData = [.. CheatData, .. SickoData, .. AUMData, .. KNData, .. MMCData];
         return base.Save();
+    }
+
+    /// <summary>
+    /// Attempts to get cheat information for the specified player.
+    /// </summary>
+    /// <param name="data">The player information to check.</param>
+    /// <param name="info">When this method returns, contains the title and hex color if cheat info is found; otherwise, empty strings.</param>
+    /// <returns>True if cheat information was found for the player; otherwise, false.</returns>
+    internal bool TryGetCheatInfo(NetworkedPlayerInfo data, out (string title, string hexColor) info)
+    {
+        info = ("", "");
+
+        if (SickoData.Any(info => info.CheckPlayerData(data)))
+        {
+            info = (Translator.GetString("Player.SickoUser"), Colors.SickoHexColor);
+            return true;
+        }
+        else if (AUMData.Any(info => info.CheckPlayerData(data)))
+        {
+            info = (Translator.GetString("Player.AUMUser"), Colors.AUMHexColor);
+            return true;
+        }
+        else if (KNData.Any(info => info.CheckPlayerData(data)))
+        {
+            info = (Translator.GetString("Player.KNUser"), Colors.KNHexColor);
+            return true;
+        }
+        else if (MMCData.Any(info => info.CheckPlayerData(data)))
+        {
+            info = (Translator.GetString("Player.MMCUser"), Colors.MMCHexColor);
+            return true;
+        }
+        else if (CheatData.Any(info => info.CheckPlayerData(data)))
+        {
+            info = (Translator.GetString("Player.FlaggedPlayer"), Colors.CheaterHexColor);
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -101,8 +142,14 @@ internal sealed class BetterDataFile : AbstractJsonFile
     public HashSet<UserInfo> AUMData { get; set; } = [];
 
     /// <summary>
-    /// Gets or sets the collection of KN cheat user data.
+    /// Gets or sets the collection of Kill Network cheat user data.
     /// </summary>
     [JsonPropertyName("knData")]
     public HashSet<UserInfo> KNData { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets the collection of Mod Menu Crew cheat user data.
+    /// </summary>
+    [JsonPropertyName("mmcData")]
+    public HashSet<UserInfo> MMCData { get; set; } = [];
 }

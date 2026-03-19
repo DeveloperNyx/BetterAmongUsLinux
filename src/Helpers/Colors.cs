@@ -7,18 +7,22 @@ namespace BetterAmongUs.Helpers;
 /// </summary>
 internal static class Colors
 {
-    // Convert a string to a colored string using a Unity Color object
     /// <summary>
-    /// Converts the provided string into a colored string by wrapping it with a 
-    /// <color> tag using the Unity Color object. The Unity Color is automatically 
-    /// converted to its hexadecimal representation before being applied to the string.
+    /// Converts the provided string into a colored string.
     /// </summary>
     /// <param name="str">The string to be colored.</param>
     /// <param name="color">The Unity Color object representing the desired color.</param>
     /// <returns>A string wrapped in a color tag, displaying the string in the specified Unity color.</returns>
     internal static string ToColor(this string str, Color color) => $"<{Color32ToHex(color)}>{str}</color>";
 
-    // Modify the alpha value of an existing color
+    /// <summary>
+    /// Converts the provided string into a colored string.
+    /// </summary>
+    /// <param name="str">The string to be colored.</param>
+    /// <param name="hex">The Hex Color representing the desired color.</param>
+    /// <returns>A string wrapped in a color tag, displaying the string in the specified hex color.</returns>
+    internal static string ToColor(this string str, string hex) => $"<{hex}>{str}</color>";
+
     /// <summary>
     /// Returns a new color that preserves the RGB (Red, Green, Blue) values of the 
     /// original color, but applies a new alpha (opacity) value from the provided new color.
@@ -29,7 +33,6 @@ internal static class Colors
     /// <returns>A new color with the same RGB values as the original color, but with the new alpha value.</returns>
     internal static Color ToColor(this Color oldColor, Color newColor) => new(newColor.r, newColor.g, newColor.b, oldColor.a);
 
-    // Set a new alpha value while keeping the original RGB values
     /// <summary>
     /// Creates and returns a new color with the same RGB values as the original color, 
     /// but with the specified alpha (transparency) value. This method is useful for 
@@ -136,4 +139,10 @@ internal static class Colors
     /// Standard impostor red color.
     /// </summary>
     internal static readonly Color ImpostorRed = new Color32(byte.MaxValue, 25, 25, byte.MaxValue);
+
+    internal static readonly string SickoHexColor = "#00f583";
+    internal static readonly string AUMHexColor = "#4f0000";
+    internal static readonly string KNHexColor = "#8731e7";
+    internal static readonly string MMCHexColor = "#9c8200";
+    internal static readonly string CheaterHexColor = "#fc0000";
 }

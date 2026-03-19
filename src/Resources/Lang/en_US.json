@@ -28,7 +28,8 @@
   "Player.SickoUser": "Sicko User",
   "Player.AUMUser": "AUM User",
   "Player.KNUser": "KN User",
-  "Player.KnownCheater": "Flagged Player",
+  "Player.MMCUser": "MMC User",
+  "Player.FlaggedPlayer": "Flagged Player",
 
   "DisconnectReason.Left": "{0} Left the game!",
   "DisconnectReason.Disconnect": "{0} Disconnected!",
@@ -129,6 +130,7 @@
   "AntiCheat.Cheat.AUM": "AUM",
   "AntiCheat.Cheat.KN": "Kill Network",
   "AntiCheat.Cheat.KNC": "KN Chat",
+  "AntiCheat.Cheat.MMCC": "MMC Chat",
   "AntiCheat.Reason.InvalidFriendCode": "Invalid Friend Code",
   "AntiCheat.Reason.PlatformSpoofer": "Platform Spoofer",
   "AntiCheat.Reason.RPCSentPS": "RPC Spam",

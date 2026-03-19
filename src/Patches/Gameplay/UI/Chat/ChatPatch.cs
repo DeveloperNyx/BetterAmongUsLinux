@@ -179,14 +179,10 @@ internal static class ChatPatch
             }
 
             // Show mod-specific tags based on player data
-            if (BetterDataManager.BetterDataFile.SickoData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
-                sbTag.Append($"<color=#00f583>{Translator.GetString("Player.SickoUser")}</color>+++");
-            else if (BetterDataManager.BetterDataFile.AUMData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
-                sbTag.Append($"<color=#4f0000>{Translator.GetString("Player.AUMUser")}</color>+++");
-            else if (BetterDataManager.BetterDataFile.KNData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
-                sbTag.Append($"<color=#8731e7>{Translator.GetString("Player.KNUser")}</color>+++");
-            else if (BetterDataManager.BetterDataFile.CheatData.Any(info => info.CheckPlayerData(sourcePlayer.Data)))
-                sbTag.Append($"<color=#fc0000>{Translator.GetString("Player.KnownCheater")}</color>+++");
+            if (BetterDataManager.BetterDataFile.TryGetCheatInfo(sourcePlayer.Data, out var info))
+            {
+                sbTag.Append(info.title.ToColor(info.hexColor) + "+++");
+            }
         }
 
         // Hide roles from alive players (unless same team)

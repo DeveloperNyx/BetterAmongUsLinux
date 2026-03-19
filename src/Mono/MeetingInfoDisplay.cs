@@ -2,7 +2,6 @@
 using BetterAmongUs.Data;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
-using BetterAmongUs.Structs;
 using Il2CppInterop.Runtime.Attributes;
 using System.Text;
 using TMPro;
@@ -33,10 +32,6 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
     /// </summary>
     private class CachedTranslations
     {
-        internal readonly string SickoUser = Translator.GetString("Player.SickoUser");
-        internal readonly string AUMUser = Translator.GetString("Player.AUMUser");
-        internal readonly string KNUser = Translator.GetString("Player.KNUser");
-        internal readonly string KnownCheater = Translator.GetString("Player.KnownCheater");
         internal readonly string DisconnectLeft = Translator.GetString("DisconnectReasonMeeting.Left");
         internal readonly string DisconnectAntiCheat = Translator.GetString("DisconnectReasonMeeting.AntiCheat");
         internal readonly string DisconnectBanned = Translator.GetString("DisconnectReasonMeeting.Banned");
@@ -177,14 +172,10 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
         if (_player.Data == null)
             return;
 
-        if (ContainsPlayerData(BetterDataManager.BetterDataFile.SickoData, _player.Data))
-            sbTag.Append($"<color=#00f583>{_cachedTranslations.SickoUser}</color>+++");
-        else if (ContainsPlayerData(BetterDataManager.BetterDataFile.AUMData, _player.Data))
-            sbTag.Append($"<color=#4f0000>{_cachedTranslations.AUMUser}</color>+++");
-        else if (ContainsPlayerData(BetterDataManager.BetterDataFile.KNData, _player.Data))
-            sbTag.Append($"<color=#8731e7>{_cachedTranslations.KNUser}</color>+++");
-        else if (ContainsPlayerData(BetterDataManager.BetterDataFile.CheatData, _player.Data))
-            sbTag.Append($"<color=#fc0000>{_cachedTranslations.KnownCheater}</color>+++");
+        if (BetterDataManager.BetterDataFile.TryGetCheatInfo(_player.Data, out var info))
+        {
+            sbTag.Append(info.title.ToColor(info.hexColor) + "+++");
+        }
     }
 
     /// <summary>
@@ -281,22 +272,6 @@ internal sealed class MeetingInfoDisplay : PlayerInfoDisplay
             textMesh.SetText(newText);
             lastValue = newText;
         }
-    }
-
-    /// <summary>
-    /// Checks if player data exists in a HashSet of UserInfo.
-    /// </summary>
-    /// <param name="dataList">HashSet of UserInfo to check.</param>
-    /// <param name="playerData">Player data to look for.</param>
-    /// <returns>True if player data exists in the HashSet.</returns>
-    private static bool ContainsPlayerData(HashSet<UserInfo> dataList, NetworkedPlayerInfo playerData)
-    {
-        foreach (var info in dataList)
-        {
-            if (info.CheckPlayerData(playerData))
-                return true;
-        }
-        return false;
     }
 
     /// <summary>

@@ -306,6 +306,14 @@ internal static class BetterDataManager
                 didFind = true;
             }
         }
+        foreach (var info in BetterDataFile.MMCData.ToArray())
+        {
+            if (info.PlayerName.Replace(' ', '_') == identifier || info.HashPuid == identifier || info.FriendCode == identifier)
+            {
+                BetterDataFile.MMCData.Remove(info);
+                didFind = true;
+            }
+        }
 
         if (didFind)
         {
@@ -324,6 +332,7 @@ internal static class BetterDataManager
         BetterDataFile.SickoData.Clear();
         BetterDataFile.AUMData.Clear();
         BetterDataFile.KNData.Clear();
+        BetterDataFile.MMCData.Clear();
         BetterDataFile.Save();
     }
 }

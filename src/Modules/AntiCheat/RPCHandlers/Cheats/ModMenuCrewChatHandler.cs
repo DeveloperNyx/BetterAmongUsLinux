@@ -1,0 +1,56 @@
+using BetterAmongUs.Attributes;
+using BetterAmongUs.Data;
+using BetterAmongUs.Data.Config;
+using BetterAmongUs.Enums;
+using BetterAmongUs.Helpers;
+using BetterAmongUs.Managers;
+using BetterAmongUs.Modules.Support;
+using BetterAmongUs.Mono;
+using BetterAmongUs.Patches.Gameplay.UI.Settings;
+using Hazel;
+using InnerNet;
+
+namespace BetterAmongUs.Modules.AntiCheat;
+
+[RegisterRPCHandler]
+internal sealed class ModMenuCrewChatHandler : RPCHandler
+{
+    internal override byte CallId => unchecked((byte)CustomRPC.ModMenuCrewChat);
+
+    internal override void HandleCheatRpcCheck(PlayerControl? sender, MessageReader reader)
+    {
+        if (BAUModdedSupportFlags.HasFlag(BAUModdedSupportFlags.Disable_Anticheat))
+            return;
+
+        if (!BAUConfigs.AntiCheat.Value || !BetterGameSettings.DetectCheatClients.GetBool())
+            return;
+
+        try
+        {
+            var tag = reader.ReadByte();
+            var senderId = reader.ReadPackedInt32();
+            var senderName = reader.ReadString();
+            var content = reader.ReadString();
+            var timestamp = reader.ReadUInt64();
+            var type = reader.ReadByte();
+
+            if (!BetterDataManager.BetterDataFile.MMCData.Any(info => info.CheckPlayerData(sender.Data)))
+            {
+                sender.ReportPlayer(ReportReasons.Cheating_Hacking);
+                BetterDataManager.BetterDataFile.MMCData.Add(new(sender?.BetterData().RealName ?? sender.Data.PlayerName, sender.GetHashPuid(), sender.Data.FriendCode, "ModMenuCrew Chat RPC"));
+                BetterDataManager.BetterDataFile.Save();
+                BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.MMCC"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheat2"));
+            }
+        }
+        catch
+        {
+            if (!BetterDataManager.BetterDataFile.MMCData.Any(info => info.CheckPlayerData(sender.Data)))
+            {
+                sender.ReportPlayer(ReportReasons.Cheating_Hacking);
+                BetterDataManager.BetterDataFile.MMCData.Add(new(sender?.BetterData().RealName ?? sender.Data.PlayerName, sender.GetHashPuid(), sender.Data.FriendCode, "ModMenuCrew Chat RPC"));
+                BetterDataManager.BetterDataFile.Save();
+                BetterNotificationManager.NotifyCheat(sender, Translator.GetString("AntiCheat.Cheat.MMCC"), Translator.GetString("AntiCheat.HasBeenDetectedWithCheat2"));
+            }
+        }
+    }
+}

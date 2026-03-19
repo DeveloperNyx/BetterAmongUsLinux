@@ -5,7 +5,6 @@ using BetterAmongUs.Data.Config;
 using BetterAmongUs.Helpers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Patches.Gameplay.UI.Settings;
-using BetterAmongUs.Structs;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Attributes;
 using System.Text;
@@ -45,10 +44,11 @@ internal class PlayerInfoDisplay : MonoBehaviour
     /// </summary>
     private static readonly Dictionary<string, Color32> _cachedColors = new()
     {
-        ["#00f583"] = Utils.HexToColor32("#00f583"),
-        ["#4f0000"] = Utils.HexToColor32("#4f0000"),
-        ["#fc0000"] = Utils.HexToColor32("#fc0000"),
-        ["#8731e7"] = Utils.HexToColor32("#8731e7")
+        [Colors.SickoHexColor] = Utils.HexToColor32(Colors.SickoHexColor),
+        [Colors.AUMHexColor] = Utils.HexToColor32(Colors.AUMHexColor),
+        [Colors.KNHexColor] = Utils.HexToColor32(Colors.KNHexColor),
+        [Colors.MMCHexColor] = Utils.HexToColor32(Colors.MMCHexColor),
+        [Colors.CheaterHexColor] = Utils.HexToColor32(Colors.CheaterHexColor)
     };
 
     /// <summary>
@@ -59,10 +59,6 @@ internal class PlayerInfoDisplay : MonoBehaviour
         internal readonly string Loading = Translator.GetString("Player.Loading");
         internal readonly string PlatformHidden = Translator.GetString("Player.PlatformHidden");
         internal readonly string NoFriendCode = Translator.GetString("Player.NoFriendCode");
-        internal readonly string SickoUser = Translator.GetString("Player.SickoUser");
-        internal readonly string AUMUser = Translator.GetString("Player.AUMUser");
-        internal readonly string KNUser = Translator.GetString("Player.KNUser");
-        internal readonly string KnownCheater = Translator.GetString("Player.KnownCheater");
         internal readonly string BetterUser = Translator.GetString("Player.BetterUser");
     }
 
@@ -361,47 +357,15 @@ internal class PlayerInfoDisplay : MonoBehaviour
 
         var color = _player.cosmetics.currentBodySprite.BodySprite.material.GetColor("_OutlineColor");
 
-        if (ContainsPlayerData(BetterDataManager.BetterDataFile.SickoData, _player.Data))
+        if (BetterDataManager.BetterDataFile.TryGetCheatInfo(_player.Data, out var info))
         {
-            sbTag.Append($"<color=#00f583>{_cachedTranslations.SickoUser}</color>+++");
-            _player.SetOutlineByHex(true, "#00f583");
-        }
-        else if (ContainsPlayerData(BetterDataManager.BetterDataFile.AUMData, _player.Data))
-        {
-            sbTag.Append($"<color=#4f0000>{_cachedTranslations.AUMUser}</color>+++");
-            _player.SetOutlineByHex(true, "#4f0000");
-        }
-        else if (ContainsPlayerData(BetterDataManager.BetterDataFile.KNData, _player.Data))
-        {
-            sbTag.Append($"<color=#8731e7>{_cachedTranslations.KNUser}</color>+++");
-            _player.SetOutlineByHex(true, "#8731e7");
-        }
-        else if (ContainsPlayerData(BetterDataManager.BetterDataFile.CheatData, _player.Data))
-        {
-            sbTag.Append($"<color=#fc0000>{_cachedTranslations.KnownCheater}</color>+++");
-            _player.SetOutlineByHex(true, "#fc0000");
+            sbTag.Append(info.title.ToColor(info.hexColor) + "+++");
+            _player.SetOutlineByHex(true, info.hexColor);
         }
         else if (_cachedColors.Any(kvp => color == kvp.Value))
         {
             _player.SetOutline(false, null);
         }
-    }
-
-    /// <summary>
-    /// Checks if player data exists in a HashSet of UserInfo.
-    /// </summary>
-    /// <param name="dataList">HashSet of UserInfo to check.</param>
-    /// <param name="playerData">Player data to look for.</param>
-    /// <returns>True if player data exists in the HashSet.</returns>
-    [HideFromIl2Cpp]
-    private static bool ContainsPlayerData(HashSet<UserInfo> dataList, NetworkedPlayerInfo playerData)
-    {
-        foreach (var info in dataList)
-        {
-            if (info.CheckPlayerData(playerData))
-                return true;
-        }
-        return false;
     }
 
     /// <summary>

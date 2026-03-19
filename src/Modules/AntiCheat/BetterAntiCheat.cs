@@ -61,6 +61,12 @@ internal static class BetterAntiCheat
                     string kickMessage = string.Format(Translator.GetString("AntiCheat.KickMessage"), Translator.GetString("AntiCheat.ByAntiCheat"), reason);
                     player.Kick(true, kickMessage, true);
                 }
+                else if (BetterDataManager.BetterDataFile.MMCData.Any(info => info.CheckPlayerData(player.Data)))
+                {
+                    string reason = Translator.GetString("AntiCheat.Reason.MMCUser");
+                    string kickMessage = string.Format(Translator.GetString("AntiCheat.KickMessage"), Translator.GetString("AntiCheat.ByAntiCheat"), reason);
+                    player.Kick(true, kickMessage, true);
+                }
                 else if (BetterDataManager.BetterDataFile.CheatData.Any(info => info.CheckPlayerData(player.Data)))
                 {
                     string reason = Translator.GetString("AntiCheat.Reason.KnownCheater");
