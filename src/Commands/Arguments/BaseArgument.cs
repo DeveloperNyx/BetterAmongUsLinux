@@ -33,6 +33,14 @@ internal abstract class BaseArgument(BaseCommand command, string argInfo)
     internal Func<string[]> GetArgSuggestions { get; set; } = () => { return []; };
 
     /// <summary>
+    /// Resets the Argument back to its default state.
+    /// </summary>
+    internal void Reset()
+    {
+        Arg = string.Empty;
+    }
+
+    /// <summary>
     /// Gets the closest suggestion for the current argument value.
     /// </summary>
     /// <returns>The closest matching suggestion, or empty string if none found.</returns>

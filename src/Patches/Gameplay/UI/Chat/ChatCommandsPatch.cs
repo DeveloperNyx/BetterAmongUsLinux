@@ -22,6 +22,7 @@ internal static class ChatCommandsPatch
         if (closestCommand != null && isTypedOut)
         {
             closestCommand.Run();
+            closestCommand.ResetArguments();
         }
         else
         {
@@ -176,6 +177,9 @@ internal static class ChatCommandsPatch
 
     private static void HandleValidSuggestion(ChatController __instance, string[] typedParts)
     {
+        if (closestCommand == null)
+            return;
+
         isTypedOut = true;
 
         // Generate suggestion text
@@ -201,6 +205,9 @@ internal static class ChatCommandsPatch
 
     private static string GenerateSuggestion(string[] typedParts)
     {
+        if (closestCommand == null)
+            return string.Empty;
+
         // If only command name typed, return full command name
         if (typedParts.Length == 1)
             return closestCommand.Name;
@@ -224,6 +231,11 @@ internal static class ChatCommandsPatch
 
     private static void UpdateCommandArguments(string[] typedParts)
     {
+        if (closestCommand == null)
+            return;
+
+        closestCommand.ResetArguments();
+
         for (int i = 1; i < typedParts.Length && i <= closestCommand.Arguments.Length; i++)
         {
             if (closestCommand.Arguments[i - 1] != null)

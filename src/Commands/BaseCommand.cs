@@ -73,6 +73,17 @@ internal abstract class BaseCommand
     internal abstract void Run();
 
     /// <summary>
+    /// Resets all associated Arguments with Command Back to its default state.
+    /// </summary>
+    internal void ResetArguments()
+    {
+        foreach (var arg in Arguments)
+        {
+            arg.Reset();
+        }
+    }
+
+    /// <summary>
     /// Formats and optionally displays command result text.
     /// </summary>
     /// <param name="text">The result text to display.</param>

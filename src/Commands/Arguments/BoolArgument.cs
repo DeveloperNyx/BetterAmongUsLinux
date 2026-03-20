@@ -25,7 +25,7 @@ internal sealed class BoolArgument(BaseCommand command, string argInfo = "{bool}
     /// </remarks>
     internal bool? GetBool()
     {
-        if (Arg.ToLower() is "true")
+        if (Arg.ToLower() == "true")
         {
             return true;
         }

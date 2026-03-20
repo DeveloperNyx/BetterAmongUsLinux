@@ -12,7 +12,7 @@ internal sealed class AllCommandsCommand : BaseCommand
 
     internal override void Run()
     {
-        BaseCommand[] allNormalCommands = allCommands.Where(cmd => cmd.Type == CommandType.Normal && cmd.ShowCommand()).ToArray();
+        BaseCommand[] allNormalCommands = [.. allCommands.Where(cmd => cmd.Type == CommandType.Normal && cmd.ShowCommand())];
         string list;
         var open = "<color=#858585>┌──────── </color>";
         var mid = "<color=#858585>├ </color>";
