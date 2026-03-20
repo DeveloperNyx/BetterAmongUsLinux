@@ -65,6 +65,22 @@ internal static class MiniMapBehaviourPatch
 
     private static Transform? _icons; // Container for all custom map icons
 
+    /// <summary>
+    /// Clears all map icons to be regenerated
+    /// </summary>
+    internal static void ClearMapIcons()
+    {
+        if (_icons != null)
+        {
+            UnityEngine.Object.Destroy(_icons.gameObject);
+        }
+
+        if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen)
+        {
+            MapBehaviour.Instance.Close();
+        }
+    }
+
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.Show))]
     [HarmonyPostfix]
     private static void MapBehaviour_Show_Postfix(MapBehaviour __instance)
@@ -73,7 +89,15 @@ internal static class MiniMapBehaviourPatch
             return;
 
         if (!BAUConfigs.MinimapIcons.Value)
+        {
+            // Reset infected overlay buttons
+            foreach (var button in __instance.infectedOverlay.allButtons)
+            {
+                button.spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
+                button.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+            }
             return;
+        }
 
         // Make infected overlay buttons semi-transparent and smaller
         foreach (var button in __instance.infectedOverlay.allButtons)

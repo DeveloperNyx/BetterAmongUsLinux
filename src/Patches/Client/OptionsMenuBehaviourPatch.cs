@@ -5,6 +5,7 @@ using BetterAmongUs.Helpers;
 using BetterAmongUs.Managers;
 using BetterAmongUs.Modules;
 using BetterAmongUs.Mono;
+using BetterAmongUs.Patches.Gameplay.UI;
 using BetterAmongUs.Patches.Gameplay.UI.Chat;
 using HarmonyLib;
 using System.Diagnostics;
@@ -52,24 +53,8 @@ internal static class OptionsMenuBehaviourPatch
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.UnlockFPS"), BAUConfigs.UnlockFPS, 1, __instance, UpdateFrameRate);
         ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.ShowFPS"), BAUConfigs.ShowFPS, 1, __instance);
 
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.VentColorGroups"), BAUConfigs.VentColorGroups, 2, __instance, toggleCheck: () =>
-        {
-            bool cannotToggle = GameState.IsInGame && !GameState.IsLobby;
-            if (cannotToggle)
-            {
-                BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
-            }
-            return !cannotToggle;
-        });
-        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.MinimapIcons"), BAUConfigs.MinimapIcons, 2, __instance, toggleCheck: () =>
-        {
-            bool cannotToggle = GameState.IsInGame && !GameState.IsLobby;
-            if (cannotToggle)
-            {
-                BetterNotificationManager.Notify($"Unable to toggle while in gameplay!", 2.5f);
-            }
-            return !cannotToggle;
-        });
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.VentColorGroups"), BAUConfigs.VentColorGroups, 2, __instance, MiniMapBehaviourPatch.ClearMapIcons);
+        ClientOptionItem.CreateToggle(Translator.GetString("BetterOption.MinimapIcons"), BAUConfigs.MinimapIcons, 2, __instance, MiniMapBehaviourPatch.ClearMapIcons);
 
         // Button options (no toggle)
         if (!ModInfo.Starlight)
